@@ -1,0 +1,2 @@
+info: total chi for all datasets combined - total number of datapoints for all datasets combined
+2023.7812348159596   26.0  77.83773980061383   

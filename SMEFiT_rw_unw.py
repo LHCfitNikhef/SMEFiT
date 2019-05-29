@@ -21,6 +21,7 @@ Needed Python packages:
  * numpy
  * tabulate
  * scipy.stats
+ * matplotlib
 
 +-------------+
 | Code set up |
@@ -57,10 +58,21 @@ Needed Python packages:
 import numpy as np
 import tabulate as tab
 import scipy.stats as stats
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+
 np.set_printoptions(precision=3)
 
-# Number of replicas in the prior fit
-n_reps = 1000
+# Input settings
+prior_data      = 'no_single_top'
+poster_data     = 't_channel'
+chi2_data       = poster_data
+n_reps          = 10000
+ks_level        = 0.3
+reduction_level = 0.3
+
+print('\n* Prior: \n ', prior_data)
+print('\n* Posterior:\n ', poster_data)
 print('\n* Number of replicas :\n ', n_reps)
 
 # Load in the prior distributions for the coefficients and the chi2 data
@@ -71,8 +83,7 @@ op_names_list = []
 for rep_number in np.arange(1, n_reps+1):
 
     # Loop over the files containing the prior Wilson coefficients
-    prior_data_per_rep = open('rw_input_data/wilson_coeffs_NLO_HO_excl_single_top_crossvalON/SMEFT_coeffs_'
-							  + str(rep_number) + '.txt')
+    prior_data_per_rep = open('rw_input_data/wilson_coeffs/' + prior_data + '/SMEFT_coeffs_' + str(rep_number) + '.txt')
 
     op_names = np.asarray(prior_data_per_rep.readline().split('\t')[:-1])
     coeffs_per_rep = np.asarray(prior_data_per_rep.readline().split()[:], dtype=float)
@@ -86,8 +97,7 @@ for rep_number in np.arange(1, n_reps+1):
     prior_coeffs_list.append(coeffs_per_rep)
 
     # Loop over the files with the chi2 data
-    chi2_per_rep = np.loadtxt('rw_input_data/chi2_incl_1_single_top_1st_set/x2_total_rep_'
-    						  + str(rep_number) + '.txt', skiprows=1)
+    chi2_per_rep = np.loadtxt('rw_input_data/chi2_data/' + chi2_data + '/x2_total_rep_' + str(rep_number) + '.txt', skiprows=1)
 
     chi2_list.append(chi2_per_rep)
 
@@ -162,7 +172,7 @@ assert np.round(np.max(probs_cumul), 4) == 1.0000, 'probability cumulants do not
 # Calculate the integer weights for unweighting
 unw_n_reps = n_eff
 unw_weights_list = []
-
+print('\n* Computing the unweighted set ...')
 for rep_num in np.arange(1, n_reps+1):
     unw_weights_rep_num_list = []
 
@@ -220,8 +230,7 @@ poster_coeffs_list = []
 for rep_number in np.arange(1, n_reps+1):
 
     # Loop over the files containing the Wilson coefficients
-    poster_data_per_rep = open('rw_input_data/wilson_coeffs_NLO_HO_incl_1_single_top_crossvalON/SMEFT_coeffs_'
-    					       + str(rep_number) + '.txt')
+    poster_data_per_rep = open('rw_input_data/wilson_coeffs/' + poster_data + '/SMEFT_coeffs_' + str(rep_number) + '.txt')
 
     op_names = np.asarray(poster_data_per_rep.readline().split('\t')[:-1])
     coeffs_per_rep = np.asarray(poster_data_per_rep.readline().split()[:], dtype=float)
@@ -231,15 +240,37 @@ for rep_number in np.arange(1, n_reps+1):
 
     poster_coeffs_list.append(coeffs_per_rep)
 
-# Obtain a 2D array with the coefficients for all replicas
+# Obtain the posterior distributions
 poster_coeffs = np.asarray(poster_coeffs_list)
 poster_means = np.mean(poster_coeffs, axis=0)
-
-
-
-# Calculate the standard deviation for the poster distributions
 poster_variances = 1/(n_reps-1) * np.sum((poster_coeffs - poster_means)**2, axis=0)
 poster_st_devs = np.sqrt(poster_variances)
+
+# Determine the reduction of the standard deviations
+reduction_poster = 1 - poster_st_devs/prior_st_devs
+no_reduction_poster = np.where(reduction_poster < 0)
+np.put(reduction_poster, no_reduction_poster, 0.0)
+
+reduction_rw = 1 - rw_st_devs/prior_st_devs
+no_reduction_rw = np.where(reduction_rw < 0)
+np.put(reduction_rw, no_reduction_rw, 0.0)
+
+# Obtain the operators that satisfy the KS level and the sigma reduction level
+ops_satisfy_ks = np.where(ks_stats > ks_level)
+ops_satisfy_red = np.where(reduction_poster > reduction_level)
+constr_op_nums = np.intersect1d(ops_satisfy_ks, ops_satisfy_red)
+
+constr_prior_st_devs = np.take(prior_st_devs, constr_op_nums)
+constr_poster_st_devs = np.take(poster_st_devs, constr_op_nums)
+constr_rw_st_devs = np.take(rw_st_devs, constr_op_nums)
+constr_unw_st_devs = np.take(unw_st_devs, constr_op_nums)
+constr_op_names = np.take(op_names, constr_op_nums)
+constr_prior_coeffs = np.take(np.transpose(prior_coeffs), constr_op_nums, axis=0)
+constr_poster_coeffs = np.take(np.transpose(poster_coeffs), constr_op_nums, axis=0)
+constr_rw_coeffs = np.take(np.transpose(rw_coeffs), constr_op_nums, axis=0)
+constr_unw_coeffs = np.take(np.transpose(unw_coeffs), constr_op_nums, axis=0)
+
+print('\n* Constrained operators : \n ', constr_op_names)
 
 
 '''
@@ -248,19 +279,46 @@ poster_st_devs = np.sqrt(poster_variances)
 +--------------------------+
 '''
 
+def print_info_to_terminal() :
+    # Print a table with operators and standard deviations
+    headers = ['operator',
+               'prior std dev',
+               'poster st devs',
+               'rw std dev',
+               'unw std dev',
+               'KS stat',
+              ]
 
-# Print a table with operators and standard deviations
-headers = ['operator',
-           'prior std dev',
-           'poster st devs',
-           'rw std dev',
-           'unw std dev'
-          ]
+    terminal_table = np.stack([op_names,
+                      prior_st_devs,
+                      poster_st_devs,
+                      rw_st_devs,
+                      unw_st_devs,
+                      ks_stats,
+                      ], axis=1)
+    print('\n')
+    print(tab.tabulate(terminal_table, headers, tablefmt='github', floatfmt='.2f'))
 
-table = np.stack([op_names,
-                  prior_st_devs,
-                  poster_st_devs,
-                  rw_st_devs,
-                  unw_st_devs], axis=1)
-print('\n')
-print(tab.tabulate(table, headers, tablefmt='github'))
+    return None
+
+print_info_to_terminal()
+
+'''
++------------------+
+| Plotting section |
++------------------+
+'''
+
+# Define colors
+color_red        = (0.70, 0.20, 0.20)
+color_yellow     = (0.90, 0.40, 0.20)
+color_blue       = (0.20, 0.40, 0.60)
+color_green      = (0.10, 0.60, 0.40)
+color_purple     = (0.70, 0.40, 0.50)
+color_green_line = (0.05, 0.40, 0.10)
+color_turqoise   = (0.20, 0.50, 0.50)
+color_light_grey = (0.85, 0.85, 0.85)
+color_dark_grey  = (0.00, 0.00, 0.00, 0.60)
+color_white      = (0.95,0.95,0.95)
+
+#
