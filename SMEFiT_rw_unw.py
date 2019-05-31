@@ -65,9 +65,9 @@ np.set_printoptions(precision=3)
 
 # Input settings
 prior_data      = 'no_single_top'
-poster_data     = 't_channel'
+poster_data     = '1st_t_channel'
 chi2_data       = poster_data
-n_reps          = 10000
+n_reps          = 1000
 ks_level        = 0.3
 reduction_level = 0.3
 
@@ -269,7 +269,6 @@ constr_prior_coeffs = np.take(np.transpose(prior_coeffs), constr_op_nums, axis=0
 constr_poster_coeffs = np.take(np.transpose(poster_coeffs), constr_op_nums, axis=0)
 constr_rw_coeffs = np.take(np.transpose(rw_coeffs), constr_op_nums, axis=0)
 constr_unw_coeffs = np.take(np.transpose(unw_coeffs), constr_op_nums, axis=0)
-
 print('\n* Constrained operators : \n ', constr_op_names)
 
 
@@ -280,6 +279,7 @@ print('\n* Constrained operators : \n ', constr_op_names)
 '''
 
 def print_info_to_terminal() :
+
     # Print a table with operators and standard deviations
     headers = ['operator',
                'prior std dev',
@@ -296,12 +296,30 @@ def print_info_to_terminal() :
                       unw_st_devs,
                       ks_stats,
                       ], axis=1)
+
     print('\n')
     print(tab.tabulate(terminal_table, headers, tablefmt='github', floatfmt='.2f'))
 
     return None
 
 print_info_to_terminal()
+
+'''
++-----------------+
+| Saving in files |
++-----------------+
+'''
+
+# format the list of operator names
+names_list = []
+for name in np.arange(len(op_names)) :
+    formatted_name = '{:^11}'.format(op_names[name])
+    names_list.append(formatted_name)
+names_header = ''.join((np.asarray(names_list, dtype=str)))
+
+# save unweighted set in text file
+np.savetxt('unw_coeffs.txt', unw_coeffs, fmt='%10.5f', header=names_header, comments='')
+
 
 '''
 +------------------+
@@ -321,4 +339,109 @@ color_light_grey = (0.85, 0.85, 0.85)
 color_dark_grey  = (0.00, 0.00, 0.00, 0.60)
 color_white      = (0.95,0.95,0.95)
 
-#
+# General settings for plotting
+plt.rc('axes', axisbelow=True)
+plt.rc('axes', edgecolor=color_dark_grey)
+plt.rcParams['xtick.color'] = color_dark_grey
+mpl.rcParams['ytick.color'] = color_dark_grey
+
+def plot_two_sigma_bounds() :
+
+    # make figure opbject
+    fig, axes = plt.subplots(3,1, sharex=True)
+    ax1, ax2, ax3 = axes
+    fig.tight_layout()
+    plt.subplots_adjust(hspace=0.1)
+
+    # needed for bar plots
+    bar_width = 0.15
+    op_list = np.arange(1, len(op_names)+1)
+
+    # two sigma bounds prior/poster/rw/unw
+    ax1.bar(op_list, 2.0*prior_st_devs, label='prior', width=4.1*bar_width, color='black', align='center', alpha=0.9)
+    ax1.bar(op_list-bar_width-0.03, 2.0*poster_st_devs, label='posterior' , width=bar_width, color=color_purple, align='center' )
+    ax1.bar(op_list, 2.0*rw_st_devs, label='reweighted', width=bar_width, color=color_turqoise   , align='center')
+    ax1.bar(op_list+bar_width+0.03, 2.0*unw_st_devs, label='unweighted', width=bar_width, color=color_yellow, align='center', alpha=0.8)
+    # ax1.bar(op_list-bar_width, 2.0*prior_st_devs, label='prior', width=bar_width, color='black', align='center')
+    # ax1.bar(op_list, 2.0*poster_st_devs, label='posterior' , width=bar_width, color='green', align='center' )
+    # ax1.bar(op_list+bar_width, 2.0*rw_st_devs, label='reweighted', width=bar_width, color=(0.80, 0.30, 0.30), align='center')
+    # ax1.bar(op_list+2.0*bar_width, 2.0*unw_st_devs, label='unweighted', width=bar_width, color=(0.20, 0.20, 0.70), align='center')
+
+
+    # layout settings two sigma bounds
+    ax1.grid(True, axis='y', color=color_light_grey)
+    ax1.set_yscale('log')
+    ax1.set_xticks(op_list)
+    ax1.set_ylabel('$2\sigma$ [TeV$^{-2}$]', color=color_dark_grey)
+    legend1 = ax1.legend(loc='best', ncol=2, facecolor=color_white)
+
+    # reduction plot
+    ax2.axhline(y=reduction_level, color=color_green_line, lw=2, alpha=0.6, linestyle='dotted')
+    ax2.bar(op_list, reduction_poster, label='1 - $\\frac{\sigma_{post}}{\sigma_{prior}}$', color=color_purple  , width=1.5*bar_width)
+    ax2.bar(op_list, reduction_rw, label='1 - $\\frac{\sigma_{rw}}{\sigma_{prior}}$', color=color_turqoise, width=2.5*bar_width, alpha=0.5)
+    # ax2.bar(op_list-bar_width, reduction_poster, label='1 - $\\frac{\sigma_{post}}{\sigma_{prior}}$', color=color_purple, width=2*bar_width)
+    # ax2.bar(op_list+bar_width, reduction_rw, label='1 - $\\frac{\sigma_{rw}}{\sigma_{prior}}$', color=color_turqoise, alpha=0.5, width=2*bar_width)
+
+    # layout reduction plot
+    ax2.grid(True, axis='y', color=color_light_grey)
+    ax2.set_yticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
+    ax2.set_ylabel('Reduction in $\sigma$', color=color_dark_grey)
+    legend2 = ax2.legend(loc='best', ncol=2, facecolor=color_white)
+
+    # plot KS stats
+    ax3.axhline(y=ks_level, color=color_green_line, lw=2, alpha=0.6, linestyle='dotted')
+    ax3.plot(op_list, ks_stats, 'd', label='$KS$-stat', color=color_turqoise, ms=4, mfc='maroon')
+    ax3.vlines(op_list, 0, ks_stats, color=color_turqoise, lw=1, linestyle='dashed')
+
+    # layout KS stats plot
+    ax3.set_yticks([0.0,0.1,0.2,0.3,0.4,0.5])
+    ax3.grid(True, axis='y', color=color_light_grey)
+    ax3.set_xticklabels(op_names, rotation=90, fontsize=8)
+    ax3.set_ylabel('$KS$-stat', color=color_dark_grey)
+
+    # save figure
+    fig.savefig('two_sigma_bounds_KS_reduction_' + poster_data + '.pdf', dpi=1000, bbox_inches='tight')
+
+    return None
+def plot_distr_constr_ops() :
+
+    # needed for histogram
+    nbins = 30
+    constr_op_list = np.arange(1, len(constr_op_names)+1)
+
+    # loop over the constrained operators
+    for oper in np.arange(len(constr_op_nums)) :
+
+        # make figure opbject
+        fig, ax = plt.subplots()
+        fig.tight_layout()
+
+        # make histograms of the coefficients
+        hist_range = [-10, 10]
+
+        # prior histogram
+        ax.hist(constr_prior_coeffs[oper], bins=nbins, density=True, range=hist_range, histtype='stepfilled', color=color_dark_grey, label='prior', alpha=0.15)
+        ax.hist(constr_prior_coeffs[oper], bins=nbins, density=True, range=hist_range, histtype='step', color=color_dark_grey, alpha=0.3)
+
+        # posterior histogram
+        ax.hist(constr_poster_coeffs[oper], bins=nbins, density=True, range=hist_range, histtype='stepfilled', color=color_purple, label='posterior', alpha=0.4)
+
+        # unweighted histogram
+        ax.hist(constr_unw_coeffs[oper], bins=nbins, density=True, range=hist_range, histtype='stepfilled', color=color_turqoise, lw=4, alpha=0.1)
+        ax.hist(constr_unw_coeffs[oper], bins=nbins, density=True, range=hist_range, label='unweighted', histtype='step', lw=2, color=color_turqoise)
+
+        # add legend
+        legend = ax.legend(loc='best', title='$' + str(constr_op_names[oper]) + '$', title_fontsize=13, facecolor=color_white)
+        legend._legend_box.align = 'left'
+
+        # set x and y labels
+        ax.set_xlabel('$c_{' + str(constr_op_names[oper]) + '}$', color=color_dark_grey, fontsize=12)
+        ax.set_ylabel('probability density', color=color_dark_grey, fontsize=12)
+
+        # save figure
+        fig.savefig('distr_' + str(constr_op_names[oper]) + '_' + poster_data + '.pdf', dpi=1000, bbox_inches='tight')
+
+    return None
+# plot_distr_constr_ops()
+# plot_two_sigma_bounds()
+print('\n* Plots are generated and saved')
