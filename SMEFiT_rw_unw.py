@@ -273,6 +273,23 @@ print('\n* Constrained operators : \n ', constr_op_names)
 
 
 '''
++--------------+
+| Chi2 profile |
++--------------+
+'''
+
+alphas = 0.2*np.arange(1,11)
+for alpha in alphas :
+    rescaled_chi2 = chi2_all_reps/(alpha**2)
+    rescaled_unnormalized_weights = rescaled_chi2**(1/2*(n_datapoints-1)) * np.exp(-1/2*rescaled_chi2)
+    scaled_normalization = np.sum(rescaled_unnormalized_weights) / n_reps
+    rescaled_weights = rescaled_unnormalized_weights / scaled_normalization
+    rescaled_chi2_profile = 1/alpha * np.sum(rescaled_weights)
+    print(rescaled_chi2_profile)
+
+
+
+'''
 +--------------------------+
 | Print table in  terminal |
 +--------------------------+
@@ -328,16 +345,15 @@ np.savetxt('unw_coeffs.txt', unw_coeffs, fmt='%10.5f', header=names_header, comm
 '''
 
 # Define colors
-color_red        = (0.70, 0.20, 0.20)
-color_yellow     = (0.90, 0.40, 0.20)
-color_blue       = (0.20, 0.40, 0.60)
-color_green      = (0.10, 0.60, 0.40)
-color_purple     = (0.70, 0.40, 0.50)
-color_green_line = (0.05, 0.40, 0.10)
-color_turqoise   = (0.20, 0.50, 0.50)
-color_light_grey = (0.85, 0.85, 0.85)
-color_dark_grey  = (0.00, 0.00, 0.00, 0.60)
-color_white      = (0.95,0.95,0.95)
+color_purple        = (0.85, 0.4, 0.55)
+color_turqoise      = (0.20, 0.70, 0.60)
+color_dark_turqoise = (0.20, 0.50, 0.50)
+color_yellow        = (0.95, 0.75, 0.20)
+color_green         = (0.10, 0.60, 0.40)
+color_green_line    = (0.05, 0.40, 0.10)
+color_light_grey    = (0.85, 0.85, 0.85)
+color_dark_grey     = (0.00, 0.00, 0.00, 0.60)
+color_white         = (0.95,0.95,0.95)
 
 # General settings for plotting
 plt.rc('axes', axisbelow=True)
@@ -347,6 +363,8 @@ mpl.rcParams['ytick.color'] = color_dark_grey
 
 def plot_two_sigma_bounds() :
 
+    print('\n* Plotting two sigma bounds ...')
+
     # make figure opbject
     fig, axes = plt.subplots(3,1, sharex=True)
     ax1, ax2, ax3 = axes
@@ -355,18 +373,14 @@ def plot_two_sigma_bounds() :
 
     # needed for bar plots
     bar_width = 0.15
+    bar_shift = 0.03
     op_list = np.arange(1, len(op_names)+1)
 
     # two sigma bounds prior/poster/rw/unw
-    ax1.bar(op_list, 2.0*prior_st_devs, label='prior', width=4.1*bar_width, color='black', align='center', alpha=0.9)
-    ax1.bar(op_list-bar_width-0.03, 2.0*poster_st_devs, label='posterior' , width=bar_width, color=color_purple, align='center' )
-    ax1.bar(op_list, 2.0*rw_st_devs, label='reweighted', width=bar_width, color=color_turqoise   , align='center')
-    ax1.bar(op_list+bar_width+0.03, 2.0*unw_st_devs, label='unweighted', width=bar_width, color=color_yellow, align='center', alpha=0.8)
-    # ax1.bar(op_list-bar_width, 2.0*prior_st_devs, label='prior', width=bar_width, color='black', align='center')
-    # ax1.bar(op_list, 2.0*poster_st_devs, label='posterior' , width=bar_width, color='green', align='center' )
-    # ax1.bar(op_list+bar_width, 2.0*rw_st_devs, label='reweighted', width=bar_width, color=(0.80, 0.30, 0.30), align='center')
-    # ax1.bar(op_list+2.0*bar_width, 2.0*unw_st_devs, label='unweighted', width=bar_width, color=(0.20, 0.20, 0.70), align='center')
-
+    ax1.bar(op_list, 2.0*prior_st_devs, label='prior', width=4.1*bar_width, color='black', align='center', alpha=0.7)
+    ax1.bar(op_list-bar_width-bar_shift, 2.0*poster_st_devs, label='posterior' , width=bar_width, color=color_purple, align='center' )
+    ax1.bar(op_list, 2.0*rw_st_devs, label='reweighted', width=bar_width, color=color_turqoise, align='center')
+    ax1.bar(op_list+bar_width+bar_shift, 2.0*unw_st_devs, label='unweighted', width=bar_width, color=color_yellow, align='center')
 
     # layout settings two sigma bounds
     ax1.grid(True, axis='y', color=color_light_grey)
@@ -378,9 +392,7 @@ def plot_two_sigma_bounds() :
     # reduction plot
     ax2.axhline(y=reduction_level, color=color_green_line, lw=2, alpha=0.6, linestyle='dotted')
     ax2.bar(op_list, reduction_poster, label='1 - $\\frac{\sigma_{post}}{\sigma_{prior}}$', color=color_purple  , width=1.5*bar_width)
-    ax2.bar(op_list, reduction_rw, label='1 - $\\frac{\sigma_{rw}}{\sigma_{prior}}$', color=color_turqoise, width=2.5*bar_width, alpha=0.5)
-    # ax2.bar(op_list-bar_width, reduction_poster, label='1 - $\\frac{\sigma_{post}}{\sigma_{prior}}$', color=color_purple, width=2*bar_width)
-    # ax2.bar(op_list+bar_width, reduction_rw, label='1 - $\\frac{\sigma_{rw}}{\sigma_{prior}}$', color=color_turqoise, alpha=0.5, width=2*bar_width)
+    ax2.bar(op_list, reduction_rw, label='1 - $\\frac{\sigma_{rw}}{\sigma_{prior}}$', color=color_dark_turqoise, width=3.0*bar_width, alpha=0.3)
 
     # layout reduction plot
     ax2.grid(True, axis='y', color=color_light_grey)
@@ -390,20 +402,23 @@ def plot_two_sigma_bounds() :
 
     # plot KS stats
     ax3.axhline(y=ks_level, color=color_green_line, lw=2, alpha=0.6, linestyle='dotted')
-    ax3.plot(op_list, ks_stats, 'd', label='$KS$-stat', color=color_turqoise, ms=4, mfc='maroon')
-    ax3.vlines(op_list, 0, ks_stats, color=color_turqoise, lw=1, linestyle='dashed')
+    ax3.plot(op_list, ks_stats, 'd', label='$KS$-stat', color=color_dark_turqoise, ms=4, mfc='maroon')
+    ax3.vlines(op_list, 0, ks_stats, color=color_dark_turqoise, lw=1, linestyle='dashed')
 
     # layout KS stats plot
     ax3.set_yticks([0.0,0.1,0.2,0.3,0.4,0.5])
     ax3.grid(True, axis='y', color=color_light_grey)
     ax3.set_xticklabels(op_names, rotation=90, fontsize=8)
-    ax3.set_ylabel('$KS$-stat', color=color_dark_grey)
+    ax3.set_ylabel('KS-stat', color=color_dark_grey)
 
     # save figure
     fig.savefig('two_sigma_bounds_KS_reduction_' + poster_data + '.pdf', dpi=1000, bbox_inches='tight')
 
     return None
+
 def plot_distr_constr_ops() :
+
+    print('\n* Plotting coefficient distributions ...')
 
     # needed for histogram
     nbins = 30
@@ -442,6 +457,8 @@ def plot_distr_constr_ops() :
         fig.savefig('distr_' + str(constr_op_names[oper]) + '_' + poster_data + '.pdf', dpi=1000, bbox_inches='tight')
 
     return None
+
+
 # plot_distr_constr_ops()
-# plot_two_sigma_bounds()
-print('\n* Plots are generated and saved')
+plot_two_sigma_bounds()
+print('\n* Plots are produced and saved')
