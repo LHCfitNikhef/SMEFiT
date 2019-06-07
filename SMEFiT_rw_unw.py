@@ -20,8 +20,20 @@ coefficients and chi2 data are available.
 Needed Python packages:
  * numpy
  * tabulate
- * scipy.stats
+ * scipy
  * matplotlib
+ * os
+
++-------------+
+| Code output |
++-------------+
+
+The code gives the following output:
+  * Plot of the 2sigma bounds of the prior/posterior/reweighted/unweighted set,
+    together with a plot of the amount of error reduction and the KS statistics
+  * Coefficient distributions for well-constrained operators
+  * Text file with the coefficients of the unweighted set for all operators
+    considered
 
 +-------------+
 | Code set up |
@@ -44,7 +56,8 @@ Needed Python packages:
 - Apply unweighting to the weights to obtain integer weights
 - Take a number copies of the predictions in the prior ensemble according to the
   corresponding integer weights to obtain the unweighted set
-  unweighted set.
+- Calculate the Kolmogorov-Smirnov statistic between unweighted and prior set
+- Plotting section
 
 '''
 
@@ -58,31 +71,36 @@ Needed Python packages:
 import numpy as np
 import tabulate as tab
 import scipy.stats as stats
+import scipy.integrate as intg
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import os
+import code_input as inp
 
 np.set_printoptions(precision=3)
 
 # Input settings
-prior_data      = 'no_single_top'
-poster_data     = '1st_t_channel'
-chi2_data       = poster_data
-n_reps          = 1000
-ks_level        = 0.3
-reduction_level = 0.3
+prior_data      = inp.prior_data
+poster_data     = inp.poster_data
+n_reps          = inp.n_reps
+ks_level        = inp.ks_level
+reduction_level = inp.reduction_level
 
 print('\n* Prior: \n ', prior_data)
 print('\n* Posterior:\n ', poster_data)
 print('\n* Number of replicas :\n ', n_reps)
+print('\n* Minimal KS :\n ', ks_level)
+print('\n* Minimal sigma reduction :\n ', reduction_level)
 
-# Load in the prior distributions for the coefficients and the chi2 data
+# Load in the prior coefficient distributions and the chi2 data
 prior_coeffs_list = []
 chi2_list = []
 op_names_list = []
 
+# Loop over the number of replicas
 for rep_number in np.arange(1, n_reps+1):
 
-    # Loop over the files containing the prior Wilson coefficients
+    # Load files containing the prior Wilson coefficients
     prior_data_per_rep = open('rw_input_data/wilson_coeffs/' + prior_data + '/SMEFT_coeffs_' + str(rep_number) + '.txt')
 
     op_names = np.asarray(prior_data_per_rep.readline().split('\t')[:-1])
@@ -91,13 +109,14 @@ for rep_number in np.arange(1, n_reps+1):
 
     prior_data_per_rep.close()
 
+    # Make a list of operator names
     if rep_number == 1:
         op_names_list.append(op_names)
 
     prior_coeffs_list.append(coeffs_per_rep)
 
     # Loop over the files with the chi2 data
-    chi2_per_rep = np.loadtxt('rw_input_data/chi2_data/' + chi2_data + '/x2_total_rep_' + str(rep_number) + '.txt', skiprows=1)
+    chi2_per_rep = np.loadtxt('rw_input_data/chi2_data/' + poster_data + '/x2_total_rep_' + str(rep_number) + '.txt', skiprows=1)
 
     chi2_list.append(chi2_per_rep)
 
@@ -123,19 +142,24 @@ chi2_all_reps = np.asarray(chi2_array[:, 0], dtype=float)
 n_datapoints = np.asarray(chi2_array[:, 1], dtype=int)
 chi2_norm_all_reps = np.asarray(chi2_array[:, 2], dtype=float)
 
-print('\n* 10 lowest normalized chi2s :\n ', np.sort(chi2_norm_all_reps)[0:10])
+print('\n* 5 lowest normalized chi2s :\n ', np.sort(chi2_norm_all_reps)[0:5])
 
 # Calculate the weights
-unnormalized_weights = chi2_all_reps**(1/2*(n_datapoints-1)) * np.exp(-1/2*chi2_all_reps)
-normalization = np.sum(unnormalized_weights) / n_reps
-nnpdf_weights = unnormalized_weights / normalization
+def calculate_weights(scaling_factor) :
 
-print('\n* 10 highest weights :\n ', np.sort(nnpdf_weights)[-10:])
+    unnormalized_weights = (chi2_all_reps/(scaling_factor**2))**(1/2*(n_datapoints-1)) * np.exp(-1/2*chi2_all_reps/(scaling_factor**2))
+    normalization = np.sum(unnormalized_weights) / n_reps
+    nnpdf_weights =  unnormalized_weights / normalization
+
+    return nnpdf_weights
+
+nnpdf_weights = calculate_weights(scaling_factor=1)
+print('\n* 5 highest weights :\n ', np.sort(nnpdf_weights)[-5:])
 
 # Replace very small weights to prevent infinities/divide-by-0's
 zero_weights = np.asarray(np.where(nnpdf_weights < 1.0e-300))[0]
 np.put(nnpdf_weights, zero_weights, 1e-300)
-print('\n* ' + str(len(zero_weights)) + ' very small weights were replaced by 1.0e-300')
+print('\n* ' + str(len(zero_weights)) + ' weights below 1.0e-300 were replaced by 1.0e-300')
 
 # Check that normalization is satisfied
 assert np.round(np.sum(nnpdf_weights)) == n_reps, 'sum of weights should equal number of replicas'
@@ -173,9 +197,12 @@ assert np.round(np.max(probs_cumul), 4) == 1.0000, 'probability cumulants do not
 unw_n_reps = n_eff
 unw_weights_list = []
 print('\n* Computing the unweighted set ...')
+
+# Loop over the original replicas
 for rep_num in np.arange(1, n_reps+1):
     unw_weights_rep_num_list = []
 
+    # Loop over the new number of replicas for unweighting
     for unw_rep_num in np.arange(1, unw_n_reps+1):
 
         if rep_num == 1:
@@ -195,7 +222,6 @@ assert np.round(np.sum(unw_weights)) == np.floor(unw_n_reps), \
 'integer weights after unweighting do not satisfy normalization'
 print('\n* sum of integer weights after unweighting :\n ', np.sum(unw_weights))
 
-
 ## Obtain the unweighted distributions for the coefficients
 surv_rep_nums = np.where(unw_weights != 0)[0]
 surv_prior_coeffs = prior_coeffs[surv_rep_nums]
@@ -211,6 +237,7 @@ unw_st_devs = np.sqrt(unw_variances)
 +-------------------------------+
 '''
 
+# Calculate the KS statistic between the prior and unweighted set
 ks_stat_list = []
 
 for operator in np.arange(len(op_names)):
@@ -225,7 +252,7 @@ ks_stats = np.asarray(ks_stat_list)[:, 0]
 +-----------------------------+
 '''
 
-# Load in the poster distributions for the coefficients and the chi2 data
+# Load in the posterior distributions for the coefficients
 poster_coeffs_list = []
 for rep_number in np.arange(1, n_reps+1):
 
@@ -269,8 +296,7 @@ constr_prior_coeffs = np.take(np.transpose(prior_coeffs), constr_op_nums, axis=0
 constr_poster_coeffs = np.take(np.transpose(poster_coeffs), constr_op_nums, axis=0)
 constr_rw_coeffs = np.take(np.transpose(rw_coeffs), constr_op_nums, axis=0)
 constr_unw_coeffs = np.take(np.transpose(unw_coeffs), constr_op_nums, axis=0)
-print('\n* Constrained operators : \n ', constr_op_names)
-
+constr_ks_stats = np.take(ks_stats, constr_op_nums)
 
 '''
 +--------------+
@@ -278,14 +304,55 @@ print('\n* Constrained operators : \n ', constr_op_names)
 +--------------+
 '''
 
-alphas = 0.2*np.arange(1,11)
+
+
+# Calculate the rescaled weights
+alphas = np.linspace(0.1, 5, 100)
+# alphas = [1.0,1.5]
+p_alphas = []
+print('alpha p_alpha')
 for alpha in alphas :
-    rescaled_chi2 = chi2_all_reps/(alpha**2)
-    rescaled_unnormalized_weights = rescaled_chi2**(1/2*(n_datapoints-1)) * np.exp(-1/2*rescaled_chi2)
-    scaled_normalization = np.sum(rescaled_unnormalized_weights) / n_reps
-    rescaled_weights = rescaled_unnormalized_weights / scaled_normalization
-    rescaled_chi2_profile = 1/alpha * np.sum(rescaled_weights)
-    print(rescaled_chi2_profile)
+    nnpdf_weights_alpha = calculate_weights(scaling_factor=alpha)
+
+    # Solve the integral
+    beta_list = np.linspace(-3,5, 1000)
+    nnpdf_weights_beta_list = []
+    for beta in beta_list :
+        nnpdf_weights_beta = calculate_weights(scaling_factor=np.exp(beta))
+        nnpdf_weights_beta_list.append(nnpdf_weights_beta)
+    nnpdf_weights_beta_array = np.asarray(nnpdf_weights_beta_list)
+
+    integral_list = []
+    for k in np.arange(n_reps) :
+        integral = intg.simps(nnpdf_weights_beta_array[:,k], beta_list)
+        integral_list.append(integral)
+    integral_array = np.asarray(integral_list)
+
+    # Replace very small integrals with 1e-300 to prevent divide-by-zero's
+    zero_integrals = np.asarray(np.where(integral_array < 1.0e-300))[0]
+    np.put(integral_array, zero_integrals, 1e-300)
+
+    p_alpha = 1/n_reps * np.sum(nnpdf_weights_alpha / (alpha * integral_array))
+    print(np.round(alpha,2),'\t' ,np.round(p_alpha,2))
+    p_alphas.append(p_alpha)
+
+p_alphas = np.asarray(p_alphas)
+
+fig, axes = plt.subplots(1,2)
+
+ax1, ax2 = axes
+
+ax1.plot(alphas, p_alphas, ':')
+ax1.set_yscale('log')
+ax1.set_xlabel('$\\alpha$')
+ax1.set_ylabel('$P(\\alpha)$')
+
+
+ax2.plot(alphas, p_alphas, ':')
+ax2.set_xlabel('$\\alpha$')
+ax2.set_ylabel('$P(\\alpha)$')
+
+fig.savefig('p_alpha.pdf', dpi=1000, bbox_inches='tight')
 
 
 
@@ -295,9 +362,11 @@ for alpha in alphas :
 +--------------------------+
 '''
 
-def print_info_to_terminal() :
+def print_constrained_operator_table() :
 
-    # Print a table with operators and standard deviations
+    print('\n')
+    print('\t\t\t ** Table of constrained operators **')
+    print('\t\t\t    ------------------------------   ')
     headers = ['operator',
                'prior std dev',
                'poster st devs',
@@ -306,37 +375,39 @@ def print_info_to_terminal() :
                'KS stat',
               ]
 
-    terminal_table = np.stack([op_names,
-                      prior_st_devs,
-                      poster_st_devs,
-                      rw_st_devs,
-                      unw_st_devs,
-                      ks_stats,
+    terminal_table = np.stack([constr_op_names,
+                      constr_prior_st_devs,
+                      constr_poster_st_devs,
+                      constr_rw_st_devs,
+                      constr_unw_st_devs,
+                      constr_ks_stats,
                       ], axis=1)
 
-    print('\n')
     print(tab.tabulate(terminal_table, headers, tablefmt='github', floatfmt='.2f'))
 
     return None
 
-print_info_to_terminal()
+
+print_constrained_operator_table()
 
 '''
-+-----------------+
-| Saving in files |
-+-----------------+
++---------------------+
+| Save unweighted set |
++---------------------+
 '''
 
-# format the list of operator names
-names_list = []
-for name in np.arange(len(op_names)) :
-    formatted_name = '{:^11}'.format(op_names[name])
-    names_list.append(formatted_name)
-names_header = ''.join((np.asarray(names_list, dtype=str)))
+def save_unw_set() :
+    # format the list of operator names
+    names_list = []
+    for name in np.arange(len(op_names)) :
+        formatted_name = '{:^11}'.format(op_names[name])
+        names_list.append(formatted_name)
+    names_header = ''.join((np.asarray(names_list, dtype=str)))
 
-# save unweighted set in text file
-np.savetxt('unw_coeffs.txt', unw_coeffs, fmt='%10.5f', header=names_header, comments='')
+    # save unweighted set in text file
+    np.savetxt('unw_coeffs.txt', unw_coeffs, fmt='%10.5f', header=names_header, comments='')
 
+    return no_single_top
 
 '''
 +------------------+
@@ -360,6 +431,10 @@ plt.rc('axes', axisbelow=True)
 plt.rc('axes', edgecolor=color_dark_grey)
 plt.rcParams['xtick.color'] = color_dark_grey
 mpl.rcParams['ytick.color'] = color_dark_grey
+
+# Make folder for the plots
+if not os.path.exists('plots/') :
+    os.makedirs('plots/')
 
 def plot_two_sigma_bounds() :
 
@@ -392,7 +467,7 @@ def plot_two_sigma_bounds() :
     # reduction plot
     ax2.axhline(y=reduction_level, color=color_green_line, lw=2, alpha=0.6, linestyle='dotted')
     ax2.bar(op_list, reduction_poster, label='1 - $\\frac{\sigma_{post}}{\sigma_{prior}}$', color=color_purple  , width=1.5*bar_width)
-    ax2.bar(op_list, reduction_rw, label='1 - $\\frac{\sigma_{rw}}{\sigma_{prior}}$', color=color_dark_turqoise, width=3.0*bar_width, alpha=0.3)
+    ax2.bar(op_list, reduction_rw, label='1 - $\\frac{\sigma^{NNPDF}_{rw}}{\sigma_{prior}}$', color=color_dark_turqoise, width=3.0*bar_width, alpha=0.3)
 
     # layout reduction plot
     ax2.grid(True, axis='y', color=color_light_grey)
@@ -412,7 +487,7 @@ def plot_two_sigma_bounds() :
     ax3.set_ylabel('KS-stat', color=color_dark_grey)
 
     # save figure
-    fig.savefig('two_sigma_bounds_KS_reduction_' + poster_data + '.pdf', dpi=1000, bbox_inches='tight')
+    fig.savefig('plots/two_sigma_bounds_KS_reduction_' + poster_data + '.pdf', dpi=1000, bbox_inches='tight')
 
     return None
 
@@ -454,11 +529,10 @@ def plot_distr_constr_ops() :
         ax.set_ylabel('probability density', color=color_dark_grey, fontsize=12)
 
         # save figure
-        fig.savefig('distr_' + str(constr_op_names[oper]) + '_' + poster_data + '.pdf', dpi=1000, bbox_inches='tight')
+        fig.savefig('plots/distr_' + str(constr_op_names[oper]) + '_' + poster_data + '.pdf', dpi=1000, bbox_inches='tight')
 
     return None
 
-
 # plot_distr_constr_ops()
-plot_two_sigma_bounds()
+# plot_two_sigma_bounds()
 print('\n* Plots are produced and saved')
