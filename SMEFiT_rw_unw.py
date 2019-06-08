@@ -299,6 +299,66 @@ constr_rw_coeffs = np.take(np.transpose(rw_coeffs), constr_op_nums, axis=0)
 constr_unw_coeffs = np.take(np.transpose(unw_coeffs), constr_op_nums, axis=0)
 constr_ks_stats = np.take(ks_stats, constr_op_nums)
 
+
+'''
++--------------+
+| Chi2 profile |
++--------------+
+'''
+
+
+#
+# # Calculate the rescaled weights
+# alphas = np.linspace(0.1, 5, 100)
+# # alphas = [1.0,1.5]
+# p_alphas = []
+# print('alpha p_alpha')
+# for alpha in alphas :
+#     nnpdf_weights_alpha = calculate_weights(scaling_factor=alpha)
+#
+#     # Solve the integral
+#     beta_list = np.linspace(-3,5, 1000)
+#     nnpdf_weights_beta_list = []
+#     for beta in beta_list :
+#         nnpdf_weights_beta = calculate_weights(scaling_factor=np.exp(beta))
+#         nnpdf_weights_beta_list.append(nnpdf_weights_beta)
+#     nnpdf_weights_beta_array = np.asarray(nnpdf_weights_beta_list)
+#
+#     integral_list = []
+#     for k in np.arange(n_reps) :
+#         integral = intg.simps(nnpdf_weights_beta_array[:,k], beta_list)
+#         integral_list.append(integral)
+#     integral_array = np.asarray(integral_list)
+#
+#     # Replace very small integrals with 1e-300 to prevent divide-by-zero's
+#     zero_integrals = np.asarray(np.where(integral_array < 1.0e-300))[0]
+#     np.put(integral_array, zero_integrals, 1e-300)
+#
+#     p_alpha = 1/n_reps * np.sum(nnpdf_weights_alpha / (alpha * integral_array))
+#     print(np.round(alpha,2),'\t' ,np.round(p_alpha,2))
+#     p_alphas.append(p_alpha)
+#
+# p_alphas = np.asarray(p_alphas)
+#
+# fig, axes = plt.subplots(1,2)
+#
+# ax1, ax2 = axes
+#
+# ax1.plot(alphas, p_alphas, ':')
+# ax1.set_yscale('log')
+# ax1.set_xlabel('$\\alpha$')
+# ax1.set_ylabel('$P(\\alpha)$')
+#
+#
+# ax2.plot(alphas, p_alphas, ':')
+# ax2.set_xlabel('$\\alpha$')
+# ax2.set_ylabel('$P(\\alpha)$')
+#
+# fig.savefig('p_alpha.pdf', dpi=1000, bbox_inches='tight')
+#
+
+
+
 '''
 +--------------------------+
 | Print table in  terminal |
