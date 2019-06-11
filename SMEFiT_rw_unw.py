@@ -400,6 +400,10 @@ print_constrained_operator_table()
 +---------------------+
 '''
 
+# Make folder for the output
+if not os.path.exists('rw_output/') :
+    os.makedirs('rw_output/')
+
 def save_unw_set() :
 
     # format the list of operator names
@@ -426,9 +430,6 @@ save_unw_set()
 
 if inp.produce_plots == 'on' :
 
-    # Make folder for the output
-    if not os.path.exists('rw_output/') :
-        os.makedirs('rw_output/')
 
     # Define colors
     color_purple        = (0.85, 0.4, 0.55)
@@ -464,7 +465,7 @@ if inp.produce_plots == 'on' :
 
         # two sigma bounds prior/poster/rw/unw
         ax1.bar(op_list, 2.0*prior_st_devs, label='prior', width=4.1*bar_width, color='black', align='center', alpha=0.7)
-        ax1.bar(op_list-bar_width-bar_shift, 2.0*poster_st_devs, label='posterior' , width=bar_width, color=color_purple, align='center' )
+        ax1.bar(op_list-bar_width-bar_shift, 2.0*poster_st_devs, label='new fit' , width=bar_width, color=color_purple, align='center' )
         ax1.bar(op_list, 2.0*rw_st_devs, label='reweighted', width=bar_width, color=color_turqoise, align='center')
         ax1.bar(op_list+bar_width+bar_shift, 2.0*unw_st_devs, label='unweighted', width=bar_width, color=color_yellow, align='center')
 
@@ -477,7 +478,7 @@ if inp.produce_plots == 'on' :
 
         # reduction plot
         ax2.axhline(y=reduction_level, color=color_green_line, lw=2, alpha=0.6, linestyle='dotted')
-        ax2.bar(op_list, reduction_poster, label='1 - $\\frac{\sigma_{post}}{\sigma_{prior}}$', color=color_purple  , width=1.5*bar_width, alpha=1.0)
+        ax2.bar(op_list, reduction_poster, label='1 - $\\frac{\sigma_{new}}{\sigma_{prior}}$', color=color_purple  , width=1.5*bar_width, alpha=1.0)
         ax2.bar(op_list, reduction_rw, label='1 - $\\frac{\sigma^{NNPDF}_{rw}}{\sigma_{prior}}$', color=color_turqoise, width=3.0*bar_width, alpha=0.3)
 
         # layout reduction plot
@@ -525,7 +526,7 @@ if inp.produce_plots == 'on' :
             ax.hist(constr_prior_coeffs[oper], bins=nbins, density=True, range=hist_range, histtype='step', color=color_dark_grey, alpha=0.3)
 
             # posterior histogram
-            ax.hist(constr_poster_coeffs[oper], bins=nbins, density=True, range=hist_range, histtype='stepfilled', color=color_purple, label='posterior', alpha=0.4)
+            ax.hist(constr_poster_coeffs[oper], bins=nbins, density=True, range=hist_range, histtype='stepfilled', color=color_purple, label='new fit', alpha=0.4)
 
             # unweighted histogram
             ax.hist(constr_unw_coeffs[oper], bins=nbins, density=True, range=hist_range, histtype='stepfilled', color=color_turqoise, lw=4, alpha=0.1)
