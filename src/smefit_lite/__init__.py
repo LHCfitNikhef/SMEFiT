@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import subprocess
+
+
 class RUNNER:  # pylint:disable=import-error,import-outside-toplevel
     """ Class containing all the possible smefit functions
     Parameters
@@ -28,42 +31,46 @@ class RUNNER:  # pylint:disable=import-error,import-outside-toplevel
 
         self.data_path = pathlib.Path(data_path).absolute()
         self.report_name = report_name
+        self.report_folder = f"{self.data_path.parents[1]}/reports/{self.report_name}"
         self.fits = fits
 
-    def _load_results(self):
-        """Read yaml card and posterior file
+    def _load_configurations(self):
+        """Load configuration yaml card for each fit
 
-        Parameters
-        ----------
-            filename : str
-                fit card name
         Returns
         -------
             config: dict
                 configuration dict
+        """
+        import yaml
+
+        config = {}
+        config["data_path"] = self.data_path
+        config["report_name"] = self.report_name
+        for fit in self.fits:
+            config[fit] = {}
+            with open(f"{self.data_path}/{fit}.yaml") as f:
+                config = yaml.safe_load(f)
+        return config
+
+    def _load_posteriors(self):
+        """Load posterior distribution for each fit
+
+        Returns
+        -------
             posterior : dict
                 dictionary containging the posterior distibution
         """
         import json
-        import yaml
 
-        config = {}
         posterior = {}
-
         for fit in self.fits:
-            config[fit] = {}
             posterior[fit] = {}
-            # Load configuration
-            with open(f"{self.data_path}/{fit}.yaml") as f:
-                config = yaml.safe_load(f)
-
-            # Load results
             with open(f"{self.data_path}/{fit}/posterior.json") as f:
                 posterior = json.load(f)
+        return posterior
 
-        return config, posterior
-
-    def _build_report(self):
+    def _build_report_folder(self):
         """ Construct results folder if deos not exists
 
         Parameters
@@ -71,8 +78,6 @@ class RUNNER:  # pylint:disable=import-error,import-outside-toplevel
             report_name : str
                 report name
         """
-        import subprocess
-
         subprocess.call(f"mkdir -p {self.data_path.parents[1]}/reports/", shell=True)
 
         # Clean output folder if exists
@@ -82,22 +87,31 @@ class RUNNER:  # pylint:disable=import-error,import-outside-toplevel
         except FileNotFoundError:
             subprocess.call(f"mkdir {report_folder}", shell=True)
 
-    def write_pdf(self):
-        """Combine all plots into a single report"""
-        import subprocess
-        from PyPDF2 import PdfFileReader, PdfFileWriter
+    def _move_to_meta(self):
+        """Move pdf files to meta folder"""
 
-        # Combine PDF files together into raw pdf report
-        report_folder = f"{self.data_path.parents[1]}/reports/{self.report_name}"
-        report_pdf = f"{report_folder}/report_{self.report_name}"
-        flags = "-q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite "
+        subprocess.call( f"mkdir -p {self.report_folder}/meta", shell=True)
         subprocess.call(
-            f"gs {flags} -sOutputFile={report_pdf}_raw.pdf `ls -rt {report_folder}/*.pdf`",
+            f"mv {self.report_folder}/*.pdf {self.report_folder}/meta/",
             shell=True,
         )
-        subprocess.call(f"mv {report_folder}/*.* {report_folder}/meta/.", shell=True)
+
+    def _write_report(self):
+        """Combine all plots into a single report"""
+        from PyPDF2 import PdfFileReader, PdfFileWriter
+
+        #TODO: Combine PDF files together into pdf report
+        #TODO: add a summary of the settings
+
+        report_pdf = f"{self.report_folder}/report_{self.report_name}"
+        flags = "-q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite "
         subprocess.call(
-            f"mv {report_folder}/meta/report_*.pdf  {report_folder}/.", shell=True
+            f"gs {flags} -sOutputFile={report_pdf}_raw.pdf `ls -rt {self.report_folder}/*.pdf`",
+            shell=True,
+        )
+        subprocess.call(f"mv {self.report_folder}/*.* {self.report_folder}/meta/.", shell=True)
+        subprocess.call(
+            f"mv {self.report_folder}/meta/report_*.pdf  {self.report_folder}/.", shell=True
         )
 
         # Rotate PDF pages if necessary and create final report
@@ -117,17 +131,29 @@ class RUNNER:  # pylint:disable=import-error,import-outside-toplevel
 
         # Remove old (raw) PDF file
         subprocess.call(
-            f"rm {report_folder}/report_{self.report_name}_raw.pdf", shell=True
+            f"rm {self.report_folder}/report_{self.report_name}_raw.pdf", shell=True
         )
 
     def run(self):
         """Run the analysis"""
-        from .analyze import Analyzer
+        from matplotlib import use
+        from matplotlib import rc
 
-        self._build_report()
-        report = Analyzer(self.data_path, self.report_name, self._load_results())
+        from .analyze.correlation import plot as corr_plot
 
-        # Things to include in repor
-        report.summary()
-        report.coefficients()
-        report.correlations()
+        # global mathplotlib settings
+        use("PDF")
+        rc("font", **{"family": "sans-serif", "sans-serif": ["Helvetica"]})
+        rc("text", usetex=True)
+
+        config = self._load_configurations()
+        posteriors = self._load_posteriors()
+        self._build_report_folder()
+
+        # Things to include in report
+        for k in self.fits:
+            # report.plot_coefficients()
+            corr_plot(k, config[k], posteriors[k])
+
+        self._move_to_meta()
+        self._write_report()

@@ -135,80 +135,80 @@ coefficients:
 
   ## TOP COEFFICIENTS ##
 
-  OpQM: {'fixed': False, 'value': 0.0, 'min': -25.0, 'max': 25.0}
-  O3pQ3: {'fixed': False, 'value': 0.0, 'min': -2.0, 'max': 2.0}
-  Opt: {'fixed': False, 'value': 0.0, 'min': -30.0, 'max': 50.0}
-  OtW: {'fixed': False, 'value': 0.0, 'min': -0.5, 'max': 0.5}
-  OtG: {'fixed': False, 'value': 0.0, 'min': -0.4, 'max': 0.5}
-  Otp: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 5.0}
-  OtZ: {'fixed': False, 'value': 0.0, 'min': -30.0, 'max': 20.0}
+  cpQM: {'fixed': False, 'value': 0.0, 'min': -25.0, 'max': 25.0}
+  c3pQ3: {'fixed': False, 'value': 0.0, 'min': -2.0, 'max': 2.0}
+  cpt: {'fixed': False, 'value': 0.0, 'min': -30.0, 'max': 50.0}
+  ctW: {'fixed': False, 'value': 0.0, 'min': -0.5, 'max': 0.5}
+  ctG: {'fixed': False, 'value': 0.0, 'min': -0.4, 'max': 0.5}
+  ctp: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 5.0}
+  ctZ: {'fixed': False, 'value': 0.0, 'min': -30.0, 'max': 20.0}
 
-  OQQ1: {'fixed': False, 'value': 0.0, 'min': -50.0, 'max': 50.0}
-  OQQ8: {'fixed': False, 'value': 0.0, 'min': -50.0, 'max': 50.0}
-  OQt1: {'fixed': False, 'value': 0.0, 'min': -50.0, 'max': 50.0}
-  OQt8: {'fixed': False, 'value': 0.0, 'min': -50.0, 'max': 50.0}
-  Ott1: {'fixed': False, 'value': 0.0, 'min': -50.0, 'max': 50.0}
+  cQQ1: {'fixed': False, 'value': 0.0, 'min': -50.0, 'max': 50.0}
+  cQQ8: {'fixed': False, 'value': 0.0, 'min': -50.0, 'max': 50.0}
+  cQt1: {'fixed': False, 'value': 0.0, 'min': -50.0, 'max': 50.0}
+  cQt8: {'fixed': False, 'value': 0.0, 'min': -50.0, 'max': 50.0}
+  ctt1: {'fixed': False, 'value': 0.0, 'min': -50.0, 'max': 50.0}
 
-  O81qq: {'fixed': False, 'value': 0.0, 'min': -10, 'max': 20.0}
-  O11qq: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 20.0}
-  O83qq: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 10.0}
-  O13qq: {'fixed': False, 'value': 0.0, 'min': -0.4, 'max': 0.6}
-  O8qt: {'fixed': False, 'value': 0.0, 'min': -20, 'max': 10.0}
-  O1qt: {'fixed': False, 'value': 0.0, 'min': -10, 'max': 10.0}
-  O8ut: {'fixed': False, 'value': 0.0, 'min': -15.0, 'max': 25.0}
-  O1ut: {'fixed': False, 'value': 0.0, 'min': -5.0, 'max': 2.0}
-  O8qu: {'fixed': False, 'value': 0.0, 'min': -20.0, 'max': 20.0}
-  O1qu: {'fixed': False, 'value': 0.0, 'min': -15.0, 'max': 20.0}
-  O8dt: {'fixed': False, 'value': 0.0, 'min': -20.0, 'max': 20.0}
-  O1dt: {'fixed': False, 'value': 0.0, 'min': -20.0, 'max': 10.0}
-  O8qd: {'fixed': False, 'value': 0.0, 'min': -30.0, 'max': 20.0}
-  O1qd: {'fixed': False, 'value': 0.0, 'min': -35.0, 'max': 10.0}
+  c81qq: {'fixed': False, 'value': 0.0, 'min': -10, 'max': 20.0}
+  c11qq: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 20.0}
+  c83qq: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 10.0}
+  c13qq: {'fixed': False, 'value': 0.0, 'min': -0.4, 'max': 0.6}
+  c8qt: {'fixed': False, 'value': 0.0, 'min': -20, 'max': 10.0}
+  c1qt: {'fixed': False, 'value': 0.0, 'min': -10, 'max': 10.0}
+  c8ut: {'fixed': False, 'value': 0.0, 'min': -15.0, 'max': 25.0}
+  c1ut: {'fixed': False, 'value': 0.0, 'min': -5.0, 'max': 2.0}
+  c8qu: {'fixed': False, 'value': 0.0, 'min': -20.0, 'max': 20.0}
+  c1qu: {'fixed': False, 'value': 0.0, 'min': -15.0, 'max': 20.0}
+  c8dt: {'fixed': False, 'value': 0.0, 'min': -20.0, 'max': 20.0}
+  c1dt: {'fixed': False, 'value': 0.0, 'min': -20.0, 'max': 10.0}
+  c8qd: {'fixed': False, 'value': 0.0, 'min': -30.0, 'max': 20.0}
+  c1qd: {'fixed': False, 'value': 0.0, 'min': -35.0, 'max': 10.0}
 
   # Do not enter with our flavor assumptions
-  OPff: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
-  ObW: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
-  OQtQb1: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
-  OQtQb8: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
-  OQb1: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
-  OQb8: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
-  Otb1: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
-  Otb8: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
+  cPff: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
+  cbW: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
+  cQtQb1: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
+  cQtQb8: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
+  cQb1: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
+  cQb8: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
+  ctb1: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
+  ctb8: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
 
 
   ## HIGGS COEFFICIENTS ##
 
-  OpG: {'fixed': False, 'value': 0.0, 'min': -0.1, 'max': 0.1}
-  OpB: {'fixed': False, 'value': 0.0, 'min': -5, 'max': 5.0}
-  OpW: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 10.0}
-  OpWB: {'fixed': ['OB','OW'], 'value': [-0.1626,-0.088625], 'min': -8.0, 'max': 16.0}
-  Opd: {'fixed': False, 'value': 0.0, 'min': -5.0, 'max': 15.0}
-  OpD: {'fixed': ['OB'], 'value': [0.3545], 'min': -5.0, 'max': 15.0}
+  cpG: {'fixed': False, 'value': 0.0, 'min': -0.1, 'max': 0.1}
+  cpB: {'fixed': False, 'value': 0.0, 'min': -5, 'max': 5.0}
+  cpW: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 10.0}
+  cpWB: {'fixed': ['cB','cW'], 'value': [-0.1626,-0.088625], 'min': -8.0, 'max': 16.0}
+  cpd: {'fixed': False, 'value': 0.0, 'min': -5.0, 'max': 15.0}
+  cpD: {'fixed': ['cB'], 'value': [0.3545], 'min': -5.0, 'max': 15.0}
 
-  Obp: {'fixed': False, 'value': 0.0, 'min': -0.15, 'max': 0.15}
+  cbp: {'fixed': False, 'value': 0.0, 'min': -0.15, 'max': 0.15}
 
-  OpqMi: {'fixed': ['OB','OW'], 'value': [0.02954166667,-0.1626], 'min': -30, 'max': 30}
-  O3pq: {'fixed': ['OW'], 'value': [0.1626], 'min': -0.5, 'max': 1.0}
-  Opui: {'fixed': ['OB'], 'value': [0.118167], 'min': -0.5, 'max': 1.0}
-  Opdi: {'fixed': ['OB'], 'value': [-0.0590833], 'min': -0.5, 'max': 1.0}
-  Ocp: {'fixed': False, 'value': 0.0, 'min': -1, 'max': 0.5}
+  cpqMi: {'fixed': ['cB','cW'], 'value': [0.02954166667,-0.1626], 'min': -30, 'max': 30}
+  c3pq: {'fixed': ['cW'], 'value': [0.1626], 'min': -0.5, 'max': 1.0}
+  cpui: {'fixed': ['cB'], 'value': [0.118167], 'min': -0.5, 'max': 1.0}
+  cpdi: {'fixed': ['cB'], 'value': [-0.0590833], 'min': -0.5, 'max': 1.0}
+  ccp: {'fixed': False, 'value': 0.0, 'min': -1, 'max': 0.5}
 
-  Opl1: {'fixed': ['OB'], 'value': [-0.088625], 'min': -0.5, 'max': 1.0}
-  Opl3: {'fixed': ['OB'], 'value': [-0.088625], 'min': -0.5, 'max': 1.0}
-  Opl2: {'fixed': ['OB'], 'value': [-0.088625], 'min': -0.5, 'max': 1.0}
-  O3pl1: {'fixed': ['OW'], 'value':[0.1626], 'min': -30.0, 'max': 60.0}
-  O3pl2: {'fixed': ['OW'], 'value': [0.1626], 'min': -30.0, 'max': 60.0}
-  O3pl3: {'fixed': ['OW'], 'value': [0.1626], 'min': -0.5, 'max': 1.0}
-  Ope: {'fixed': ['OB'], 'value': [-0.17725], 'min': -0.5, 'max': 1.0}
-  Opta: {'fixed': ['OB'], 'value': [-0.17725], 'min': -0.5, 'max': 1.0}
-  Opmu: {'fixed': ['OB'], 'value': [-0.17725], 'min': -0.5, 'max': 1.0}
-  Otap: {'fixed': False, 'value': 0.0, 'min': -0.1, 'max': 0.1}
-  Oll: {'fixed': True, 'value': 0.0, 'min': -0.5, 'max': 1.0}
+  cpl1: {'fixed': ['cB'], 'value': [-0.088625], 'min': -0.5, 'max': 1.0}
+  cpl3: {'fixed': ['cB'], 'value': [-0.088625], 'min': -0.5, 'max': 1.0}
+  cpl2: {'fixed': ['cB'], 'value': [-0.088625], 'min': -0.5, 'max': 1.0}
+  c3pl1: {'fixed': ['cW'], 'value':[0.1626], 'min': -30.0, 'max': 60.0}
+  c3pl2: {'fixed': ['cW'], 'value': [0.1626], 'min': -30.0, 'max': 60.0}
+  c3pl3: {'fixed': ['cW'], 'value': [0.1626], 'min': -0.5, 'max': 1.0}
+  cpe: {'fixed': ['cB'], 'value': [-0.17725], 'min': -0.5, 'max': 1.0}
+  cpta: {'fixed': ['cB'], 'value': [-0.17725], 'min': -0.5, 'max': 1.0}
+  cpmu: {'fixed': ['cB'], 'value': [-0.17725], 'min': -0.5, 'max': 1.0}
+  ctap: {'fixed': False, 'value': 0.0, 'min': -0.1, 'max': 0.1}
+  cll: {'fixed': True, 'value': 0.0, 'min': -0.5, 'max': 1.0}
 
   ## DIBOSON COEFFICIENTS ##
 
-  OWWW: {'fixed': False, 'value': 0.0, 'min': -15.0, 'max': 15.0}
-  OW: {'fixed': False, 'value': 0.0, 'min': -6.0, 'max': 6.0}
-  OB: {'fixed': False, 'value': 0.0, 'min': -15.0, 'max': 15.0}
+  cWWW: {'fixed': False, 'value': 0.0, 'min': -15.0, 'max': 15.0}
+  cW: {'fixed': False, 'value': 0.0, 'min': -6.0, 'max': 6.0}
+  cB: {'fixed': False, 'value': 0.0, 'min': -15.0, 'max': 15.0}
 
 ############################################################################################################
 #
@@ -225,7 +225,7 @@ coefficients:
 ############################################################################################################
 
 coeff_group:
-  4H: [OQQ1,OQQ8,OQt1,OQt8,OQb1,OQb8,Ott1,Otb1,Otb8,OQtQb1,OQtQb8]
-  2L2H: [O81qq,O11qq,O83qq,O13qq,O8qt,O1qt,O8ut,O1ut,O8qu,O1qu,O8dt,O1dt,O8qd,O1qd]
-  2FB: [Otp,OtG,Obp,Ocp,Otap,OtW,OtZ,ObW,OPff,Opl1,O3pl1,Opl2,O3pl2,Opl3,O3pl3,Ope,Opmu,Opta,O3pq,O3pQ3,OpqMi,OpQM,Opui,Opdi,Opt,Oll]
-  B: [OpG,OpB,OpW,OpWB,Opd,OpD,OWWW,OW,OB]
+  4H: [cQQ1,cQQ8,cQt1,cQt8,cQb1,cQb8,ctt1,ctb1,ctb8,cQtQb1,cQtQb8]
+  2L2H: [c81qq,c11qq,c83qq,c13qq,c8qt,c1qt,c8ut,c1ut,c8qu,c1qu,c8dt,c1dt,c8qd,c1qd]
+  2FB: [ctp,ctG,cbp,ccp,ctap,ctW,ctZ,cbW,cPff,cpl1,c3pl1,cpl2,c3pl2,cpl3,c3pl3,cpe,cpmu,cpta,c3pq,c3pQ3,cpqMi,cpQM,cpui,cpdi,cpt,cll]
+  B: [cpG,cpB,cpW,cpWB,cpd,cpD,cWWW,cW,cB]
