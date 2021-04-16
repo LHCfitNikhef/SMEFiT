@@ -164,7 +164,7 @@ class RUNNER:  # pylint:disable=import-error,import-outside-toplevel
             disjointed_list = list(config[k]["double_solution"])
             name = r"${\rm %s}$" % k.replace(
                 "_", "\_" # pylint:disable=anomalous-backslash-in-string
-            )  
+            )
             # TODO: add here a function to set the constrains for each fit
             (
                 cl_bounds[name],
