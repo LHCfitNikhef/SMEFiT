@@ -165,7 +165,7 @@ coefficients:
   c1qd: {'fixed': False, 'value': 0.0, 'min': -35.0, 'max': 10.0}
 
   # Do not enter with our flavor assumptions
-  cPff: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
+  cff: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
   cbW: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
   cQtQb1: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
   cQtQb8: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
@@ -201,7 +201,7 @@ coefficients:
   cpe: {'fixed': ['cB'], 'value': [-0.17725], 'min': -0.5, 'max': 1.0}
   cpta: {'fixed': ['cB'], 'value': [-0.17725], 'min': -0.5, 'max': 1.0}
   cpmu: {'fixed': ['cB'], 'value': [-0.17725], 'min': -0.5, 'max': 1.0}
-  ctap: {'fixed': False, 'value': 0.0, 'min': -0.1, 'max': 0.1}
+  ctap: {'fixed': False, 'value': 0.0, 'min': -0.1, 'max': 0.1 }
   cll: {'fixed': True, 'value': 0.0, 'min': -0.5, 'max': 1.0}
 
   ## DIBOSON COEFFICIENTS ##
@@ -210,22 +210,6 @@ coefficients:
   cW: {'fixed': False, 'value': 0.0, 'min': -6.0, 'max': 6.0}
   cB: {'fixed': False, 'value': 0.0, 'min': -15.0, 'max': 15.0}
 
-############################################################################################################
-#
-# Lists for SMEFT operator classification
-#
-# 4H = 4-heavy
-#
-# 2L2H = 2-light-2-heavy
-#
-# 2FB = 2-fermion + boson
-#
-# B = purely bosonic
-#
-############################################################################################################
-
-coeff_group:
-  4H: [cQQ1,cQQ8,cQt1,cQt8,cQb1,cQb8,ctt1,ctb1,ctb8,cQtQb1,cQtQb8]
-  2L2H: [c81qq,c11qq,c83qq,c13qq,c8qt,c1qt,c8ut,c1ut,c8qu,c1qu,c8dt,c1dt,c8qd,c1qd]
-  2FB: [ctp,ctG,cbp,ccp,ctap,ctW,ctZ,cbW,cPff,cpl1,c3pl1,cpl2,c3pl2,cpl3,c3pl3,cpe,cpmu,cpta,c3pq,c3pQ3,cpqMi,cpQM,cpui,cpdi,cpt,cll]
-  B: [cpG,cpB,cpW,cpWB,cpd,cpD,cWWW,cW,cB]
+double_solution:
+  - 'ctap'
+  - 'cbp'

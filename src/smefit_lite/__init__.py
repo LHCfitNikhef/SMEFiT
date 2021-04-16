@@ -3,7 +3,9 @@ import subprocess
 
 
 class RUNNER:  # pylint:disable=import-error,import-outside-toplevel
-    """ Class containing all the possible smefit functions
+    """
+    Runner class for smefit lite
+
     Parameters
     ----------
         data_path : str
@@ -46,7 +48,7 @@ class RUNNER:  # pylint:disable=import-error,import-outside-toplevel
 
         config = {}
         config["data_path"] = self.data_path
-        config["report_name"] = self.report_name
+        config["report_name"] = self.report_folder
         for fit in self.fits:
             config[fit] = {}
             with open(f"{self.data_path}/{fit}.yaml") as f:
@@ -90,18 +92,17 @@ class RUNNER:  # pylint:disable=import-error,import-outside-toplevel
     def _move_to_meta(self):
         """Move pdf files to meta folder"""
 
-        subprocess.call( f"mkdir -p {self.report_folder}/meta", shell=True)
+        subprocess.call(f"mkdir -p {self.report_folder}/meta", shell=True)
         subprocess.call(
-            f"mv {self.report_folder}/*.pdf {self.report_folder}/meta/",
-            shell=True,
+            f"mv {self.report_folder}/*.pdf {self.report_folder}/meta/", shell=True,
         )
 
     def _write_report(self):
         """Combine all plots into a single report"""
         from PyPDF2 import PdfFileReader, PdfFileWriter
 
-        #TODO: Combine PDF files together into pdf report
-        #TODO: add a summary of the settings
+        # TODO: Combine PDF files together into pdf report
+        # TODO: add a summary of the settings
 
         report_pdf = f"{self.report_folder}/report_{self.report_name}"
         flags = "-q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite "
@@ -109,9 +110,12 @@ class RUNNER:  # pylint:disable=import-error,import-outside-toplevel
             f"gs {flags} -sOutputFile={report_pdf}_raw.pdf `ls -rt {self.report_folder}/*.pdf`",
             shell=True,
         )
-        subprocess.call(f"mv {self.report_folder}/*.* {self.report_folder}/meta/.", shell=True)
         subprocess.call(
-            f"mv {self.report_folder}/meta/report_*.pdf  {self.report_folder}/.", shell=True
+            f"mv {self.report_folder}/*.* {self.report_folder}/meta/.", shell=True
+        )
+        subprocess.call(
+            f"mv {self.report_folder}/meta/report_*.pdf  {self.report_folder}/.",
+            shell=True,
         )
 
         # Rotate PDF pages if necessary and create final report
@@ -140,6 +144,7 @@ class RUNNER:  # pylint:disable=import-error,import-outside-toplevel
         from matplotlib import rc
 
         from .analyze.correlation import plot as corr_plot
+        from .analyze.coefficients import CoefficientsPlotter
 
         # global mathplotlib settings
         use("PDF")
@@ -150,7 +155,28 @@ class RUNNER:  # pylint:disable=import-error,import-outside-toplevel
         posteriors = self._load_posteriors()
         self._build_report_folder()
 
-        # Things to include in report
+        coeff_ptl = CoefficientsPlotter(config)
+        residuals = {}
+        cl_bounds = {}
+        error_bounds = {}
+
+        for k in self.fits:
+            disjointed_list = list(config[k]["double_solution"])
+            name = r"${\rm %s}$" % k.replace(
+                "_", "\_" # pylint:disable=anomalous-backslash-in-string
+            )  
+            # TODO: add here a function to set the constrains for each fit
+            (
+                cl_bounds[name],
+                residuals[name],
+                error_bounds[name],
+            ) = coeff_ptl.compute_confidence_level(posteriors, disjointed_list)
+
+        coeff_ptl.plot_coeffs(cl_bounds)
+        coeff_ptl.plot_coeffs_bar(error_bounds)
+        coeff_ptl.plot_residuals_bar(residuals)
+
+        # correlation plots
         for k in self.fits:
             # report.plot_coefficients()
             corr_plot(k, config[k], posteriors[k])
