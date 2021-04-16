@@ -1,5 +1,5 @@
-from os import listdir
-from os import remove
+# -*- coding: utf-8 -*-
+import os
 
 import json
 import argparse
@@ -25,8 +25,8 @@ if __name__ == "__main__":
         coeffs = []
         vals = {}
 
-        bar = Bar(r"Reading replica", max=len(listdir(k)) - 1)
-        for filename in listdir(k):
+        bar = Bar(r"Reading replica", max=len(os.listdir(k)) - 1)
+        for filename in os.listdir(k):
             if filename.startswith("SMEFT_coeffs_") is False or filename.endswith(
                 "_0.txt"
             ):
@@ -49,7 +49,7 @@ if __name__ == "__main__":
             file.close()
 
             # cleaning
-            #remove(f"{k}/{filename}")
+            #os.remove(f"{k}/{filename}")
             bar.next()
         bar.finish()
         with open(f"{k}/postetior.json", "w") as f:
