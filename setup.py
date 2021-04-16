@@ -19,7 +19,7 @@ def setup_package():
         MINOR,
         MICRO,
         pack.versions.is_released(repo_path),
-        filename="code/smefit_lite/version.py",
+        filename="src/smefit_lite/version.py",
     )
     # paste Readme
     with open("README.md", "r") as fh:
@@ -47,12 +47,12 @@ def setup_package():
         ],
         install_requires=[
             "PyPDF2",
-            "progress",
+            #"progress",
             "matplotlib",
             "pyyaml",
             "numpy",
-            "scipy",
-            "pandas",
+            #"scipy",
+            #"pandas",
         ],
         python_requires=">=3.7",
     )
