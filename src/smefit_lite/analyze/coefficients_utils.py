@@ -96,13 +96,9 @@ def get_conficence_values(dist):
     cl_vals["low95"] = np.nanpercentile(dist, 2.5)
     cl_vals["high95"] = np.nanpercentile(dist, 97.5)
     cl_vals["mid"] = np.mean(dist, axis=0)
+    cl_vals["error68"] = (cl_vals["high"] - cl_vals["low"]) / 2.0
+    cl_vals["error95"] = (cl_vals["high95"] - cl_vals["low95"]) / 2.0
     return cl_vals
-
-
-def get_cl_erros(cl_vals):
-    error68 = (cl_vals["high"] - cl_vals["low"]) / 2.0
-    error95 = (cl_vals["high95"] - cl_vals["low95"]) / 2.0
-    return error68, error95
 
 
 def set_double_cl(full_solution, l):
@@ -111,7 +107,7 @@ def set_double_cl(full_solution, l):
     max_val = max(full_solution)
     mid = (max_val + min_val) / 2.0
 
-    if l == "Obp" or l == "Opd":
+    if l in ["Obp", "Opd"]:
         solution1 = full_solution[full_solution > mid]
         solution2 = full_solution[full_solution < mid]
     else:
@@ -120,21 +116,9 @@ def set_double_cl(full_solution, l):
 
     # First solution
     cl_vals_1 = get_conficence_values(solution1)
-    error68, error95 = get_cl_erros(cl_vals_1)
-    first_err = error95
-
     # Second solution
     cl_vals_2 = get_conficence_values(solution2)
-    temp = get_cl_erros(cl_vals_2)
-    error68 += temp[0]
-    error95 += temp[1]
+    cl_vals_1.update({ "2": cl_vals_2})
 
-    double_bounds = {
-        "1": cl_vals_1,
-        "2": cl_vals_2,
-        "errors": [error68, error95],
-        "second_err": temp[1],
-        "first_err": first_err,
-    }
-    return double_bounds, cl_vals_1["mid"] / error68
+    return cl_vals_1, cl_vals_1["mid"] / cl_vals_1["error68"]
     # [ 1./np.sqrt(error68), 1./np.sqrt(error95) ], [ mid / error68 , mid / error95 ]

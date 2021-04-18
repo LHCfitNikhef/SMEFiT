@@ -2,7 +2,7 @@
 import subprocess
 
 
-class RUNNER:  # pylint:disable=import-error,import-outside-toplevel
+class Runner:  # pylint:disable=import-error,import-outside-toplevel
     """
     Runner class for smefit lite
 
@@ -33,7 +33,7 @@ class RUNNER:  # pylint:disable=import-error,import-outside-toplevel
 
         self.data_path = pathlib.Path(data_path).absolute()
         self.report_name = report_name
-        self.report_folder = f"{self.data_path.parents[1]}/reports/{self.report_name}"
+        self.report_folder = f"{self.data_path.parents[0]}/reports/{self.report_name}"
         self.fits = fits
 
     def _load_configurations(self):
@@ -47,12 +47,11 @@ class RUNNER:  # pylint:disable=import-error,import-outside-toplevel
         import yaml
 
         config = {}
-        config["data_path"] = self.data_path
-        config["report_name"] = self.report_folder
+        config.update({"data_path": self.data_path, "report_name": self.report_name})
         for fit in self.fits:
-            config[fit] = {}
-            with open(f"{self.data_path}/{fit}.yaml") as f:
-                config = yaml.safe_load(f)
+            with open(f"{self.data_path}/{fit}/{fit}.yaml") as f:
+                temp = yaml.safe_load(f)
+            config.update({fit: temp})
         return config
 
     def _load_posteriors(self):
@@ -67,9 +66,9 @@ class RUNNER:  # pylint:disable=import-error,import-outside-toplevel
 
         posterior = {}
         for fit in self.fits:
-            posterior[fit] = {}
             with open(f"{self.data_path}/{fit}/posterior.json") as f:
-                posterior = json.load(f)
+                temp = json.load(f)
+            posterior.update({fit: temp})
         return posterior
 
     def _build_report_folder(self):
@@ -80,14 +79,11 @@ class RUNNER:  # pylint:disable=import-error,import-outside-toplevel
             report_name : str
                 report name
         """
-        subprocess.call(f"mkdir -p {self.data_path.parents[1]}/reports/", shell=True)
+        subprocess.call(f"mkdir -p {self.data_path.parents[0]}/reports/", shell=True)
 
         # Clean output folder if exists
-        report_folder = f"{self.data_path.parents[1]}/reports/{self.report_name}"
-        try:
-            subprocess.call(f"rm -rf {report_folder}", shell=True)
-        except FileNotFoundError:
-            subprocess.call(f"mkdir {report_folder}", shell=True)
+        subprocess.call(f"rm -rf {self.report_folder}", shell=True)
+        subprocess.call(f"mkdir {self.report_folder}", shell=True)
 
     def _move_to_meta(self):
         """Move pdf files to meta folder"""
@@ -143,8 +139,8 @@ class RUNNER:  # pylint:disable=import-error,import-outside-toplevel
         from matplotlib import use
         from matplotlib import rc
 
-        from .analyze.correlation import plot as corr_plot
-        from .analyze.coefficients import CoefficientsPlotter
+        from analyze.correlation import plot as corr_plot
+        from analyze.coefficients import CoefficientsPlotter
 
         # global mathplotlib settings
         use("PDF")
@@ -170,7 +166,7 @@ class RUNNER:  # pylint:disable=import-error,import-outside-toplevel
                 cl_bounds[name],
                 residuals[name],
                 error_bounds[name],
-            ) = coeff_ptl.compute_confidence_level(posteriors, disjointed_list)
+            ) = coeff_ptl.compute_confidence_level(posteriors[k], disjointed_list)
 
         coeff_ptl.plot_coeffs(cl_bounds)
         coeff_ptl.plot_coeffs_bar(error_bounds)
@@ -178,8 +174,21 @@ class RUNNER:  # pylint:disable=import-error,import-outside-toplevel
 
         # correlation plots
         for k in self.fits:
-            # report.plot_coefficients()
-            corr_plot(k, config[k], posteriors[k])
+            free_dofs = { "show": ["cpWB", "cpD"], "hide":["cB", "cW"] }
+            corr_plot(config[k], posteriors[k], f"{self.report_folder}/Coeffs_Corr_{k}.pdf", dofs=free_dofs)
 
         self._move_to_meta()
         self._write_report()
+
+
+
+if __name__ == "__main__":
+
+    import pathlib
+
+    path = f"{pathlib.Path(__file__).parents[2].absolute()}/SMEFiT20"
+    fit = ["NS_GLOBAL_NLO_NHO"]
+    report_name = "test"
+
+    smefit = Runner(path, report_name, fit)
+    smefit.run()

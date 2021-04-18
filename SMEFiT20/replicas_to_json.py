@@ -52,5 +52,5 @@ if __name__ == "__main__":
             #os.remove(f"{k}/{filename}")
             bar.next()
         bar.finish()
-        with open(f"{k}/postetior.json", "w") as f:
+        with open(f"{k}/posterior.json", "w") as f:
             json.dump(vals, f)

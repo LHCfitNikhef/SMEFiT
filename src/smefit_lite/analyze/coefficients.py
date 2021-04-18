@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 
 import matplotlib.pyplot as py
-from matplotlib import colors as matcolors
 
 from . import coefficients_utils as utils
 
@@ -33,25 +32,28 @@ class CoefficientsPlotter:
 
     def __init__(self, config):
         self.report_folder = (
-            f"{config['data_path'].parents[1]}/reports/{config['report_name']}"
+            f"{config['data_path'].parents[0]}/reports/{config['report_name']}"
         )
 
         coeff_config = utils.coeff_by_group().copy()
+        temp = config.copy()
+        temp.pop("data_path")
+        temp.pop("report_name")
         self.coeff_list = []
         for group in coeff_config.values():
             for c in group:
-                if c in ["OW", "OB"]:
+                if c in ["cW", "cB"]:
                     continue
                 if np.any(
                     [
                         config[k]["coefficients"][c]["fixed"] is not False
-                        for k in config.keys()
+                        for k in temp.keys()
                         if c in config[k]["coefficients"]
                     ]
                 ):
                     continue
                 if c not in self.coeff_list and np.any(
-                    [c in config[k]["coefficients"] for k in config.keys()]
+                    [c in config[k]["coefficients"] for k in temp.keys()]
                 ):
                     self.coeff_list.append(c)
 
@@ -65,19 +67,19 @@ class CoefficientsPlotter:
         error_bounds = []
 
         for l in self.coeff_list:
-
+            fit[l] = np.array(fit[l])
             # double soultion
             if l in disjointed_list:
-                np.append(bounds, utils.set_double_cl(fit[l], l)[0])
-                np.append(residuals, utils.set_double_cl(fit[l], l)[1])
-                np.appned(error_bounds, utils.set_double_cl(fit[l], l)[0]["errors"][1])
+                cl = utils.set_double_cl(fit[l], l)
+                bounds.update({ l : cl[0] })
+                residuals = np.append(residuals, cl[1])
+                error_bounds = np.append(error_bounds, cl[0]["error95"])
             # single solution
             else:
                 cl_vals = utils.get_conficence_values(fit[l])
-                error68, error95 = utils.get_cl_erros(cl_vals)
-                np.append(bounds, {"1": cl_vals, "errors": [error68, error95]})
-                np.append(residuals, cl_vals["mid"] / error68)
-                np.append(error_bounds, error95)
+                bounds.update( { l : cl_vals })
+                residuals = np.append(residuals, cl_vals["mid"] / cl_vals["error68"])
+                error_bounds = np.append(error_bounds, cl_vals["error95"])
 
         return bounds, residuals, error_bounds
 
@@ -86,7 +88,6 @@ class CoefficientsPlotter:
 
         nrows, ncols = 1, 1
         py.figure(figsize=(nrows * 10, ncols * 5))
-
         ax = py.subplot(111)
 
         # X-axis
@@ -103,8 +104,8 @@ class CoefficientsPlotter:
                 if cnt == 0:
                     ax.errorbar(
                         X[cnt] + val[i],
-                        y=np.array(vals["1"]["mid"]),
-                        yerr=np.array(vals["errors"][1] - vals["second_err"]),
+                        y=np.array( vals["mid"]),
+                        yerr=np.array(vals["error95"]),
                         color=colors[i],
                         fmt=".",
                         elinewidth=2,
@@ -113,19 +114,19 @@ class CoefficientsPlotter:
                 else:
                     ax.errorbar(
                         X[cnt] + val[i],
-                        y=np.array(vals["1"]["mid"]),
-                        yerr=np.array(vals["errors"][1] - vals["second_err"]),
+                        y= np.array(vals["mid"]),
+                        yerr=np.array(vals["error95"]),
                         color=colors[i],
                         fmt=".",
                         elinewidth=2,
                     )
 
                 # double soluton
-                if vals["second_err"] != 0.0:
+                if "2" in vals.keys():
                     ax.errorbar(
                         X[cnt] + val[i] + 0.5,
                         y=np.array(vals["2"]["mid"]),
-                        yerr=np.array(vals["second_err"]),
+                        yerr=np.array(vals["2"]["error95"]),
                         color=colors[i],
                         fmt=".",
                         elinewidth=2,
@@ -135,7 +136,7 @@ class CoefficientsPlotter:
 
         py.plot(list(range(-1, 200)), np.zeros(201), "k--", alpha=0.7)
 
-        py.yscale("symlog", linthreshy=1e-1)
+        py.yscale("symlog", linthresh=1e-1)
         py.ylim(-200, 200)
         py.yticks(
             [-100, -10, -1, -0.1, 0, 0.1, 1, 10, 100],
@@ -166,7 +167,7 @@ class CoefficientsPlotter:
 
         py.figure(figsize=(7, 5))
         df = pd.DataFrame.from_dict(error, orient="index", columns=self.coeff_list)
-        new_df = df.Txw
+        new_df = df.T
         new_df.plot(kind="bar", rot=0, width=0.7, figsize=(10, 5))
 
         # Hard cutoff
@@ -197,9 +198,9 @@ class CoefficientsPlotter:
         new_df = df.T
 
         ax = new_df.plot(kind="bar", rot=0, width=0.7, figsize=(10, 5))
-        ax.plot([-1, self.npar + 1], np.zeros(2), "k--", lw=2)
-        ax.plot([-1, self.npar + 1], np.ones(2), "k--", lw=2, alpha=0.3)
-        ax.plot([-1, self.npar + 1], -1.0 * np.ones(2), "k--", lw=2, alpha=0.3)
+        ax.plot([-1, self.npar+1], np.zeros(2), "k--", lw=2)
+        ax.plot([-1, self.npar+1], np.ones(2), "k--", lw=2, alpha=0.3)
+        ax.plot([-1, self.npar+1], -1.0 * np.ones(2), "k--", lw=2, alpha=0.3)
 
         py.xticks(rotation=90)
         py.tick_params(axis="y", direction="in", labelsize=15)
