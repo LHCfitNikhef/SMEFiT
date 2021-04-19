@@ -179,6 +179,7 @@ class CoefficientsPlotter:
 
     def plot_residuals_bar(self, residual):
         """ Plot residuals at 68% CL (bar plot) """
+
         py.figure(figsize=(7, 5))
 
         df = pd.DataFrame.from_dict(residual, orient="index", columns=self.coeff_list)
@@ -198,7 +199,10 @@ class CoefficientsPlotter:
         py.savefig(f"{self.report_folder}/Coeffs_Residuals.pdf")
 
     def plot_posteriors(self, posteriors, disjointed_lists=None):
-        """" Plot posteriors (histograms)"""
+        """" Plot posteriors (histograms)"""  # pylint:disable=import-error,import-outside-toplevel
+        import warnings
+        import matplotlib
+        warnings.filterwarnings("ignore",category=matplotlib.mplDeprecation)
 
         colors = py.rcParams["axes.prop_cycle"].by_key()["color"]
 

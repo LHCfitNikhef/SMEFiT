@@ -2,7 +2,7 @@
 import subprocess
 
 
-class Runner:  # pylint:disable=import-error,import-outside-toplevel
+class Runner:  # pylint:disable=import-error,import-outside-toplevel, anomalous-backslash-in-string
     """
     Runner class for smefit lite
 
@@ -20,7 +20,7 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel
         """
         Init the data path where the rusults are stored
 
-        """  # pylint:disable=anomalous-backslash-in-string
+        """
         import pathlib
 
         print(20 * "  ", " ____  __  __ _____ _____ _ _____ ")
@@ -29,7 +29,7 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel
         print(20 * "  ", " ___) | |  | | |___|  _| | | | |  ")
         print(20 * "  ", "|____/|_|  |_|_____|_|   |_| |_|  ")
         print()
-        print(18 * "  ", "A Standar Model Effective Field Theory Fitter")
+        print(18 * "  ", "A Standard Model Effective Field Theory Fitter")
 
         self.data_path = pathlib.Path(data_path).absolute()
         self.report_name = report_name
@@ -42,7 +42,7 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel
         Returns
         -------
             config: dict
-            configuration card
+                configuration card
         """
         import yaml
 
@@ -60,7 +60,7 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel
         Returns
         -------
             posterior : dict
-                dictionary containging the posterior distibution
+                dictionary containing the posterior distibution
         """
         import json
 
@@ -85,57 +85,15 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel
         subprocess.call(f"rm -rf {self.report_folder}", shell=True)
         subprocess.call(f"mkdir {self.report_folder}", shell=True)
 
-    # def _move_to_meta(self):
-    #     """Move pdf files to meta folder"""
-
-    #     subprocess.call(f"mkdir -p {self.report_folder}/meta", shell=True)
-    #     subprocess.call(
-    #         f"mv {self.report_folder}/*.pdf {self.report_folder}/meta/", shell=True,
-    #     )
-
-    # def _write_report(self):
-    #     """Combine all plots into a single report"""
-    #     from PyPDF2 import PdfFileReader, PdfFileWriter
-
-    #     # TODO: Combine PDF files together into pdf report
-    #     # TODO: add a summary of the settings
-
-    #     report_pdf = f"{self.report_folder}/report_{self.report_name}"
-    #     flags = "-q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite "
-    #     subprocess.call(
-    #         f"gs {flags} -sOutputFile={report_pdf}_raw.pdf `ls -rt {self.report_folder}/*.pdf`",
-    #         shell=True,
-    #     )
-    #     subprocess.call(
-    #         f"mv {self.report_folder}/*.* {self.report_folder}/meta/.", shell=True
-    #     )
-    #     subprocess.call(
-    #         f"mv {self.report_folder}/meta/report_*.pdf  {self.report_folder}/.",
-    #         shell=True,
-    #     )
-
-    #     # Rotate PDF pages if necessary and create final report
-    #     pdf_in = open(f"{report_pdf}_raw.pdf", "rb")
-    #     pdf_reader = PdfFileReader(pdf_in)
-    #     pdf_writer = PdfFileWriter()
-    #     for pagenum in range(pdf_reader.numPages):
-    #         pdfpage = pdf_reader.getPage(pagenum)
-    #         orientation = pdfpage.get("/Rotate")
-    #         if orientation == 90:
-    #             pdfpage.rotateCounterClockwise(90)
-    #         pdf_writer.addPage(pdfpage)
-    #     pdf_out = open(f"{report_pdf}.pdf", "wb")
-    #     pdf_writer.write(pdf_out)
-    #     pdf_out.close()
-    #     pdf_in.close()
-
-    #     # Remove old (raw) PDF file
-    #     subprocess.call(
-    #         f"rm {self.report_folder}/report_{self.report_name}_raw.pdf", shell=True
-    #     )
-
     def run(self, free_dofs=None):
-        """Run the analysis"""
+        """
+        Run the analysis
+
+        Parameters
+        ----------
+            free_dofs : dict, optional
+                dictionary with hidden and visible degrees of freedom
+        """
         from matplotlib import use
         from matplotlib import rc
 
@@ -152,6 +110,7 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel
         config = self._load_configurations()
         posteriors = self._load_posteriors()
 
+        print(2 * "  ", f"Loading: {self.fits}")
         self._build_report_folder()
         coeff_ptl = CoefficientsPlotter(config, hide_dofs=free_dofs["hide"])
 
@@ -160,23 +119,25 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel
         for k in self.fits:
             disjointed_list = list(config[k]["double_solution"])
             name = r"${\rm %s}$" % k.replace(
-                "_", "\ "  # pylint:disable=anomalous-backslash-in-string
+                "_", "\ "
             )
             propagate_constraints(config[k], posteriors[k])
             cl_bounds[name] = coeff_ptl.compute_confidence_level(
                 posteriors[k], disjointed_list
             )
 
-        # Central values and eroror bars
+        print(2 * "  ", "Plotting: Central values and Confidence Level bounds")
         coeff_ptl.plot_coeffs(cl_bounds)
-        # CL error bars
+
+        print(2 * "  ", "Plotting: Confidence Level error bars")
         coeff_ptl.plot_coeffs_bar(
             {
                 name: [cl_bounds[name][op]["error95"] for op in cl_bounds[name]]
                 for name in cl_bounds
             }
         )
-        # Residuals
+
+        print(2 * "  ", "Plotting: Residuals")
         coeff_ptl.plot_residuals_bar(
             {
                 name: [
@@ -187,13 +148,13 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel
             }
         )
 
-        # Posteriors
+        print(2 * "  ", "Plotting: Posterior histograms")
         coeff_ptl.plot_posteriors(
             posteriors,
             disjointed_lists=[config[k]["double_solution"] for k in self.fits],
         )
 
-        # correlation plots
+        print(2 * "  ", "Plotting: Correlations")
         for k in self.fits:
             corr_plot(
                 config[k],
@@ -201,6 +162,3 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel
                 f"{self.report_folder}/Coeffs_Corr_{k}.pdf",
                 dofs=free_dofs,
             )
-
-        # self._move_to_meta()
-        # self._write_report()
