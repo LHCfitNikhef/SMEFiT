@@ -3,6 +3,10 @@ import numpy as np
 import pandas as pd
 
 import matplotlib.pyplot as py
+from matplotlib.backends.backend_pdf import PdfPages
+
+import pylatex as pl
+import rich
 
 from . import coefficients_utils as utils
 
@@ -13,16 +17,6 @@ class CoefficientsPlotter:
 
     Takes into account parameter constraints and displays
     all non-zero parameters.
-
-    Note: coefficients that are known to have disjoint
-    probability distributions (i.e. multiple solutions)
-    are manually separated by including the coefficient name
-    in disjointed_list for global.
-
-    Note: Probability distributions for single parameter
-    fits are included for all coefficients EXCEPT those
-    constrained as a linear combination of two or more parameters
-    (since they have different numbers of posterior samples)
 
     Parameters
     ----------
@@ -61,26 +55,51 @@ class CoefficientsPlotter:
 
         self.npar = len(self.coeff_list)
 
-    def compute_confidence_level(self, fit, disjointed_list=None):
-        """Compute 95 % and 68 % confidence levels and store everthing in a dictionary"""
+    def compute_confidence_level(self, posterior, disjointed_list = None):
+        """
+        Compute 95 % and 68 % confidence levels and store the result in a dictionary
+
+        Parameters
+        ----------
+            posterior : dict
+                posterior distibutions per coefficent
+            disjointed_list: list, optional
+                list of coefficients with double solutions
+
+        Returns
+        -------
+            bounds: dict
+                confidence level bounds per coefficient
+                Note: double solutions are appended under "2"
+        """
 
         disjointed_list = disjointed_list or []
         bounds = {}
         for l in self.coeff_list:
-            fit[l] = np.array(fit[l])
+            posterior[l] = np.array(posterior[l])
             cl_vals = {}
             # double soultion
             if l in disjointed_list:
-                cl_vals = utils.get_double_cls(fit[l])
+                cl_vals1, cl_vals2 = utils.get_double_cls(posterior[l])
+                bounds.update({l: cl_vals1})
+                bounds.update({f"{l}_2": cl_vals2})
             # single solution
             else:
-                cl_vals = utils.get_conficence_values(fit[l])
-            bounds.update({l: cl_vals})
+                cl_vals = utils.get_conficence_values(posterior[l])
+                bounds.update({l: cl_vals})
 
         return bounds
 
-    def plot_coeffs(self, bounds):
-        """Plot central value + 95% CL errors"""
+    def plot_coeffs(self, bounds, disjointed_lists):
+        """
+        Plot central value + 95% CL errors
+
+        Parameters
+        ----------
+            bounds: dict
+                confidence level bounds per fit and coefficient
+                Note: double solutions are appended under "2"
+        """
 
         nrows, ncols = 1, 1
         py.figure(figsize=(nrows * 10, ncols * 5))
@@ -111,11 +130,11 @@ class CoefficientsPlotter:
                 )
                 label = None
                 # double soluton
-                if "2" in vals.keys():
+                if coeff in disjointed_lists[i]:
                     ax.errorbar(
                         X[cnt] + val[i],
-                        y=np.array(vals["2"]["mid"]),
-                        yerr=np.array(vals["2"]["error95"]),
+                        y=np.array( bounds[name][f"{coeff}_2"]["mid"]),
+                        yerr=np.array(bounds[name][f"{coeff}_2"]["error95"]),
                         color=colors[i],
                         fmt=".",
                         elinewidth=2,
@@ -150,12 +169,18 @@ class CoefficientsPlotter:
         py.savefig(f"{self.report_folder}/Coeffs_Central.pdf")
 
     def plot_coeffs_bar(self, error):
-        """ Plot 95% CLs for coefficients (bar plot)"""
+        """
+        Plot error bars at given confidence level
+
+        Parameters
+        ----------
+            error: dict
+               confidence level bounds per fit and coefficient
+        """
 
         py.figure(figsize=(7, 5))
-        df = pd.DataFrame.from_dict(error, orient="index", columns=self.coeff_list)
-        new_df = df.T
-        new_df.plot(kind="bar", rot=0, width=0.7, figsize=(10, 5))
+        df = pd.DataFrame.from_dict(error, orient="index", columns=self.coeff_list).T
+        df.plot(kind="bar", rot=0, width=0.7, figsize=(10, 5))
 
         # Hard cutoff
         py.plot(
@@ -165,7 +190,6 @@ class CoefficientsPlotter:
             alpha=0.7,
             lw=2,
         )
-
         py.xticks(rotation=90)
         py.tick_params(axis="y", direction="in", labelsize=15)
         py.yscale("log")
@@ -178,14 +202,19 @@ class CoefficientsPlotter:
         py.savefig(f"{self.report_folder}/Coeffs_Bar.pdf")
 
     def plot_residuals_bar(self, residual):
-        """ Plot residuals at 68% CL (bar plot) """
+        """
+        Plot residuals at given confidence level
+
+        Parameters
+        ----------
+            residual: dict
+                residuals per fit and coefficient
+        """
 
         py.figure(figsize=(7, 5))
+        df = pd.DataFrame.from_dict(residual, orient="index", columns=self.coeff_list).T
 
-        df = pd.DataFrame.from_dict(residual, orient="index", columns=self.coeff_list)
-        new_df = df.T
-
-        ax = new_df.plot(kind="bar", rot=0, width=0.7, figsize=(10, 5))
+        ax = df.plot(kind="bar", rot=0, width=0.7, figsize=(10, 5))
         ax.plot([-1, self.npar + 1], np.zeros(2), "k--", lw=2)
         ax.plot([-1, self.npar + 1], np.ones(2), "k--", lw=2, alpha=0.3)
         ax.plot([-1, self.npar + 1], -1.0 * np.ones(2), "k--", lw=2, alpha=0.3)
@@ -198,8 +227,16 @@ class CoefficientsPlotter:
         py.tight_layout()
         py.savefig(f"{self.report_folder}/Coeffs_Residuals.pdf")
 
-    def plot_posteriors(self, posteriors, disjointed_lists=None):
-        """" Plot posteriors (histograms)"""  # pylint:disable=import-error,import-outside-toplevel
+    def plot_posteriors(self, posteriors, disjointed_lists = None):
+        """" Plot posteriors histograms
+
+        Parameters
+        ----------
+            posterior : dict
+                posterior distibutions per fit and coefficent
+            disjointed_list: list, optional
+                list of coefficients with double solutions
+        """  # pylint:disable=import-error,import-outside-toplevel
         import warnings
         import matplotlib
         warnings.filterwarnings("ignore",category=matplotlib.mplDeprecation)
@@ -257,3 +294,21 @@ class CoefficientsPlotter:
         fig.legend(lines, labels, loc="lower right", prop={"size": 35})
         py.tight_layout()
         py.savefig(f"{self.report_folder}/Coeffs_Hist.pdf")
+
+    def write_cl_table(self, bounds):
+        """
+        Write table with CL bounds
+
+        Parameters
+        ----------
+            bounds: dict
+                confidence level bounds per fit and coefficient
+        """
+        pd.set_option('display.max_colwidth', None)
+        pd.set_option('precision', 2)
+        for name in bounds:
+            print(10 * "====")
+            print(2 * "  ", name )
+            print(10 * "====")
+            df = pd.DataFrame(bounds[name]).T
+            print(df.to_latex())

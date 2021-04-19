@@ -117,13 +117,11 @@ def split_solution(full_solution):
 
     return solution1, solution2
 
-
 def get_double_cls(full_solution):
     solution1, solution2 = split_solution(full_solution)
     # First solution
     cl_vals_1 = get_conficence_values(solution1)
     # Second solution
     cl_vals_2 = get_conficence_values(solution2)
-    cl_vals_1.update({"2": cl_vals_2})
 
-    return cl_vals_1
+    return cl_vals_1, cl_vals_2

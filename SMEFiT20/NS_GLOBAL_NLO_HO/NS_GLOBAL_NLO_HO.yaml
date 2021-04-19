@@ -210,6 +210,9 @@ coefficients:
   cW: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
   cB: {'fixed': False, 'value': 0.0, 'min': -2.0, 'max': 2.0}
 
+#    Note: coefficients that are known to have disjoint
+#    probability distributions (i.e. multiple solutions)
+#    are listed here to have better plot resolution.
 double_solution:
   - "ctap"
   - "cbp"

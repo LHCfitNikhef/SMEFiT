@@ -60,7 +60,7 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel, anomalous-
         Returns
         -------
             posterior : dict
-                dictionary containing the posterior distibution
+                posterior distibutions per fit and coefficent
         """
         import json
 
@@ -116,23 +116,35 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel, anomalous-
 
         # Build the confidence levels
         cl_bounds = {}
+        disjointed_lists = []
         for k in self.fits:
-            disjointed_list = list(config[k]["double_solution"])
             name = r"${\rm %s}$" % k.replace(
                 "_", "\ "
             )
+            disjointed_lists.append( config[k]["double_solution"] )
             propagate_constraints(config[k], posteriors[k])
             cl_bounds[name] = coeff_ptl.compute_confidence_level(
-                posteriors[k], disjointed_list
+                posteriors[k], config[k]["double_solution"]
             )
 
         print(2 * "  ", "Plotting: Central values and Confidence Level bounds")
-        coeff_ptl.plot_coeffs(cl_bounds)
+        coeff_ptl.plot_coeffs(cl_bounds, disjointed_lists)
 
         print(2 * "  ", "Plotting: Confidence Level error bars")
+
+        # Uncomment if you want to show the total error bar for double solution,
+        # otherwhise show 95% CL for null solutions.
+        # add second error if exists
+        # for k in self.fits:
+        #     name = r"${\rm %s}$" % k.replace(
+        #         "_", "\ "
+        #     )
+        #     for op in list(config[k]["double_solution"]):
+        #         cl_bounds[name][op]["error95"] += cl_bounds[name][op]["2"]["error95"]
+
         coeff_ptl.plot_coeffs_bar(
             {
-                name: [cl_bounds[name][op]["error95"] for op in cl_bounds[name]]
+                name: [cl_bounds[name][op]["error95"] for op in coeff_ptl.coeff_list ]
                 for name in cl_bounds
             }
         )
@@ -142,7 +154,7 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel, anomalous-
             {
                 name: [
                     cl_bounds[name][op]["mid"] / cl_bounds[name][op]["error68"]
-                    for op in cl_bounds[name]
+                    for op in coeff_ptl.coeff_list
                 ]
                 for name in cl_bounds
             }
@@ -152,6 +164,11 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel, anomalous-
         coeff_ptl.plot_posteriors(
             posteriors,
             disjointed_lists=[config[k]["double_solution"] for k in self.fits],
+        )
+
+        print(2 * "  ", "Writing: Confidence level table")
+        coeff_ptl.write_cl_table(
+            cl_bounds,
         )
 
         print(2 * "  ", "Plotting: Correlations")
