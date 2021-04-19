@@ -71,7 +71,7 @@ class CoefficientsPlotter:
             cl_vals = {}
             # double soultion
             if l in disjointed_list:
-                cl_vals = utils.set_double_cl(fit[l])
+                cl_vals = utils.get_double_cls(fit[l])
             # single solution
             else:
                 cl_vals = utils.get_conficence_values(fit[l])
@@ -89,7 +89,7 @@ class CoefficientsPlotter:
         # X-axis
         X = 2 * np.array(range(self.npar))
         # Spacing between fit results
-        val = np.linspace(-1, 1, len(bounds))
+        val = np.linspace(-0.1 * len(bounds), 0.1 * len(bounds), len(bounds))
         colors = py.rcParams["axes.prop_cycle"].by_key()["color"]
 
         # loop over fits
@@ -101,7 +101,7 @@ class CoefficientsPlotter:
                 if cnt == 0:
                     label = name
                 ax.errorbar(
-                    X[cnt] + val[i] + 1,
+                    X[cnt] + val[i],
                     y=np.array(vals["mid"]),
                     yerr=np.array(vals["error95"]),
                     color=colors[i],
@@ -113,7 +113,7 @@ class CoefficientsPlotter:
                 # double soluton
                 if "2" in vals.keys():
                     ax.errorbar(
-                        X[cnt] + val[i] + 0.5,
+                        X[cnt] + val[i],
                         y=np.array(vals["2"]["mid"]),
                         yerr=np.array(vals["2"]["error95"]),
                         color=colors[i],
@@ -197,49 +197,43 @@ class CoefficientsPlotter:
         py.tight_layout()
         py.savefig(f"{self.report_folder}/Coeffs_Residuals.pdf")
 
-    def plot_posteriors(self, fits):
+    def plot_posteriors(self, posteriors, disjointed_lists=None):
         """" Plot posteriors (histograms)"""
 
-        nrows, ncols = 1, 1
         colors = py.rcParams["axes.prop_cycle"].by_key()["color"]
 
         gs = int(np.sqrt(self.npar)) + 1
-        cnt = 1
         nrows, ncols = gs, gs
         fig = py.figure(figsize=(nrows * 4, ncols * 3))
 
-        heights = {}
         total_cnt = []
-        clr_cnt = 0
-        for name, fit in fits.items():
-            heights[name] = {}
-            for l in self.coeff_list:
+        for clr_cnt, (name, posterior) in enumerate(posteriors.items()):
+            for cnt, l in enumerate(self.coeff_list):
+                cnt += 1
                 ax = py.subplot(ncols, nrows, cnt)
-
-                # if l in disjointed_list:
-                #     min_val = min(fit[l])
-                #     max_val = max(fit[l])
-                #     mid = (max_val+min_val)/2.
-
-                #     if l in ['Obp', 'Opd']:
-                #         solution1 = fit[fit[l]>mid]
-                #         solution2 = fit[fit[l]<mid]
-                #     else:
-                #         print(fit[l])
-                #         solution1 = fit[fit[l]<mid]
-                #         solution2 = fit[fit[l]>mid]
-                #     heights[name][cnt]=ax.hist(solution1,bins='fd',density=True,color=colors[clr_cnt],edgecolor='black',alpha=0.3)
-                #     ax.hist(solution2,bins='fd',density=True,color=colors[clr_cnt],edgecolor='black',alpha=0.3)
-                # else:
-                heights[name][cnt] = ax.hist(
-                    fit[l],
+                solution = posterior[l]
+                if l in disjointed_lists[clr_cnt]:
+                    solution, solution2 = utils.split_solution(posterior[l])
+                    ax.hist(
+                        solution2,
+                        bins="fd",
+                        density=True,
+                        color=colors[clr_cnt],
+                        edgecolor="black",
+                        alpha=0.3,
+                    )
+                ax.hist(
+                    solution,
                     bins="fd",
                     density=True,
                     color=colors[clr_cnt],
                     edgecolor="black",
                     alpha=0.3,
-                    label=r"${\rm %s}$" % name.replace("_", "\ "), # pylint:disable=anomalous-backslash-in-string
-                )  
+                    label=r"${\rm %s}$"
+                    % name.replace(
+                        "_", "\ "  # pylint:disable=anomalous-backslash-in-string
+                    ),
+                )
                 if clr_cnt == 0:
                     ax.text(
                         0.05,
@@ -254,9 +248,6 @@ class CoefficientsPlotter:
 
                 if cnt not in total_cnt:
                     total_cnt.append(cnt)
-
-                cnt += 1
-            clr_cnt += 1
 
         lines, labels = fig.axes[-2].get_legend_handles_labels()
         fig.legend(lines, labels, loc="lower right", prop={"size": 35})

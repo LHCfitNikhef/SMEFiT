@@ -26,7 +26,7 @@ if __name__ == "__main__":
         vals = {}
 
         bar = Bar(r"Reading replica", max=len(os.listdir(k)) - 1)
-        for filename in os.listdir(k):
+        for i, filename in enumerate( os.listdir(k)):
             if filename.startswith("SMEFT_coeffs_") is False or filename.endswith(
                 "_0.txt"
             ):
@@ -34,22 +34,23 @@ if __name__ == "__main__":
 
             file = open(f"{k}/{filename}", "r")
             data = file.readlines()
-            if filename.endswith("_1.txt"):
+            if i == 0:
                 coeffs = [str(i) for i in data[0].split()]
                 for c in coeffs:
                     if c not in vals.keys():
                         vals[c] = []
-            # else:
-            # for op in list(data[0]):
-            #    if op not in coeffs:
-            #        raise UserWarning(f"Fonund a new op in replica, {filename}: {op}")
+            # sanity check
+            for op in [str(i) for i in data[0].split()]:
+                if op not in coeffs:
+                    raise UserWarning(f"Fonund a new op in replica, {filename}: {op}")
+
             temp = dict(zip(coeffs, [float(i) for i in data[1].split()]))
             for c in coeffs:
                 vals[c].append(temp[c])
             file.close()
 
             # cleaning
-            #os.remove(f"{k}/{filename}")
+            os.remove(f"{k}/{filename}")
             bar.next()
         bar.finish()
         with open(f"{k}/posterior.json", "w") as f:

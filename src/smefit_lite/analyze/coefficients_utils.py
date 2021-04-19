@@ -102,7 +102,7 @@ def get_conficence_values(dist):
     return cl_vals
 
 
-def set_double_cl(full_solution):
+def split_solution(full_solution):
 
     min_val = min(full_solution)
     max_val = max(full_solution)
@@ -112,9 +112,14 @@ def set_double_cl(full_solution):
     solution1 = full_solution[full_solution < mid]
     solution2 = full_solution[full_solution > mid]
 
-    if min(abs(solution2)) < min(abs(solution2)):
+    if min(abs(solution2)) < min(abs(solution1)):
         solution1, solution2 = solution2, solution1
 
+    return solution1, solution2
+
+
+def get_double_cls(full_solution):
+    solution1, solution2 = split_solution(full_solution)
     # First solution
     cl_vals_1 = get_conficence_values(solution1)
     # Second solution

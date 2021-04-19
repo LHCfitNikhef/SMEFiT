@@ -26,8 +26,9 @@ python setup.py install
 
 ## Running
 To run the pogram do:
+
 ```bash
-blablabla ... 
+python lite_runner.py
 ```
 ## Documentation
 
