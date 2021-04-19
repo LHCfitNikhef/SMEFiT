@@ -102,7 +102,7 @@ def get_conficence_values(dist):
     return cl_vals
 
 
-def set_double_cl(full_solution, l):
+def set_double_cl(full_solution):
 
     min_val = min(full_solution)
     max_val = max(full_solution)

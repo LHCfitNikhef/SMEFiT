@@ -48,7 +48,7 @@ class CoefficientsPlotter:
                     continue
                 if np.any(
                     [
-                        config[k]["coefficients"][c]["fixed"] is not False
+                        config[k]["coefficients"][c]["fixed"] is True
                         for k in temp.keys()
                         if c in config[k]["coefficients"]
                     ]
@@ -71,7 +71,7 @@ class CoefficientsPlotter:
             cl_vals = {}
             # double soultion
             if l in disjointed_list:
-                cl_vals = utils.set_double_cl(fit[l], l)
+                cl_vals = utils.set_double_cl(fit[l])
             # single solution
             else:
                 cl_vals = utils.get_conficence_values(fit[l])
@@ -89,18 +89,19 @@ class CoefficientsPlotter:
         # X-axis
         X = 2 * np.array(range(self.npar))
         # Spacing between fit results
-        val = np.linspace(-0.1 * self.npar, 0.1 * self.npar, self.npar)
+        val = np.linspace(-1, 1, len(bounds))
         colors = py.rcParams["axes.prop_cycle"].by_key()["color"]
 
-        i = 0
         # loop over fits
-        for name in bounds:
-            cnt = 0
-            for vals in bounds[name].values():
+        for i, name in enumerate(bounds):
+            for cnt, coeff in enumerate(self.coeff_list):
+                if coeff not in bounds[name].keys():
+                    continue
+                vals = bounds[name][coeff]
                 if cnt == 0:
                     label = name
                 ax.errorbar(
-                    X[cnt] + val[i],
+                    X[cnt] + val[i] + 1,
                     y=np.array(vals["mid"]),
                     yerr=np.array(vals["error95"]),
                     color=colors[i],
@@ -112,15 +113,13 @@ class CoefficientsPlotter:
                 # double soluton
                 if "2" in vals.keys():
                     ax.errorbar(
-                        X[cnt] + val[i] + 0.05,
+                        X[cnt] + val[i] + 0.5,
                         y=np.array(vals["2"]["mid"]),
                         yerr=np.array(vals["2"]["error95"]),
                         color=colors[i],
                         fmt=".",
                         elinewidth=2,
                     )
-                cnt += 1
-            i += 1
 
         py.plot(list(range(-1, 200)), np.zeros(201), "k--", alpha=0.7)
 
@@ -239,8 +238,8 @@ class CoefficientsPlotter:
                     color=colors[clr_cnt],
                     edgecolor="black",
                     alpha=0.3,
-                    label=r"${\rm %s}$" % name.replace("_", "\ "),
-                )  # pylint:disable=anomalous-backslash-in-string
+                    label=r"${\rm %s}$" % name.replace("_", "\ "), # pylint:disable=anomalous-backslash-in-string
+                )  
                 if clr_cnt == 0:
                     ax.text(
                         0.05,

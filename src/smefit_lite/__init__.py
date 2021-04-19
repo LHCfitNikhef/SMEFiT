@@ -42,7 +42,7 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel
         Returns
         -------
             config: dict
-                configuration dict
+            configuration card
         """
         import yaml
 
@@ -139,8 +139,9 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel
         from matplotlib import use
         from matplotlib import rc
 
-        from analyze.correlation import plot as corr_plot
-        from analyze.coefficients import CoefficientsPlotter
+        from .analyze.correlation import plot as corr_plot
+        from .analyze.coefficients import CoefficientsPlotter
+        from .fixed_dofs import propagate_constraints
 
         # global mathplotlib settings
         use("PDF")
@@ -159,7 +160,7 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel
             name = r"${\rm %s}$" % k.replace(
                 "_", "\ "  # pylint:disable=anomalous-backslash-in-string
             )
-            # TODO: add here a function to set the constrains for each fit
+            propagate_constraints(config[k], posteriors[k])
             cl_bounds[name] = coeff_ptl.compute_confidence_level(
                 posteriors[k], disjointed_list
             )
@@ -199,15 +200,3 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel
 
         self._move_to_meta()
         self._write_report()
-
-
-if __name__ == "__main__":
-
-    import pathlib
-
-    path = f"{pathlib.Path(__file__).parents[2].absolute()}/SMEFiT20"
-    fit = ["NS_GLOBAL_NLO_NHO"]
-    report_name = "test"
-
-    smefit = Runner(path, report_name, fit)
-    smefit.run()
