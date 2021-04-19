@@ -210,6 +210,4 @@ coefficients:
   cW: {'fixed': False, 'value': 0.0, 'min': -6.0, 'max': 6.0}
   cB: {'fixed': False, 'value': 0.0, 'min': -15.0, 'max': 15.0}
 
-double_solution:
-  - 'ctap'
-  - 'cbp'
+double_solution: []

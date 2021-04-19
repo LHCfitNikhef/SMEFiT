@@ -151,35 +151,54 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel
         posteriors = self._load_posteriors()
         self._build_report_folder()
 
-        coeff_ptl = CoefficientsPlotter(config)
-        residuals = {}
+        coeff_ptl = CoefficientsPlotter(config, hide_dofs=["cW", "cB"])
         cl_bounds = {}
-        error_bounds = {}
 
         for k in self.fits:
             disjointed_list = list(config[k]["double_solution"])
             name = r"${\rm %s}$" % k.replace(
-                "_", "\_" # pylint:disable=anomalous-backslash-in-string
+                "_", "\ "  # pylint:disable=anomalous-backslash-in-string
             )
             # TODO: add here a function to set the constrains for each fit
-            (
-                cl_bounds[name],
-                residuals[name],
-                error_bounds[name],
-            ) = coeff_ptl.compute_confidence_level(posteriors[k], disjointed_list)
+            cl_bounds[name] = coeff_ptl.compute_confidence_level(
+                posteriors[k], disjointed_list
+            )
 
+        # Central values and eroror bars
         coeff_ptl.plot_coeffs(cl_bounds)
-        coeff_ptl.plot_coeffs_bar(error_bounds)
-        coeff_ptl.plot_residuals_bar(residuals)
+        # CL error bars
+        coeff_ptl.plot_coeffs_bar(
+            {
+                name: [cl_bounds[name][op]["error95"] for op in cl_bounds[name]]
+                for name in cl_bounds
+            }
+        )
+        # Residuals
+        coeff_ptl.plot_residuals_bar(
+            {
+                name: [
+                    cl_bounds[name][op]["mid"] / cl_bounds[name][op]["error68"]
+                    for op in cl_bounds[name]
+                ]
+                for name in cl_bounds
+            }
+        )
+
+        # Posteriors
+        coeff_ptl.plot_posteriors(posteriors)
 
         # correlation plots
         for k in self.fits:
-            free_dofs = { "show": ["cpWB", "cpD"], "hide":["cB", "cW"] }
-            corr_plot(config[k], posteriors[k], f"{self.report_folder}/Coeffs_Corr_{k}.pdf", dofs=free_dofs)
+            free_dofs = {"show": ["cpWB", "cpD"], "hide": ["cB", "cW"]}
+            corr_plot(
+                config[k],
+                posteriors[k],
+                f"{self.report_folder}/Coeffs_Corr_{k}.pdf",
+                dofs=free_dofs,
+            )
 
         self._move_to_meta()
         self._write_report()
-
 
 
 if __name__ == "__main__":

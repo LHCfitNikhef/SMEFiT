@@ -30,7 +30,9 @@ class CoefficientsPlotter:
             configuration dictionary
     """
 
-    def __init__(self, config):
+    def __init__(self, config, hide_dofs=None):
+
+        hide_dofs = hide_dofs or []
         self.report_folder = (
             f"{config['data_path'].parents[0]}/reports/{config['report_name']}"
         )
@@ -42,7 +44,7 @@ class CoefficientsPlotter:
         self.coeff_list = []
         for group in coeff_config.values():
             for c in group:
-                if c in ["cW", "cB"]:
+                if c in hide_dofs:
                     continue
                 if np.any(
                     [
@@ -60,28 +62,22 @@ class CoefficientsPlotter:
         self.npar = len(self.coeff_list)
 
     def compute_confidence_level(self, fit, disjointed_list=None):
-        """Compute 95 % and 68 % confidence levels, energy bounds and residuals"""
+        """Compute 95 % and 68 % confidence levels and store everthing in a dictionary"""
 
+        disjointed_list = disjointed_list or []
         bounds = {}
-        residuals = []
-        error_bounds = []
-
         for l in self.coeff_list:
             fit[l] = np.array(fit[l])
+            cl_vals = {}
             # double soultion
             if l in disjointed_list:
-                cl = utils.set_double_cl(fit[l], l)
-                bounds.update({ l : cl[0] })
-                residuals = np.append(residuals, cl[1])
-                error_bounds = np.append(error_bounds, cl[0]["error95"])
+                cl_vals = utils.set_double_cl(fit[l], l)
             # single solution
             else:
                 cl_vals = utils.get_conficence_values(fit[l])
-                bounds.update( { l : cl_vals })
-                residuals = np.append(residuals, cl_vals["mid"] / cl_vals["error68"])
-                error_bounds = np.append(error_bounds, cl_vals["error95"])
+            bounds.update({l: cl_vals})
 
-        return bounds, residuals, error_bounds
+        return bounds
 
     def plot_coeffs(self, bounds):
         """Plot central value + 95% CL errors"""
@@ -98,33 +94,25 @@ class CoefficientsPlotter:
 
         i = 0
         # loop over fits
-        for name in bounds.keys():
+        for name in bounds:
             cnt = 0
             for vals in bounds[name].values():
                 if cnt == 0:
-                    ax.errorbar(
-                        X[cnt] + val[i],
-                        y=np.array( vals["mid"]),
-                        yerr=np.array(vals["error95"]),
-                        color=colors[i],
-                        fmt=".",
-                        elinewidth=2,
-                        label=name,
-                    )
-                else:
-                    ax.errorbar(
-                        X[cnt] + val[i],
-                        y= np.array(vals["mid"]),
-                        yerr=np.array(vals["error95"]),
-                        color=colors[i],
-                        fmt=".",
-                        elinewidth=2,
-                    )
-
+                    label = name
+                ax.errorbar(
+                    X[cnt] + val[i],
+                    y=np.array(vals["mid"]),
+                    yerr=np.array(vals["error95"]),
+                    color=colors[i],
+                    fmt=".",
+                    elinewidth=2,
+                    label=label,
+                )
+                label = None
                 # double soluton
                 if "2" in vals.keys():
                     ax.errorbar(
-                        X[cnt] + val[i] + 0.5,
+                        X[cnt] + val[i] + 0.05,
                         y=np.array(vals["2"]["mid"]),
                         yerr=np.array(vals["2"]["error95"]),
                         color=colors[i],
@@ -198,9 +186,9 @@ class CoefficientsPlotter:
         new_df = df.T
 
         ax = new_df.plot(kind="bar", rot=0, width=0.7, figsize=(10, 5))
-        ax.plot([-1, self.npar+1], np.zeros(2), "k--", lw=2)
-        ax.plot([-1, self.npar+1], np.ones(2), "k--", lw=2, alpha=0.3)
-        ax.plot([-1, self.npar+1], -1.0 * np.ones(2), "k--", lw=2, alpha=0.3)
+        ax.plot([-1, self.npar + 1], np.zeros(2), "k--", lw=2)
+        ax.plot([-1, self.npar + 1], np.ones(2), "k--", lw=2, alpha=0.3)
+        ax.plot([-1, self.npar + 1], -1.0 * np.ones(2), "k--", lw=2, alpha=0.3)
 
         py.xticks(rotation=90)
         py.tick_params(axis="y", direction="in", labelsize=15)
@@ -209,3 +197,69 @@ class CoefficientsPlotter:
         py.legend(loc=2, frameon=False, prop={"size": 11})
         py.tight_layout()
         py.savefig(f"{self.report_folder}/Coeffs_Residuals.pdf")
+
+    def plot_posteriors(self, fits):
+        """" Plot posteriors (histograms)"""
+
+        nrows, ncols = 1, 1
+        colors = py.rcParams["axes.prop_cycle"].by_key()["color"]
+
+        gs = int(np.sqrt(self.npar)) + 1
+        cnt = 1
+        nrows, ncols = gs, gs
+        fig = py.figure(figsize=(nrows * 4, ncols * 3))
+
+        heights = {}
+        total_cnt = []
+        clr_cnt = 0
+        for name, fit in fits.items():
+            heights[name] = {}
+            for l in self.coeff_list:
+                ax = py.subplot(ncols, nrows, cnt)
+
+                # if l in disjointed_list:
+                #     min_val = min(fit[l])
+                #     max_val = max(fit[l])
+                #     mid = (max_val+min_val)/2.
+
+                #     if l in ['Obp', 'Opd']:
+                #         solution1 = fit[fit[l]>mid]
+                #         solution2 = fit[fit[l]<mid]
+                #     else:
+                #         print(fit[l])
+                #         solution1 = fit[fit[l]<mid]
+                #         solution2 = fit[fit[l]>mid]
+                #     heights[name][cnt]=ax.hist(solution1,bins='fd',density=True,color=colors[clr_cnt],edgecolor='black',alpha=0.3)
+                #     ax.hist(solution2,bins='fd',density=True,color=colors[clr_cnt],edgecolor='black',alpha=0.3)
+                # else:
+                heights[name][cnt] = ax.hist(
+                    fit[l],
+                    bins="fd",
+                    density=True,
+                    color=colors[clr_cnt],
+                    edgecolor="black",
+                    alpha=0.3,
+                    label=r"${\rm %s}$" % name.replace("_", "\ "),
+                )  # pylint:disable=anomalous-backslash-in-string
+                if clr_cnt == 0:
+                    ax.text(
+                        0.05,
+                        0.85,
+                        r"${\rm {\bf " + l + "}}$",
+                        transform=ax.transAxes,
+                        fontsize=20,
+                    )
+
+                ax.tick_params(which="both", direction="in", labelsize=22.5)
+                ax.tick_params(labelleft=False)
+
+                if cnt not in total_cnt:
+                    total_cnt.append(cnt)
+
+                cnt += 1
+            clr_cnt += 1
+
+        lines, labels = fig.axes[-2].get_legend_handles_labels()
+        fig.legend(lines, labels, loc="lower right", prop={"size": 35})
+        py.tight_layout()
+        py.savefig(f"{self.report_folder}/Coeffs_Hist.pdf")

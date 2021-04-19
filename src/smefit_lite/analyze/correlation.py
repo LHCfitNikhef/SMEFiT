@@ -7,25 +7,25 @@ from matplotlib import colors as matcolors
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
-def plot(fig_file, config, fit, dofs = None ):
+def plot(config, fit, fig_file, dofs=None):
     """
     Computes and displays the correlation coefficients
     between parameters in a heat map
 
     Parameters
     ----------
-        fig_file : str
-            fit name
         config : dict
             configuration dictionary
         fit : dict
             posterior distributions dictionary
+        fig_file : str
+            fit name
         dofs: dict
             dependent degrees of freedom to keep or hide
 
     """
     if dofs is None:
-        dofs = {"show":[], "hide":[] }
+        dofs = {"show": [], "hide": []}
 
     coeff_list = list(fit.keys())
     param_data = pd.DataFrame(fit.values()).T
@@ -33,9 +33,9 @@ def plot(fig_file, config, fit, dofs = None ):
     rows_to_keep = []
     for i, _ in enumerate(correlations):
         for j, _ in enumerate(correlations[i]):
-            if (coeff_list[i] not in dofs["show"] ) and config[
-                "coefficients"
-            ][coeff_list[i]]["fixed"] is not False:
+            if (coeff_list[i] not in dofs["show"]) and config["coefficients"][
+                coeff_list[i]
+            ]["fixed"] is not False:
                 continue
             if coeff_list[i] in dofs["hide"]:
                 continue

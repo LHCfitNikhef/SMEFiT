@@ -1,6 +1,7 @@
 # # -*- coding: utf-8 -*-
 import numpy as np
 
+
 def coeff_by_group():
     """
     Lists for SMEFT operator classification:
@@ -107,18 +108,17 @@ def set_double_cl(full_solution, l):
     max_val = max(full_solution)
     mid = (max_val + min_val) / 2.0
 
-    if l in ["Obp", "Opd"]:
-        solution1 = full_solution[full_solution > mid]
-        solution2 = full_solution[full_solution < mid]
-    else:
-        solution1 = full_solution[full_solution < mid]
-        solution2 = full_solution[full_solution > mid]
+    # solution 1 should be closer to 0
+    solution1 = full_solution[full_solution < mid]
+    solution2 = full_solution[full_solution > mid]
+
+    if min(abs(solution2)) < min(abs(solution2)):
+        solution1, solution2 = solution2, solution1
 
     # First solution
     cl_vals_1 = get_conficence_values(solution1)
     # Second solution
     cl_vals_2 = get_conficence_values(solution2)
-    cl_vals_1.update({ "2": cl_vals_2})
+    cl_vals_1.update({"2": cl_vals_2})
 
-    return cl_vals_1, cl_vals_1["mid"] / cl_vals_1["error68"]
-    # [ 1./np.sqrt(error68), 1./np.sqrt(error95) ], [ mid / error68 , mid / error95 ]
+    return cl_vals_1
