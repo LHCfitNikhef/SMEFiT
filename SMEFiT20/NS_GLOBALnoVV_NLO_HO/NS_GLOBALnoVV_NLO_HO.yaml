@@ -1,0 +1,217 @@
+# Input YAML configurations for SMEFiT code
+
+# Result ID (see Result ID Naming Convention in README)
+resultID: NS_GLOBALnoVV_NLO_HO
+
+# pQCD order (LO or NLO)
+order: NLO
+
+# SMEFT Expansion Order (NHO = Lambda^-2 , HO = Lambda^-4)
+HOlambda: HO
+
+# Cross-validation
+cv: False
+
+# Replica generation
+bootstrap: False
+
+# NS settings
+efr: 0.005
+nlive: 1000
+ceff: True
+
+# Closure tests (True or False)
+CT0L: False
+# Closure test level (0, 1, or 2)
+ctlevel: 0
+
+# Set parameter bounds to previous SCAN result
+bounds: Null
+
+# Datasets to include
+datasets:
+
+  # TOP QUARK PRODUCTION
+
+  # ttbar
+  - ATLAS_tt_8TeV_ljets_Mtt
+  - ATLAS_tt_8TeV_dilep_Mtt
+  - CMS_tt_8TeV_ljets_Ytt
+  - CMS_tt2D_8TeV_dilep_MttYtt
+  - CMS_tt_13TeV_ljets_2015_Mtt
+  - CMS_tt_13TeV_dilep_2015_Mtt
+  - CMS_tt_13TeV_ljets_2016_Mtt
+  - CMS_tt_13TeV_dilep_2016_Mtt
+  - ATLAS_tt_13TeV_ljets_2016_Mtt
+  - ATLAS_CMS_tt_AC_8TeV
+  - ATLAS_tt_AC_13TeV
+
+  # ttbar asymm and helicity frac
+  - ATLAS_WhelF_8TeV
+  - CMS_WhelF_8TeV
+
+  # ttbb
+  - CMS_ttbb_13TeV
+  - CMS_ttbb_13TeV_2016
+  - ATLAS_ttbb_13TeV_2016
+
+  # tttt
+  - CMS_tttt_13TeV
+  - CMS_tttt_13TeV_run2
+  - ATLAS_tttt_13TeV_run2
+
+  # ttZ
+  - CMS_ttZ_8TeV
+  - CMS_ttZ_13TeV
+  - CMS_ttZ_13TeV_pTZ
+  - ATLAS_ttZ_8TeV
+  - ATLAS_ttZ_13TeV
+  - ATLAS_ttZ_13TeV_2016
+
+  # ttW
+  - CMS_ttW_8TeV
+  - CMS_ttW_13TeV
+  - ATLAS_ttW_8TeV
+  - ATLAS_ttW_13TeV
+  - ATLAS_ttW_13TeV_2016
+
+  # Single top
+  - CMS_t_tch_8TeV_inc
+  - ATLAS_t_tch_8TeV
+  - CMS_t_tch_8TeV_diff_Yt
+  - CMS_t_sch_8TeV
+  - ATLAS_t_sch_8TeV
+  - ATLAS_t_tch_13TeV
+  - CMS_t_tch_13TeV_inc
+  - CMS_t_tch_13TeV_diff_Yt
+  - CMS_t_tch_13TeV_2016_diff_Yt
+
+  # tW
+  - ATLAS_tW_8TeV_inc
+  - ATLAS_tW_slep_8TeV_inc
+  - CMS_tW_8TeV_inc
+  - ATLAS_tW_13TeV_inc
+  - CMS_tW_13TeV_inc
+
+  # tZ
+  - ATLAS_tZ_13TeV_inc
+  - ATLAS_tZ_13TeV_run2_inc
+  - CMS_tZ_13TeV_inc
+  - CMS_tZ_13TeV_2016_inc
+
+  # HIGGS PRODUCTION
+
+  # ATLAS & CMS Combined Run 1 Higgs Measurements
+  - ATLAS_CMS_SSinc_RunI
+  - ATLAS_SSinc_RunII
+  - CMS_SSinc_RunII
+
+  # ATLAS & CMS Run II Higgs Differential
+  - CMS_H_13TeV_2015_pTH
+  - ATLAS_H_13TeV_2015_pTH
+
+  # ATLAS & CMS STXS
+  - ATLAS_WH_Hbb_13TeV
+  - ATLAS_ZH_Hbb_13TeV
+  - ATLAS_ggF_ZZ_13TeV
+  - CMS_ggF_aa_13TeV
+  #- CMS_ggF_tautau_13TeV
+
+  # DIBOSON DATA
+
+  #- ATLAS_WW_13TeV_2016_memu
+  #- ATLAS_WZ_13TeV_2016_mTWZ
+  #- CMS_WZ_13TeV_2016_mWZ
+
+  # LEP
+  #- LEP_eeWW_182GeV
+  #- LEP_eeWW_189GeV
+  #- LEP_eeWW_198GeV
+  #- LEP_eeWW_206GeV
+
+# Coefficients to fit
+coefficients:
+
+  ## TOP COEFFICIENTS ##
+
+  cpQM: {'fixed': False, 'value': 0.0, 'min': -4.5, 'max': 4.5}
+  c3pQ3: {'fixed': False, 'value': 0.0, 'min': -1.5, 'max': 1.3}
+  cpt: {'fixed': False, 'value': 0.0, 'min': -25.0, 'max': 15.0}
+  ctW: {'fixed': False, 'value': 0.0, 'min': -0.5, 'max': 1.5}
+  ctG: {'fixed': False, 'value': 0.0, 'min': -0.9, 'max': 0.6}
+  ctp: {'fixed': False, 'value': 0.0, 'min': -11.0, 'max': 16.0}
+  ctZ: {'fixed': False, 'value': 0.0, 'min': -2.3, 'max': 2.3}
+
+  cQQ1: {'fixed': False, 'value': 0.0, 'min': -7.5, 'max': 7.3}
+  cQQ8: {'fixed': False, 'value': 0.0, 'min': -22.0, 'max': 22.0}
+  cQt1: {'fixed': False, 'value': 0.0, 'min': -6.0, 'max': 6.0}
+  cQt8: {'fixed': False, 'value': 0.0, 'min': -13.0, 'max': 12.0}
+  ctt1: {'fixed': False, 'value': 0.0, 'min': -3.5, 'max': 3.5}
+
+  c81qq: {'fixed': False, 'value': 0.0, 'min': -2.3, 'max': 1.5}
+  c11qq: {'fixed': False, 'value': 0.0, 'min': -0.9, 'max': 0.8}
+  c83qq: {'fixed': False, 'value': 0.0, 'min': -1.5, 'max': 1.5}
+  c13qq: {'fixed': False, 'value': 0.0, 'min': -0.4, 'max': 0.5}
+  c8qt: {'fixed': False, 'value': 0.0, 'min': -2.5, 'max': 2.2}
+  c1qt: {'fixed': False, 'value': 0.0, 'min': -0.8, 'max': 0.8}
+  c8ut: {'fixed': False, 'value': 0.0, 'min': -3.0, 'max': 2.0}
+  c1ut: {'fixed': False, 'value': 0.0, 'min': -2.0, 'max': 0.6}
+  c8qu: {'fixed': False, 'value': 0.0, 'min': -3.0, 'max': 3.0}
+  c1qu: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.2}
+  c8dt: {'fixed': False, 'value': 0.0, 'min': -3.7, 'max': 3.0}
+  c1dt: {'fixed': False, 'value': 0.0, 'min': -1.4, 'max': 1.4}
+  c8qd: {'fixed': False, 'value': 0.0, 'min': -4.5, 'max': 4.0}
+  c1qd: {'fixed': False, 'value': 0.0, 'min': -1.4, 'max': 1.5}
+
+  # Do not enter with our flavor assumptions
+  cPff: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
+  cbW: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
+  cQtQb1: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
+  cQtQb8: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
+  cQb1: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
+  cQb8: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
+  ctb1: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
+  ctb8: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
+
+
+  ## HIGGS COEFFICIENTS ##
+
+  cpG: {'fixed': False, 'value': 0.0, 'min': -0.2, 'max': 0.04}
+  cpB: {'fixed': False, 'value': 0.0, 'min': -0.12, 'max': 0.12}
+  cpW: {'fixed': False, 'value': 0.0, 'min': -0.4, 'max': 0.4}
+  cpWB: {'fixed': False, 'value': 0.0, 'min': -0.3, 'max': 0.5}
+  cpd: {'fixed': False, 'value': 0.0, 'min': -42.0, 'max': 8.8}
+  cpD: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
+
+  cbp: {'fixed': False, 'value': 0.0, 'min': -0.6, 'max': 0.22}
+
+  cpqMi: {'fixed': ['cpD','cpWB'], 'value': [0.9248,1.8347], 'min': -30, 'max': 30}
+  c3pq: {'fixed': ['cpD','cpWB'], 'value': [-0.8415,-1.8347], 'min': -0.5, 'max': 1.0}
+  cpui: {'fixed': ['cpD'], 'value': [0.3333], 'min': -0.5, 'max': 1.0}
+  cpdi: {'fixed': ['cpD'], 'value': [-0.1667], 'min': -0.5, 'max': 1.0}
+  ccp: {'fixed': False, 'value': 0.0, 'min': -0.44, 'max': 0.81}
+
+  cpl1: {'fixed': ['cpD'], 'value': [-0.25], 'min': -0.5, 'max': 1.0}
+  cpl2: {'fixed': ['cpD'], 'value': [-0.25], 'min': -0.5, 'max': 1.0}
+  cpl3: {'fixed': ['cpD'], 'value': [-0.25], 'min': -0.5, 'max': 1.0}
+  c3pl1: {'fixed': ['cpD','cpWB'], 'value': [-0.8415,-1.8347], 'min': -30.0, 'max': 60.0}
+  c3pl2: {'fixed': ['cpD','cpWB'], 'value': [-0.8415,-1.8347], 'min': -30.0, 'max': 60.0}
+  c3pl3: {'fixed': ['cpD','cpWB'], 'value': [-0.8415,-1.8347], 'min': -0.5, 'max': 1.0}
+  cpe: {'fixed': ['cpD'], 'value': [-0.5], 'min': -0.5, 'max': 1.0}
+  cpmu: {'fixed': ['cpD'], 'value': [-0.5], 'min': -0.5, 'max': 1.0}
+  cpta: {'fixed': ['cpD'], 'value': [-0.5], 'min': -0.5, 'max': 1.0}
+  ctap: {'fixed': False, 'value': 0.0, 'min': -0.28, 'max': 0.72}
+  cll: {'fixed': True, 'value': 0.0, 'min': -0.5, 'max': 1.0}
+
+  ## DIBOSON COEFFICIENTS ##
+
+  #OWWW: {'fixed': False, 'value': 0.0, 'min': -0.85, 'max': 0.35}
+  #OW: {'fixed': ['OpD','OpWB'], 'value': [-5.1754,-11.2835], 'min': -0.80, 'max': 0.25}
+  #OB: {'fixed': 'OpD', 'value': 2.8209, 'min': -0.85, 'max': 0.30}
+
+#    Note: coefficients that are known to have disjoint
+#    probability distributions (i.e. multiple solutions)
+#    are listed here to have better plot resolution.
+double_solution:
+  - "ctap"
+  - "cbp"
