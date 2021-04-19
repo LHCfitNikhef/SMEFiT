@@ -3,9 +3,6 @@ import numpy as np
 import pandas as pd
 
 import matplotlib.pyplot as py
-from matplotlib.backends.backend_pdf import PdfPages
-
-import pylatex as pl
 import rich
 
 from . import coefficients_utils as utils
@@ -311,4 +308,4 @@ class CoefficientsPlotter:
             print(2 * "  ", name )
             print(10 * "====")
             df = pd.DataFrame(bounds[name]).T
-            print(df.to_latex())
+            rich.print(df.to_latex())

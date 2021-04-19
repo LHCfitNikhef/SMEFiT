@@ -131,21 +131,21 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel, anomalous-
         coeff_ptl.plot_coeffs(cl_bounds, disjointed_lists)
 
         print(2 * "  ", "Plotting: Confidence Level error bars")
-
+        temp = cl_bounds.copy()
         # Uncomment if you want to show the total error bar for double solution,
         # otherwhise show 95% CL for null solutions.
         # add second error if exists
-        # for k in self.fits:
-        #     name = r"${\rm %s}$" % k.replace(
-        #         "_", "\ "
-        #     )
-        #     for op in list(config[k]["double_solution"]):
-        #         cl_bounds[name][op]["error95"] += cl_bounds[name][op]["2"]["error95"]
+        for k in self.fits:
+            name = r"${\rm %s}$" % k.replace(
+                "_", "\ "
+            )
+            for op in list(config[k]["double_solution"]):
+                temp[name][op]["error95"] += temp[name][f"{op}_2"]["error95"]
 
         coeff_ptl.plot_coeffs_bar(
             {
-                name: [cl_bounds[name][op]["error95"] for op in coeff_ptl.coeff_list ]
-                for name in cl_bounds
+                name: [temp[name][op]["error95"] for op in coeff_ptl.coeff_list ]
+                for name in temp
             }
         )
 
