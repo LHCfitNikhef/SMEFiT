@@ -92,12 +92,12 @@ def get_conficence_values(dist):
     Get confidence level bounds given the distribution
     """
     cl_vals = {}
-    cl_vals["low"] = np.nanpercentile(dist, 16)
-    cl_vals["high"] = np.nanpercentile(dist, 84)
+    cl_vals["low68"] = np.nanpercentile(dist, 16)
+    cl_vals["high68"] = np.nanpercentile(dist, 84)
     cl_vals["low95"] = np.nanpercentile(dist, 2.5)
     cl_vals["high95"] = np.nanpercentile(dist, 97.5)
     cl_vals["mid"] = np.mean(dist, axis=0)
-    cl_vals["error68"] = (cl_vals["high"] - cl_vals["low"]) / 2.0
+    cl_vals["error68"] = (cl_vals["high68"] - cl_vals["low68"]) / 2.0
     cl_vals["error95"] = (cl_vals["high95"] - cl_vals["low95"]) / 2.0
     return cl_vals
 

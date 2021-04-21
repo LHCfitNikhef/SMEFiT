@@ -46,12 +46,10 @@ def setup_package():
             "Topic :: Scientific/Engineering :: Physics",
         ],
         install_requires=[
-            #"PyPDF2",
-            #"progress",
+            "rich",
             "matplotlib",
             "pyyaml",
             "numpy",
-            #"scipy",
             "pandas",
         ],
         python_requires=">=3.7",

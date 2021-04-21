@@ -116,14 +116,21 @@ class CoefficientsPlotter:
                 vals = bounds[name][coeff]
                 if cnt == 0:
                     label = name
-                ax.errorbar(
+                eb = ax.errorbar(
                     X[cnt] + val[i],
                     y=np.array(vals["mid"]),
                     yerr=np.array(vals["error95"]),
                     color=colors[i],
                     fmt=".",
-                    elinewidth=2,
+                    elinewidth=1,
                     label=label,
+                )
+                eb[-1][0].set_linestyle(':')
+                ax.errorbar(
+                    X[cnt] + val[i],
+                    y=np.array(vals["mid"]),
+                    yerr=np.array(vals["error68"]),
+                    color=colors[i],
                 )
                 label = None
                 # double soluton
@@ -134,7 +141,7 @@ class CoefficientsPlotter:
                         yerr=np.array(bounds[name][f"{coeff}_2"]["error95"]),
                         color=colors[i],
                         fmt=".",
-                        elinewidth=2,
+                        elinewidth=1,
                     )
 
         py.plot(list(range(-1, 200)), np.zeros(201), "k--", alpha=0.7)
@@ -304,8 +311,6 @@ class CoefficientsPlotter:
         pd.set_option('display.max_colwidth', None)
         pd.set_option('precision', 2)
         for name in bounds:
-            print(10 * "====")
-            print(2 * "  ", name )
-            print(10 * "====")
             df = pd.DataFrame(bounds[name]).T
-            rich.print(df.to_latex())
+            caption = f"{name} Confidence Level bounds"
+            rich.print(df.to_latex(column_format='cccccccc', caption=caption))
