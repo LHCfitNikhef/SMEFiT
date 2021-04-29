@@ -41,10 +41,14 @@ def plot(config, fit, fig_file, dofs=None):
                 continue
             if i != j and (correlations[i][j] > 0.5 or correlations[i][j] < -0.5):
                 if i not in rows_to_keep:
-                    # Commnent to remove uncorrelated coeffs after a rotation
-                    if config["coefficients"][coeff_list[j]]["fixed"] is False \
-                        and coeff_list[j] not in dofs["hide"]:
-                        rows_to_keep.append(i)
+                    # Uncommnent to avoid displaying uncorrelated coeffs after a rotation
+                    # if config["coefficients"][coeff_list[j]]["fixed"] is False \
+                    #     and coeff_list[j] not in dofs["hide"]:
+                    #     rows_to_keep.append(i)
+                    # if j not in rows_to_keep:
+                    #    rows_to_keep.append(j)
+                    rows_to_keep.append(i)
+
 
     correlations = np.array(correlations)[np.array(rows_to_keep), :]
     correlations = np.array(correlations)[:, np.array(rows_to_keep)]
