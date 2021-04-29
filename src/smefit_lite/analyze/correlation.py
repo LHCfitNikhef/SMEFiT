@@ -41,7 +41,10 @@ def plot(config, fit, fig_file, dofs=None):
                 continue
             if i != j and (correlations[i][j] > 0.5 or correlations[i][j] < -0.5):
                 if i not in rows_to_keep:
-                    rows_to_keep.append(i)
+                    # Commnent to remove uncorrelated coeffs after a rotation
+                    if config["coefficients"][coeff_list[j]]["fixed"] is False \
+                        and coeff_list[j] not in dofs["hide"]:
+                        rows_to_keep.append(i)
 
     correlations = np.array(correlations)[np.array(rows_to_keep), :]
     correlations = np.array(correlations)[:, np.array(rows_to_keep)]
@@ -62,7 +65,7 @@ def plot(config, fit, fig_file, dofs=None):
     for i in range(npar):
         for j in range(npar):
             c = correlations[j, i]
-            if c > 0.5 or c < -0.5:
+            if c >= 0.1 or c <= -0.1:
                 ax.text(
                     i, j, str(np.round(c, 1)), va="center", ha="center", fontsize=10
                 )
