@@ -99,6 +99,8 @@ def get_conficence_values(dist):
     cl_vals["mid"] = np.mean(dist, axis=0)
     cl_vals["error68"] = (cl_vals["high68"] - cl_vals["low68"]) / 2.0
     cl_vals["error95"] = (cl_vals["high95"] - cl_vals["low95"]) / 2.0
+    cl_vals["cl68"] = np.array([cl_vals["mid"]-cl_vals["low68"],cl_vals["high68"]-cl_vals["mid"]])
+    cl_vals["cl95"] = np.array([cl_vals["mid"]-cl_vals["low95"],cl_vals["high95"]-cl_vals["mid"]])
     return cl_vals
 
 

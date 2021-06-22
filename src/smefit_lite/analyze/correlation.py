@@ -33,6 +33,8 @@ def plot(config, fit, fig_file, dofs=None):
     rows_to_keep = []
     for i, _ in enumerate(correlations):
         for j, _ in enumerate(correlations[i]):
+            if coeff_list[i] not in  config["coefficients"]:
+                continue
             if (coeff_list[i] not in dofs["show"]) and config["coefficients"][
                 coeff_list[i]
             ]["fixed"] is not False:

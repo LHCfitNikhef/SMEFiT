@@ -85,7 +85,7 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel, anomalous-
         subprocess.call(f"rm -rf {self.report_folder}", shell=True)
         subprocess.call(f"mkdir {self.report_folder}", shell=True)
 
-    def run(self, free_dofs=None):
+    def run(self, free_dofs=None, plot_only=None):
         """
         Run the analysis
 
@@ -106,7 +106,11 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel, anomalous-
         rc("font", **{"family": "sans-serif", "sans-serif": ["Helvetica"]})
         rc("text", usetex=True)
 
-        free_dofs = free_dofs or {}
+        free_dofs = free_dofs or {'hide': [], 'show': []}
+        if plot_only is None:
+            plot_only = ['cl_vals','cl_bars','residuals','post_hist','coeff_table','correlations']
+
+        # load results and configutation
         config = self._load_configurations()
         posteriors = self._load_posteriors()
 
@@ -127,55 +131,60 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel, anomalous-
                 posteriors[k], config[k]["double_solution"]
             )
 
-        print(2 * "  ", "Plotting: Central values and Confidence Level bounds")
-        coeff_ptl.plot_coeffs(cl_bounds, disjointed_lists)
+        if 'cl_vals' in plot_only:
+            print(2 * "  ", "Plotting: Central values and Confidence Level bounds")
+            coeff_ptl.plot_coeffs(cl_bounds, disjointed_lists)
 
-        print(2 * "  ", "Plotting: Confidence Level error bars")
-        temp = cl_bounds.copy()
-        # Uncomment if you want to show the total error bar for double solution,
-        # otherwhise show 95% CL for null solutions.
-        # add second error if exists
-        for k in self.fits:
-            name = r"${\rm %s}$" % k.replace(
-                "_", "\ "
+        if 'cl_bars' in plot_only:
+            print(2 * "  ", "Plotting: Confidence Level error bars")
+            temp = cl_bounds.copy()
+            # Uncomment if you want to show the total error bar for double solution,
+            # otherwhise show 95% CL for null solutions.
+            # add second error if exists
+            for k in self.fits:
+                name = r"${\rm %s}$" % k.replace(
+                    "_", "\ "
+                )
+                for op in list(config[k]["double_solution"]):
+                    temp[name][op]["error95"] += temp[name][f"{op}_2"]["error95"]
+
+            coeff_ptl.plot_coeffs_bar(
+                {
+                    name: [temp[name][op]["error95"] for op in coeff_ptl.coeff_list ]
+                    for name in temp
+                }
             )
-            for op in list(config[k]["double_solution"]):
-                temp[name][op]["error95"] += temp[name][f"{op}_2"]["error95"]
-
-        coeff_ptl.plot_coeffs_bar(
-            {
-                name: [temp[name][op]["error95"] for op in coeff_ptl.coeff_list ]
-                for name in temp
-            }
-        )
-
-        print(2 * "  ", "Plotting: Residuals")
-        coeff_ptl.plot_residuals_bar(
-            {
-                name: [
-                    cl_bounds[name][op]["mid"] / cl_bounds[name][op]["error68"]
-                    for op in coeff_ptl.coeff_list
-                ]
-                for name in cl_bounds
-            }
-        )
-
-        print(2 * "  ", "Plotting: Posterior histograms")
-        coeff_ptl.plot_posteriors(
-            posteriors,
-            disjointed_lists=[config[k]["double_solution"] for k in self.fits],
-        )
-
-        print(2 * "  ", "Writing: Confidence level table")
-        coeff_ptl.write_cl_table(
-            cl_bounds,
-        )
-
-        print(2 * "  ", "Plotting: Correlations")
-        for k in self.fits:
-            corr_plot(
-                config[k],
-                posteriors[k],
-                f"{self.report_folder}/Coeffs_Corr_{k}.pdf",
-                dofs=free_dofs,
+        if 'residuals' in plot_only:
+            print(2 * "  ", "Plotting: Residuals")
+            coeff_ptl.plot_residuals_bar(
+                {
+                    name: [
+                        cl_bounds[name][op]["mid"] / cl_bounds[name][op]["error68"]
+                        for op in coeff_ptl.coeff_list
+                    ]
+                    for name in cl_bounds
+                }
             )
+
+        if 'post_hist' in plot_only:
+            print(2 * "  ", "Plotting: Posterior histograms")
+            coeff_ptl.plot_posteriors(
+                posteriors,
+                disjointed_lists=[config[k]["double_solution"] for k in self.fits],
+            )
+
+        if 'coeff_table' in plot_only:
+            print(2 * "  ", "Writing: Confidence level table")
+            coeff_ptl.write_cl_table(
+                cl_bounds,
+            )
+
+        if 'correlations' in plot_only: 
+            print(2 * "  ", "Plotting: Correlations")
+            for k in self.fits:
+                corr_plot(
+                    config[k],
+                    posteriors[k],
+                    f"{self.report_folder}/Coeffs_Corr_{k}.pdf",
+                    dofs=free_dofs,
+                )

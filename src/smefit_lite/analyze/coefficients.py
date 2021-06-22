@@ -40,13 +40,13 @@ class CoefficientsPlotter:
                 if np.any(
                     [
                         config[k]["coefficients"][c]["fixed"] is True
-                        for k in temp.keys()
+                        for k in temp
                         if c in config[k]["coefficients"]
                     ]
                 ):
                     continue
                 if c not in self.coeff_list and np.any(
-                    [c in config[k]["coefficients"] for k in temp.keys()]
+                    [c in config[k]["coefficients"] for k in temp]
                 ):
                     self.coeff_list.append(c)
 
@@ -73,6 +73,8 @@ class CoefficientsPlotter:
         disjointed_list = disjointed_list or []
         bounds = {}
         for l in self.coeff_list:
+            if l not in posterior:
+                posterior[l] = np.array(np.zeros(len(list(posterior.values())[0])))
             posterior[l] = np.array(posterior[l])
             cl_vals = {}
             # double soultion
@@ -111,15 +113,18 @@ class CoefficientsPlotter:
         # loop over fits
         for i, name in enumerate(bounds):
             for cnt, coeff in enumerate(self.coeff_list):
-                if coeff not in bounds[name].keys():
-                    continue
-                vals = bounds[name][coeff]
                 if cnt == 0:
                     label = name
+                if coeff not in bounds[name]:
+                    continue
+                
+                vals = bounds[name][coeff]
+                if vals["error95"] == 0.0:
+                    continue
                 eb = ax.errorbar(
                     X[cnt] + val[i],
                     y=np.array(vals["mid"]),
-                    yerr=np.array(vals["error95"]),
+                    yerr=np.array([vals["cl95"]]).T,
                     color=colors[i],
                     fmt=".",
                     elinewidth=1,
@@ -129,7 +134,7 @@ class CoefficientsPlotter:
                 ax.errorbar(
                     X[cnt] + val[i],
                     y=np.array(vals["mid"]),
-                    yerr=np.array(vals["error68"]),
+                    yerr=np.array([vals["cl68"]]).T,
                     color=colors[i],
                 )
                 label = None
@@ -138,7 +143,7 @@ class CoefficientsPlotter:
                     ax.errorbar(
                         X[cnt] + val[i],
                         y=np.array( bounds[name][f"{coeff}_2"]["mid"]),
-                        yerr=np.array(bounds[name][f"{coeff}_2"]["error95"]),
+                        yerr=np.array( [bounds[name][f"{coeff}_2"]["mid"]]).T,
                         color=colors[i],
                         fmt=".",
                         elinewidth=1,
@@ -250,13 +255,12 @@ class CoefficientsPlotter:
         gs = int(np.sqrt(self.npar)) + 1
         nrows, ncols = gs, gs
         fig = py.figure(figsize=(nrows * 4, ncols * 3))
-
-        total_cnt = []
         for clr_cnt, (name, posterior) in enumerate(posteriors.items()):
             for cnt, l in enumerate(self.coeff_list):
-                cnt += 1
-                ax = py.subplot(ncols, nrows, cnt)
+                ax = py.subplot(ncols, nrows, cnt+1)
                 solution = posterior[l]
+                if solution.all() == 0.0:
+                    continue
                 if l in disjointed_lists[clr_cnt]:
                     solution, solution2 = utils.split_solution(posterior[l])
                     ax.hist(
@@ -276,8 +280,8 @@ class CoefficientsPlotter:
                     alpha=0.3,
                     label=r"${\rm %s}$"
                     % name.replace(
-                        "_", "\ "  # pylint:disable=anomalous-backslash-in-string
-                    ),
+                        "_", r"\ "
+                    )
                 )
                 if clr_cnt == 0:
                     ax.text(
@@ -291,10 +295,10 @@ class CoefficientsPlotter:
                 ax.tick_params(which="both", direction="in", labelsize=22.5)
                 ax.tick_params(labelleft=False)
 
-                if cnt not in total_cnt:
-                    total_cnt.append(cnt)
-
-        lines, labels = fig.axes[-2].get_legend_handles_labels()
+        lines, labels = fig.axes[0].get_legend_handles_labels()
+        for axes in fig.axes:
+            if len(axes.get_legend_handles_labels()[0]) > len(lines):
+                lines, labels = axes.get_legend_handles_labels()
         fig.legend(lines, labels, loc="lower right", prop={"size": 35})
         py.tight_layout()
         py.savefig(f"{self.report_folder}/Coeffs_Hist.pdf")
@@ -308,7 +312,7 @@ class CoefficientsPlotter:
             bounds: dict
                 confidence level bounds per fit and coefficient
         """
-        pd.set_option('display.max_colwidth', None)
+        pd.set_option('display.max_colwidth', 999)
         pd.set_option('precision', 2)
         for name in bounds:
             df = pd.DataFrame(bounds[name]).T
