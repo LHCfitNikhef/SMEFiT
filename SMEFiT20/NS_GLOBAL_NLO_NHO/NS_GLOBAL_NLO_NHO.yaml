@@ -1,6 +1,6 @@
 # Input YAML configurations for SMEFiT code
 
-# Result ID
+# Result ID (see Result ID Naming Convention in README)
 resultID: NS_GLOBAL_NLO_NHO
 
 # pQCD order (LO or NLO)
@@ -30,6 +30,7 @@ bounds: Null
 
 # Datasets to include
 datasets:
+
 
   # TOP QUARK PRODUCTION
 
@@ -119,9 +120,9 @@ datasets:
 
   # DIBOSON DATA
 
-  # LHC
   - ATLAS_WW_13TeV_2016_memu
   - ATLAS_WZ_13TeV_2016_mTWZ
+  #- CMS_WZ_13TeV_2016_mWZ
   - CMS_WZ_13TeV_2016_pTZ
 
   # LEP
@@ -136,33 +137,33 @@ coefficients:
   ## TOP COEFFICIENTS ##
 
   cpQM: {'fixed': False, 'value': 0.0, 'min': -25.0, 'max': 25.0}
-  c3pQ3: {'fixed': False, 'value': 0.0, 'min': -2.0, 'max': 2.0}
-  cpt: {'fixed': False, 'value': 0.0, 'min': -30.0, 'max': 50.0}
+  c3pQ3: {'fixed': False, 'value': 0.0, 'min': -5.0, 'max': 5.0}
+  cpt: {'fixed': False, 'value': 0.0, 'min': -50.0, 'max': 50.0}
   ctW: {'fixed': False, 'value': 0.0, 'min': -0.5, 'max': 0.5}
-  ctG: {'fixed': False, 'value': 0.0, 'min': -0.4, 'max': 0.5}
-  ctp: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 5.0}
-  ctZ: {'fixed': False, 'value': 0.0, 'min': -30.0, 'max': 20.0}
+  ctG: {'fixed': False, 'value': 0.0, 'min': -0.5, 'max': 0.5}
+  ctp: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 10.0}
+  ctZ: {'fixed': False, 'value': 0.0, 'min': -60.0, 'max': 60.0}
 
-  cQQ1: {'fixed': False, 'value': 0.0, 'min': -50.0, 'max': 50.0}
-  cQQ8: {'fixed': False, 'value': 0.0, 'min': -50.0, 'max': 50.0}
-  cQt1: {'fixed': False, 'value': 0.0, 'min': -50.0, 'max': 50.0}
-  cQt8: {'fixed': False, 'value': 0.0, 'min': -50.0, 'max': 50.0}
-  ctt1: {'fixed': False, 'value': 0.0, 'min': -50.0, 'max': 50.0}
+  cQQ1: {'fixed': False, 'value': 0.0, 'min': -200.0, 'max': 200.0}
+  cQQ8: {'fixed': False, 'value': 0.0, 'min': -200.0, 'max': 200.0}
+  cQt1: {'fixed': False, 'value': 0.0, 'min': -200.0, 'max': 200.0}
+  cQt8: {'fixed': False, 'value': 0.0, 'min': -200.0, 'max': 200.0}
+  ctt1: {'fixed': False, 'value': 0.0, 'min': -200.0, 'max': 200.0}
 
-  c81qq: {'fixed': False, 'value': 0.0, 'min': -10, 'max': 20.0}
-  c11qq: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 20.0}
-  c83qq: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 10.0}
-  c13qq: {'fixed': False, 'value': 0.0, 'min': -0.4, 'max': 0.6}
-  c8qt: {'fixed': False, 'value': 0.0, 'min': -20, 'max': 10.0}
-  c1qt: {'fixed': False, 'value': 0.0, 'min': -10, 'max': 10.0}
-  c8ut: {'fixed': False, 'value': 0.0, 'min': -15.0, 'max': 25.0}
-  c1ut: {'fixed': False, 'value': 0.0, 'min': -5.0, 'max': 2.0}
-  c8qu: {'fixed': False, 'value': 0.0, 'min': -20.0, 'max': 20.0}
-  c1qu: {'fixed': False, 'value': 0.0, 'min': -15.0, 'max': 20.0}
-  c8dt: {'fixed': False, 'value': 0.0, 'min': -20.0, 'max': 20.0}
-  c1dt: {'fixed': False, 'value': 0.0, 'min': -20.0, 'max': 10.0}
-  c8qd: {'fixed': False, 'value': 0.0, 'min': -30.0, 'max': 20.0}
-  c1qd: {'fixed': False, 'value': 0.0, 'min': -35.0, 'max': 10.0}
+  c81qq: {'fixed': False, 'value': 0.0, 'min': -50.0, 'max': 50.0}
+  c11qq: {'fixed': False, 'value': 0.0, 'min': -50.0, 'max': 50.0}
+  c83qq: {'fixed': False, 'value': 0.0, 'min': -50.0, 'max': 50.0}
+  c13qq: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 10.0}
+  c8qt: {'fixed': False, 'value': 0.0, 'min': -100.0, 'max': 100.0}
+  c1qt: {'fixed': False, 'value': 0.0, 'min': -100.0, 'max': 100.0}
+  c8ut: {'fixed': False, 'value': 0.0, 'min': -100.0, 'max': 100.0}
+  c1ut: {'fixed': False, 'value': 0.0, 'min': -100.0, 'max': 100.0}
+  c8qu: {'fixed': False, 'value': 0.0, 'min': -100.0, 'max': 100.0}
+  c1qu: {'fixed': False, 'value': 0.0, 'min': -100.0, 'max': 100.0}
+  c8dt: {'fixed': False, 'value': 0.0, 'min': -100.0, 'max': 100.0}
+  c1dt: {'fixed': False, 'value': 0.0, 'min': -100.0, 'max': 100.0}
+  c8qd: {'fixed': False, 'value': 0.0, 'min': -100.0, 'max': 100.0}
+  c1qd: {'fixed': False, 'value': 0.0, 'min': -100.0, 'max': 100.0}
 
   # Do not enter with our flavor assumptions
   cff: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
@@ -177,7 +178,7 @@ coefficients:
 
   ## HIGGS COEFFICIENTS ##
 
-  cpG: {'fixed': False, 'value': 0.0, 'min': -0.1, 'max': 0.1}
+  cpG: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
   cpB: {'fixed': False, 'value': 0.0, 'min': -5, 'max': 5.0}
   cpW: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 10.0}
   cpWB: {'fixed': ['cB','cW'], 'value': [-0.1626,-0.088625], 'min': -8.0, 'max': 16.0}
@@ -187,21 +188,21 @@ coefficients:
   cbp: {'fixed': False, 'value': 0.0, 'min': -0.15, 'max': 0.15}
 
   cpqMi: {'fixed': ['cB','cW'], 'value': [0.02954166667,-0.1626], 'min': -30, 'max': 30}
-  c3pq: {'fixed': ['cW'], 'value': [0.1626], 'min': -0.5, 'max': 1.0}
-  cpui: {'fixed': ['cB'], 'value': [0.118167], 'min': -0.5, 'max': 1.0}
-  cpdi: {'fixed': ['cB'], 'value': [-0.0590833], 'min': -0.5, 'max': 1.0}
+  c3pq: {'fixed': ['cW'], 'value': [0.1626], 'min': -2.0, 'max': 2.0}
+  cpui: {'fixed': ['cB'], 'value': [0.118167], 'min': -1.0, 'max': 1.0}
+  cpdi: {'fixed': ['cB'], 'value': [-0.0590833], 'min': -1.0, 'max': 1.0}
   ccp: {'fixed': False, 'value': 0.0, 'min': -1, 'max': 0.5}
 
   cpl1: {'fixed': ['cB'], 'value': [-0.088625], 'min': -0.5, 'max': 1.0}
-  cpl3: {'fixed': ['cB'], 'value': [-0.088625], 'min': -0.5, 'max': 1.0}
   cpl2: {'fixed': ['cB'], 'value': [-0.088625], 'min': -0.5, 'max': 1.0}
-  c3pl1: {'fixed': ['cW'], 'value':[0.1626], 'min': -30.0, 'max': 60.0}
+  cpl3: {'fixed': ['cB'], 'value': [-0.088625], 'min': -0.5, 'max': 1.0}
+  c3pl1: {'fixed': ['cW'], 'value': [0.1626], 'min': -30.0, 'max': 60.0}
   c3pl2: {'fixed': ['cW'], 'value': [0.1626], 'min': -30.0, 'max': 60.0}
-  c3pl3: {'fixed': ['cW'], 'value': [0.1626], 'min': -0.5, 'max': 1.0}
+  c3pl3: {'fixed': ['cW'], 'value': [0.1626], 'min': -30.0, 'max': 60.0}
   cpe: {'fixed': ['cB'], 'value': [-0.17725], 'min': -0.5, 'max': 1.0}
-  cpta: {'fixed': ['cB'], 'value': [-0.17725], 'min': -0.5, 'max': 1.0}
   cpmu: {'fixed': ['cB'], 'value': [-0.17725], 'min': -0.5, 'max': 1.0}
-  ctap: {'fixed': False, 'value': 0.0, 'min': -0.1, 'max': 0.1 }
+  cpta: {'fixed': ['cB'], 'value': [-0.17725], 'min': -0.5, 'max': 1.0}
+  ctap: {'fixed': False, 'value': 0.0, 'min': -0.1, 'max': 0.1}
   cll: {'fixed': True, 'value': 0.0, 'min': -0.5, 'max': 1.0}
 
   ## DIBOSON COEFFICIENTS ##

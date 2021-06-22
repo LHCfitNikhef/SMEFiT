@@ -37,7 +37,7 @@ if __name__ == "__main__":
             if i == 0:
                 coeffs = [str(i) for i in data[0].split()]
                 for c in coeffs:
-                    if c not in vals.keys():
+                    if c not in vals:
                         vals[c] = []
             # sanity check
             for op in [str(i) for i in data[0].split()]:

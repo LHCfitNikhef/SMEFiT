@@ -1,7 +1,7 @@
 # Input YAML configurations for SMEFiT code
 
 # Result ID (see Result ID Naming Convention in README)
-resultID: 260121-NS_GLOBAL_NLO_HO
+resultID: NS_GLOBAL_NLO_HO
 
 # pQCD order (LO or NLO)
 order: NLO
@@ -30,6 +30,7 @@ bounds: Null
 
 # Datasets to include
 datasets:
+
 
   # TOP QUARK PRODUCTION
 
@@ -135,34 +136,35 @@ coefficients:
 
   ## TOP COEFFICIENTS ##
 
-  cpQM: {'fixed': False, 'value': 0.0, 'min': -4.5, 'max': 4.5}
-  c3pQ3: {'fixed': False, 'value': 0.0, 'min': -1.5, 'max': 1.3}
+  cpQM: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 10.0}
+  c3pQ3: {'fixed': False, 'value': 0.0, 'min': -2.0, 'max': 2.0}
   cpt: {'fixed': False, 'value': 0.0, 'min': -25.0, 'max': 15.0}
-  ctW: {'fixed': False, 'value': 0.0, 'min': -0.5, 'max': 1.5}
-  ctG: {'fixed': False, 'value': 0.0, 'min': -0.9, 'max': 0.6}
-  ctp: {'fixed': False, 'value': 0.0, 'min': -11.0, 'max': 16.0}
-  ctZ: {'fixed': False, 'value': 0.0, 'min': -2.3, 'max': 2.3}
+  ctW: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
+  ctG: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
+  ctp: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 5.0}
+  ctZ: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 10.0}
 
-  cQQ1: {'fixed': False, 'value': 0.0, 'min': -7.5, 'max': 7.3}
-  cQQ8: {'fixed': False, 'value': 0.0, 'min': -22.0, 'max': 22.0}
-  cQt1: {'fixed': False, 'value': 0.0, 'min': -6.0, 'max': 6.0}
-  cQt8: {'fixed': False, 'value': 0.0, 'min': -13.0, 'max': 12.0}
-  ctt1: {'fixed': False, 'value': 0.0, 'min': -3.5, 'max': 3.5}
+  cQQ1: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 10.0}
+  cQQ8: {'fixed': False, 'value': 0.0, 'min': -20.0, 'max': 20.0}
+  cQt1: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 10.0}
+  cQt8: {'fixed': False, 'value': 0.0, 'min': -20.0, 'max': 20.0}
+  ctt1: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 10.0}
 
-  c81qq: {'fixed': False, 'value': 0.0, 'min': -2.3, 'max': 1.5}
-  c11qq: {'fixed': False, 'value': 0.0, 'min': -0.9, 'max': 0.8}
-  c83qq: {'fixed': False, 'value': 0.0, 'min': -1.5, 'max': 1.5}
-  c13qq: {'fixed': False, 'value': 0.0, 'min': -0.4, 'max': 0.5}
-  c8qt: {'fixed': False, 'value': 0.0, 'min': -2.5, 'max': 2.2}
-  c1qt: {'fixed': False, 'value': 0.0, 'min': -0.8, 'max': 0.8}
-  c8ut: {'fixed': False, 'value': 0.0, 'min': -3.0, 'max': 2.0}
-  c1ut: {'fixed': False, 'value': 0.0, 'min': -2.0, 'max': 0.6}
-  c8qu: {'fixed': False, 'value': 0.0, 'min': -3.0, 'max': 3.0}
-  c1qu: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.2}
-  c8dt: {'fixed': False, 'value': 0.0, 'min': -3.7, 'max': 3.0}
-  c1dt: {'fixed': False, 'value': 0.0, 'min': -1.4, 'max': 1.4}
-  c8qd: {'fixed': False, 'value': 0.0, 'min': -4.5, 'max': 4.0}
-  c1qd: {'fixed': False, 'value': 0.0, 'min': -1.4, 'max': 1.5}
+  c81qq: {'fixed': False, 'value': 0.0, 'min': -5.0, 'max': 5.0}
+  c11qq: {'fixed': False, 'value': 0.0, 'min': -5.0, 'max': 5.0}
+  c83qq: {'fixed': False, 'value': 0.0, 'min': -5.0, 'max': 5.0}
+  c13qq: {'fixed': False, 'value': 0.0, 'min': -0.4, 'max': 0.6}
+  c8qt: {'fixed': False, 'value': 0.0, 'min': -5.0, 'max': 5.0}
+  c1qt: {'fixed': False, 'value': 0.0, 'min': -5.0, 'max': 5.0}
+  c8ut: {'fixed': False, 'value': 0.0, 'min': -5.0, 'max': 5.0}
+  c1ut: {'fixed': False, 'value': 0.0, 'min': -5.0, 'max': 5.0}
+  c8qu: {'fixed': False, 'value': 0.0, 'min': -5.0, 'max': 5.0}
+  c1qu: {'fixed': False, 'value': 0.0, 'min': -5.0, 'max': 5.0}
+  c8dt: {'fixed': False, 'value': 0.0, 'min': -5.0, 'max': 5.0}
+  c1dt: {'fixed': False, 'value': 0.0, 'min': -5.0, 'max': 5.0}
+  c8qd: {'fixed': False, 'value': 0.0, 'min': -5.0, 'max': 5.0}
+  c1qd: {'fixed': False, 'value': 0.0, 'min': -5.0, 'max': 5.0}
+
 
   # Do not enter with our flavor assumptions
   cff: {'fixed': True, 'value': 0.0, 'min': -35.0, 'max': 10.0}
@@ -187,32 +189,28 @@ coefficients:
   cbp: {'fixed': False, 'value': 0.0, 'min': -0.6, 'max': 0.22}
 
   cpqMi: {'fixed': ['cB','cW'], 'value': [0.02954166667,-0.1626], 'min': -30, 'max': 30}
-  c3pq: {'fixed': ['cW'], 'value': [0.1626], 'min': -0.5, 'max': 1.0}
-  cpui: {'fixed': ['cB'], 'value': [0.118167], 'min': -0.5, 'max': 1.0}
-  cpdi: {'fixed': ['cB'], 'value': [-0.0590833], 'min': -0.5, 'max': 1.0}
+  c3pq: {'fixed': ['cW'], 'value': [0.1626], 'min': -2.0, 'max': 2.0}
+  cpui: {'fixed': ['cB'], 'value': [0.118167], 'min': -1.0, 'max': 1.0}
+  cpdi: {'fixed': ['cB'], 'value': [-0.0590833], 'min': -1.0, 'max': 1.0}
   ccp: {'fixed': False, 'value': 0.0, 'min': -0.44, 'max': 0.81}
 
-  cpl1: {'fixed': ['cB'], 'value': [-0.088625], 'min': -0.5, 'max': 1.0}
-  cpl2: {'fixed': ['cB'], 'value': [-0.088625], 'min': -0.5, 'max': 1.0}
-  cpl3: {'fixed': ['cB'], 'value': [-0.088625], 'min': -0.5, 'max': 1.0}
-  c3pl1: {'fixed': ['cW'], 'value': [0.1626], 'min': -30.0, 'max': 60.0}
-  c3pl2: {'fixed': ['cW'], 'value': [0.1626], 'min': -30.0, 'max': 60.0}
-  c3pl3: {'fixed': ['cW'], 'value': [0.1626], 'min': -0.5, 'max': 1.0}
+  cpl1: {'fixed': ['cB'], 'value': [-0.088625], 'min': -1.0, 'max': 1.0}
+  cpl2: {'fixed': ['cB'], 'value': [-0.088625], 'min': -1.0, 'max': 1.0}
+  cpl3: {'fixed': ['cB'], 'value': [-0.088625], 'min': -1.0, 'max': 1.0}
+  c3pl1: {'fixed': ['cW'], 'value': [0.1626], 'min': -30.0, 'max': 30.0}
+  c3pl2: {'fixed': ['cW'], 'value': [0.1626], 'min': -30.0, 'max': 30.0}
+  c3pl3: {'fixed': ['cW'], 'value': [0.1626], 'min': -30.0, 'max': 30.0}
   cpe: {'fixed': ['cB'], 'value': [-0.17725], 'min': -0.5, 'max': 1.0}
   cpmu: {'fixed': ['cB'], 'value': [-0.17725], 'min': -0.5, 'max': 1.0}
   cpta: {'fixed': ['cB'], 'value': [-0.17725], 'min': -0.5, 'max': 1.0}
   ctap: {'fixed': False, 'value': 0.0, 'min': -0.28, 'max': 0.72}
   cll: {'fixed': True, 'value': 0.0, 'min': -0.5, 'max': 1.0}
-
   ## DIBOSON COEFFICIENTS ##
 
   cWWW: {'fixed': False, 'value': 0.0, 'min': -0.85, 'max': 0.35}
-  cW: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
-  cB: {'fixed': False, 'value': 0.0, 'min': -2.0, 'max': 2.0}
+  cW: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 10.0}
+  cB: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 10.0}
 
-#    Note: coefficients that are known to have disjoint
-#    probability distributions (i.e. multiple solutions)
-#    are listed here to have better plot resolution.
 double_solution:
   - "ctap"
   - "cbp"
