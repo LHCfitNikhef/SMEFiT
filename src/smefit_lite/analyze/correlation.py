@@ -33,7 +33,7 @@ def plot(config, fit, fig_file, dofs=None):
     rows_to_keep = []
     for i, _ in enumerate(correlations):
         for j, _ in enumerate(correlations[i]):
-            if coeff_list[i] not in  config["coefficients"]:
+            if coeff_list[i] not in config["coefficients"]:
                 continue
             if (coeff_list[i] not in dofs["show"]) and config["coefficients"][
                 coeff_list[i]
@@ -50,7 +50,6 @@ def plot(config, fit, fig_file, dofs=None):
                     # if j not in rows_to_keep:
                     #    rows_to_keep.append(j)
                     rows_to_keep.append(i)
-
 
     correlations = np.array(correlations)[np.array(rows_to_keep), :]
     correlations = np.array(correlations)[:, np.array(rows_to_keep)]

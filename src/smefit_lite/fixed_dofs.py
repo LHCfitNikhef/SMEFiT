@@ -3,7 +3,7 @@ import numpy as np
 
 
 def propagate_constraints(config, posterior):
-    """ This fuctions construct the posterior ditributions for the
+    """This fuctions construct the posterior ditributions for the
     fixed coefficints
 
     Parameters

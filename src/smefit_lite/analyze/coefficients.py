@@ -52,7 +52,7 @@ class CoefficientsPlotter:
 
         self.npar = len(self.coeff_list)
 
-    def compute_confidence_level(self, posterior, disjointed_list = None):
+    def compute_confidence_level(self, posterior, disjointed_list=None):
         """
         Compute 95 % and 68 % confidence levels and store the result in a dictionary
 
@@ -117,7 +117,7 @@ class CoefficientsPlotter:
                     label = name
                 if coeff not in bounds[name]:
                     continue
-                
+
                 vals = bounds[name][coeff]
                 if vals["error95"] == 0.0:
                     continue
@@ -130,7 +130,7 @@ class CoefficientsPlotter:
                     elinewidth=1,
                     label=label,
                 )
-                eb[-1][0].set_linestyle(':')
+                eb[-1][0].set_linestyle(":")
                 ax.errorbar(
                     X[cnt] + val[i],
                     y=np.array(vals["mid"]),
@@ -142,8 +142,8 @@ class CoefficientsPlotter:
                 if coeff in disjointed_lists[i]:
                     ax.errorbar(
                         X[cnt] + val[i],
-                        y=np.array( bounds[name][f"{coeff}_2"]["mid"]),
-                        yerr=np.array( [bounds[name][f"{coeff}_2"]["mid"]]).T,
+                        y=np.array(bounds[name][f"{coeff}_2"]["mid"]),
+                        yerr=np.array([bounds[name][f"{coeff}_2"]["cl95"]]).T,
                         color=colors[i],
                         fmt=".",
                         elinewidth=1,
@@ -194,7 +194,7 @@ class CoefficientsPlotter:
         # Hard cutoff
         py.plot(
             np.linspace(-1, 2 * self.npar + 1, 2),
-            50 * np.ones(2),
+            400 * np.ones(2),
             "k--",
             alpha=0.7,
             lw=2,
@@ -205,7 +205,7 @@ class CoefficientsPlotter:
         py.ylabel(
             r"$95\%\ {\rm Confidence\ Level\ Bounds}\ (1/{\rm TeV}^2)$", fontsize=11
         )
-        py.ylim(1e-3, 1e3)
+        py.ylim(1e-3, 4e3)
         py.legend(loc=2, frameon=False, prop={"size": 11})
         py.tight_layout()
         py.savefig(f"{self.report_folder}/Coeffs_Bar.pdf")
@@ -236,19 +236,20 @@ class CoefficientsPlotter:
         py.tight_layout()
         py.savefig(f"{self.report_folder}/Coeffs_Residuals.pdf")
 
-    def plot_posteriors(self, posteriors, disjointed_lists = None):
-        """" Plot posteriors histograms
+    def plot_posteriors(self, posteriors, disjointed_lists=None):
+        """ " Plot posteriors histograms
 
         Parameters
         ----------
-            posterior : dict
+            posteriors : dict
                 posterior distibutions per fit and coefficent
             disjointed_list: list, optional
                 list of coefficients with double solutions
         """  # pylint:disable=import-error,import-outside-toplevel
         import warnings
         import matplotlib
-        warnings.filterwarnings("ignore",category=matplotlib.mplDeprecation)
+
+        warnings.filterwarnings("ignore", category=matplotlib.mplDeprecation)
 
         colors = py.rcParams["axes.prop_cycle"].by_key()["color"]
 
@@ -257,7 +258,7 @@ class CoefficientsPlotter:
         fig = py.figure(figsize=(nrows * 4, ncols * 3))
         for clr_cnt, (name, posterior) in enumerate(posteriors.items()):
             for cnt, l in enumerate(self.coeff_list):
-                ax = py.subplot(ncols, nrows, cnt+1)
+                ax = py.subplot(ncols, nrows, cnt + 1)
                 solution = posterior[l]
                 if solution.all() == 0.0:
                     continue
@@ -278,10 +279,7 @@ class CoefficientsPlotter:
                     color=colors[clr_cnt],
                     edgecolor="black",
                     alpha=0.3,
-                    label=r"${\rm %s}$"
-                    % name.replace(
-                        "_", r"\ "
-                    )
+                    label=r"${\rm %s}$" % name.replace("_", r"\ "),
                 )
                 if clr_cnt == 0:
                     ax.text(
@@ -303,6 +301,95 @@ class CoefficientsPlotter:
         py.tight_layout()
         py.savefig(f"{self.report_folder}/Coeffs_Hist.pdf")
 
+    def plot_single_posterior(self, coeff_name, posteriors, bounds):
+        """ " Plot posteriors histograms
+
+        Parameters
+        ----------
+            coeff_name : str
+                selected coefficient name
+            posteriors : dict
+                posterior distibutions per fit and coefficent
+        """
+        colors = py.rcParams["axes.prop_cycle"].by_key()["color"]
+
+        fig = py.figure(figsize=(15, 10))
+        gs = fig.add_gridspec(5, 1)
+        ax = py.subplot(gs[:-1])
+        ax_ratio = py.subplot(gs[-1])
+
+        labels = []
+        for clr_cnt, (name, posterior) in enumerate(posteriors.items()):
+            solution = posterior[coeff_name]
+            if solution.all() == 0.0:
+                continue
+
+            label = r"${\rm %s}$" % name.replace("_", r"\ ")
+            labels.append(label)
+            vals = bounds[label][coeff_name]
+            ax.hist(
+                solution,
+                bins="fd",
+                density=True,
+                color=colors[clr_cnt],
+                edgecolor="black",
+                alpha=0.3,
+                label=name,
+            )
+            # cl bounds
+            if f"{coeff_name}_2" in bounds[label]:
+                vals2 = bounds[label][f"{coeff_name}_2"]
+                eb = ax_ratio.errorbar(
+                    x=np.array(vals2["mid"]),
+                    y=clr_cnt,
+                    xerr=np.array([vals2["cl95"]]).T,
+                    color=colors[clr_cnt],
+                    fmt=".",
+                    elinewidth=3,
+                )
+                eb[-1][0].set_linestyle(":")
+                ax_ratio.errorbar(
+                    x=np.array(vals2["mid"]),
+                    y=clr_cnt,
+                    xerr=np.array([vals2["cl68"]]).T,
+                    color=colors[clr_cnt],
+                    elinewidth=3,
+                )
+            eb = ax_ratio.errorbar(
+                x=np.array(vals["mid"]),
+                y=clr_cnt,
+                xerr=np.array([vals["cl95"]]).T,
+                color=colors[clr_cnt],
+                fmt=".",
+                elinewidth=3,
+            )
+            eb[-1][0].set_linestyle(":")
+            ax_ratio.errorbar(
+                x=np.array(vals["mid"]),
+                y=clr_cnt,
+                xerr=np.array([vals["cl68"]]).T,
+                color=colors[clr_cnt],
+                elinewidth=3,
+            )
+
+        ax.set_title(r"${" + coeff_name + "}$", fontsize=20)
+        ax.set_ylabel(r"${ \rm Poterior\ distibution\ }$", fontsize=12)
+        ax.legend(labels, loc=0, prop={"size": 20})
+
+        ax_ratio.set_ylabel(r"${ \rm Confidence\ Level\ Bounds }$", fontsize=12)
+        ax_ratio.set_yticklabels([])
+        ax_ratio.set_xlim(ax.get_xlim())
+        ax_ratio.set_ylim(-0.5, clr_cnt + 0.5)
+        ax_ratio.plot(
+            np.zeros(clr_cnt + 3),
+            list(range(-1, len(bounds) + 1)),
+            "k--",
+            linewidth=2,
+            alpha=0.7,
+        )
+        py.tight_layout()
+        py.savefig(f"{self.report_folder}/Coeffs_Hist_{coeff_name}.pdf")
+
     def write_cl_table(self, bounds):
         """
         Write table with CL bounds
@@ -312,9 +399,9 @@ class CoefficientsPlotter:
             bounds: dict
                 confidence level bounds per fit and coefficient
         """
-        pd.set_option('display.max_colwidth', 999)
-        pd.set_option('precision', 2)
+        pd.set_option("display.max_colwidth", 999)
+        pd.set_option("precision", 2)
         for name in bounds:
             df = pd.DataFrame(bounds[name]).T
             caption = f"{name} Confidence Level bounds"
-            rich.print(df.to_latex(column_format='cccccccc', caption=caption))
+            rich.print(df.to_latex(column_format="cccccccc", caption=caption))
