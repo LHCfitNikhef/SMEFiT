@@ -313,7 +313,9 @@ class CoefficientsPlotter:
         """
         colors = py.rcParams["axes.prop_cycle"].by_key()["color"]
 
-        fig = py.figure(figsize=(15, 10))
+        print("I am here")
+
+        fig = py.figure(figsize=(7, 5))
         gs = fig.add_gridspec(5, 1)
         ax = py.subplot(gs[:-1])
         ax_ratio = py.subplot(gs[-1])
@@ -381,12 +383,22 @@ class CoefficientsPlotter:
                 elinewidth=3,
             )
 
-        ax.text(0.05,0.90,r"${ \rm " + coeff_name + "}$", transform=ax.transAxes, fontsize=35)
-        ax.set_ylabel(r"${ \rm Posterior\ distibution\ }$", fontsize=12)
-        ax.legend(labels, loc=1, prop={"size": 20})
+        #ax.text(0.05,0.90,r"${ \rm " + coeff_name + "}$", transform=ax.transAxes, fontsize=35)
+        ax.text(0.03,0.88,r"$c_{\varphi t}$", transform=ax.transAxes, fontsize=37)
+        ax.set_ylabel(r"${ \rm Posterior\ Distibution\ }$", fontsize=20)
 
-        ax_ratio.set_ylabel(r"${ \rm Confidence\ Level\ Bounds }$", fontsize=12)
+
+        #
+        labels=[r"${\rm LO~QCD,~Quadratic~EFT}$",r"${\rm NLO~QCD,~Quadratic~EFT}$"]
+        ax.legend(labels, loc=1, prop={"size": 18})
+        ax.tick_params(color="black", labelsize=18, width=1)
+        ax.set_xticklabels([])
+        ax.set_yticklabels([])
+        ax.set_ylim([0,0.2])
+
+        ax_ratio.set_ylabel(r"${ \rm 95\%~CL }$", fontsize=15)
         ax_ratio.set_yticklabels([])
+        ax_ratio.set_yticks([])
         ax_ratio.set_xlim(ax.get_xlim())
         ax_ratio.set_ylim(-0.5, clr_cnt + 0.5)
         ax_ratio.plot(
@@ -396,6 +408,9 @@ class CoefficientsPlotter:
             linewidth=2,
             alpha=0.7,
         )
+        ax_ratio.tick_params(color="black", labelsize=18, width=1)
+
+        
         py.tight_layout()
         py.savefig(f"{self.report_folder}/Coeffs_Hist_{coeff_name}.pdf")
 
