@@ -327,17 +327,17 @@ class CoefficientsPlotter:
             label = r"${\rm %s}$" % name.replace("_", r"\ ")
             labels.append(label)
             vals = bounds[label][coeff_name]
-            ax.hist(
-                solution,
-                bins="fd",
-                density=True,
-                color=colors[clr_cnt],
-                edgecolor="black",
-                alpha=0.3,
-                label=name,
-            )
             # cl bounds
             if f"{coeff_name}_2" in bounds[label]:
+                solution, solution2 = utils.split_solution(posterior[coeff_name])
+                ax.hist(
+                    solution2,
+                    bins="fd",
+                    density=True,
+                    color=colors[clr_cnt],
+                    edgecolor="black",
+                    alpha=0.3,
+                )
                 vals2 = bounds[label][f"{coeff_name}_2"]
                 eb = ax_ratio.errorbar(
                     x=np.array(vals2["mid"]),
@@ -355,6 +355,15 @@ class CoefficientsPlotter:
                     color=colors[clr_cnt],
                     elinewidth=3,
                 )
+            ax.hist(
+                solution,
+                bins="fd",
+                density=True,
+                color=colors[clr_cnt],
+                edgecolor="black",
+                alpha=0.3,
+                label=name,
+            )
             eb = ax_ratio.errorbar(
                 x=np.array(vals["mid"]),
                 y=clr_cnt,
@@ -372,9 +381,9 @@ class CoefficientsPlotter:
                 elinewidth=3,
             )
 
-        ax.set_title(r"${" + coeff_name + "}$", fontsize=20)
-        ax.set_ylabel(r"${ \rm Poterior\ distibution\ }$", fontsize=12)
-        ax.legend(labels, loc=0, prop={"size": 20})
+        ax.text(0.05,0.90,r"${ \rm " + coeff_name + "}$", transform=ax.transAxes, fontsize=35)
+        ax.set_ylabel(r"${ \rm Posterior\ distibution\ }$", fontsize=12)
+        ax.legend(labels, loc=1, prop={"size": 20})
 
         ax_ratio.set_ylabel(r"${ \rm Confidence\ Level\ Bounds }$", fontsize=12)
         ax_ratio.set_yticklabels([])
