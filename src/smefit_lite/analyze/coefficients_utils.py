@@ -1,6 +1,83 @@
 # # -*- coding: utf-8 -*-
 import numpy as np
 
+def latex_coeff():
+    """
+    Dictr SMEFT oprator with latex name
+    """  # pylint:disable=line-too-long
+    return {
+        # 4H
+        "cQQ1": r"$c_{QQ}^{1}$",
+        "cQQ8": r"$c_{QQ}^{8}$",
+        "cQt1": r"$c_{Qt}^{1}$",
+        "cQt8": r"$c_{Qt}^{8}$",
+        "cQb1": r"$c_{Qb}^{1}$",
+        "cQb8": r"$c_{Qb}^{8}$",
+        "ctt1": r"$c_{tt}^{1}$",
+        "ctb1": r"$c_{tb}^{1}$",
+        "ctb8": r"$c_{tb}^{8}$",
+        "cQtQb1": r"$c_{QtQb}^{1}$",
+        "cQtQb8": r"$c_{QtQb}^{8}$",
+        #"2L2H"
+        "c81qq": r"$c_{qq}^{1,8}$",
+        "c11qq": r"$c_{qq}^{1,1}$",
+        "c83qq": r"$c_{qq}^{8,3}$",
+        "c13qq": r"$c_{qq}^{1,3}$",
+        "c8qt": r"$c_{qt}^{8}$",
+        "c1qt": r"$c_{qt}^{1}$",
+        "c8ut": r"$c_{ut}^{8}$",
+        "c1ut": r"$c_{ut}^{1}$",
+        "c8qu": r"$c_{qu}^{8}$",
+        "c1qu": r"$c_{qu}^{1}$",
+        "c8dt": r"$c_{dt}^{8}$",
+        "c1dt": r"$c_{dt}^{1}$",
+        "c8qd": r"$c_{qd}^{8}$",
+        "c1qd": r"$c_{qd}^{1}$",
+        #"2FB"
+        "ctp": r"$c_{t \varphi}$",
+        "ctG":r"$c_{tG}$",
+        "cbp": r"$c_{b \varphi}$",
+        "ccp": r"$c_{c \varphi}$",
+        "ctap": r"$c_{\tau \varphi}$",
+        "ctW": r"$c_{tW}$",
+        "ctZ": r"$c_{tZ}$",
+        "cbW": r"$c_{bW}$",
+        "cff": r"$c_{ff}$",
+        "cpl1": r"$c_{\varphi l_1}$",
+        "c3pl1": r"$c_{\varphi l_1}^{3}$",
+        "cpl2": r"$c_{\varphi l_2}$",
+        "c3pl2": r"$c_{\varphi l_2}^{3}$",
+        "cpl3": r"$c_{\varphi l_3}$",
+        "c3pl3": r"$c_{\varphi l_3}^{3}$",
+        "cpe": r"$c_{\varphi e}$",
+        "cpmu": r"$c_{\varphi \mu}$",
+        "cpta": r"$c_{\varphi \tau}$",
+        "c3pq": r"$c_{\varphi q}^{3}$",
+        "c3pQ3": r"$c_{\varphi Q}^{3}$",
+        "cpqMi": r"$c_{\varphi q}^{(-)}$",
+        "cpQM": r"$c_{\varphi Q}^{(-)}$",
+        "cpui": r"$c_{\varphi u}$",
+        "cpdi":r"$c_{\varphi d}$",
+        "cpt": r"$c_{\varphi t}$",
+        "cll": r"$c_{ll}$",
+        #"B"
+        "cpG": r"$c_{\varphi G}$",
+        "cpGtil": r"$c_{\widetilde{\varphi G}}$",
+        "cpB": r"$c_{\varphi B}$",
+        "cpBtil": r"$c_{\widetilde{\varphi B}}$",
+        "cpW": r"$c_{\varphi W}$",
+        "cpWtil":r"$c_{\widetilde{\varphi W}}$",
+        "cpWB": r"$c_{\varphi WB}$",
+        "cpWBtil": r"$c_{\widetilde{\varphi WB}}$",
+        "cpd": r"$c_{\varphi d}$",
+        "cpD": r"$c_{\varphi D}$",
+        "cWWW": r"$c_{3W}$",
+        "cWWWtil": r"$c_{\widetilde{3W}}$",
+        # Non Warsaw Redundant dofs, keep them for code
+        # consistency
+        "cW": r"$c_{W}$",
+        "cB":r"$c_{B}$",
+    }
 
 def coeff_by_group():
     """

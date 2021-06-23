@@ -17,8 +17,10 @@ class CoefficientsPlotter:
 
     Parameters
     ----------
-       config : dict
+        config : dict
             configuration dictionary
+        hid_dofs: list
+            list of coefficients to hide
     """
 
     def __init__(self, config, hide_dofs=None):
@@ -28,7 +30,7 @@ class CoefficientsPlotter:
             f"{config['data_path'].parents[0]}/reports/{config['report_name']}"
         )
 
-        coeff_config = utils.coeff_by_group().copy()
+        coeff_config = utils.coeff_by_group()
         temp = config.copy()
         temp.pop("data_path")
         temp.pop("report_name")
@@ -51,6 +53,7 @@ class CoefficientsPlotter:
                     self.coeff_list.append(c)
 
         self.npar = len(self.coeff_list)
+        self.coeff_labels = [utils.latex_coeff()[name] for name in self.coeff_list]
 
     def compute_confidence_level(self, posterior, disjointed_list=None):
         """
@@ -98,10 +101,11 @@ class CoefficientsPlotter:
             bounds: dict
                 confidence level bounds per fit and coefficient
                 Note: double solutions are appended under "2"
+            disjointed_list: list, optional
+                list of coefficients with double solutions
         """
 
-        nrows, ncols = 1, 1
-        py.figure(figsize=(nrows * 10, ncols * 5))
+        py.figure(figsize=(12,5))
         ax = py.subplot(111)
 
         # X-axis
@@ -127,8 +131,6 @@ class CoefficientsPlotter:
                     yerr=np.array([vals["cl95"]]).T,
                     color=colors[i],
                     fmt=".",
-                    elinewidth=1,
-                    label=label,
                 )
                 eb[-1][0].set_linestyle(":")
                 ax.errorbar(
@@ -136,6 +138,8 @@ class CoefficientsPlotter:
                     y=np.array(vals["mid"]),
                     yerr=np.array([vals["cl68"]]).T,
                     color=colors[i],
+                    fmt=".",
+                    label=label,
                 )
                 label = None
                 # double soluton
@@ -146,7 +150,6 @@ class CoefficientsPlotter:
                         yerr=np.array([bounds[name][f"{coeff}_2"]["cl95"]]).T,
                         color=colors[i],
                         fmt=".",
-                        elinewidth=1,
                     )
 
         py.plot(list(range(-1, 200)), np.zeros(201), "k--", alpha=0.7)
@@ -171,7 +174,7 @@ class CoefficientsPlotter:
 
         py.xlim(-1, (self.npar) * 2 - 1)
         py.tick_params(which="major", direction="in", labelsize=13)
-        py.xticks(X, self.coeff_list, rotation=90)
+        py.xticks(X, self.coeff_labels, fontsize=7)
 
         py.legend(loc=0, frameon=False, prop={"size": 13})
         py.tight_layout()
@@ -188,8 +191,8 @@ class CoefficientsPlotter:
         """
 
         py.figure(figsize=(7, 5))
-        df = pd.DataFrame.from_dict(error, orient="index", columns=self.coeff_list).T
-        df.plot(kind="bar", rot=0, width=0.7, figsize=(10, 5))
+        df = pd.DataFrame.from_dict(error, orient="index", columns=self.coeff_labels).T
+        df.plot(kind="bar", rot=0, width=0.6, figsize=(12, 5))
 
         # Hard cutoff
         py.plot(
@@ -199,7 +202,7 @@ class CoefficientsPlotter:
             alpha=0.7,
             lw=2,
         )
-        py.xticks(rotation=90)
+        py.xticks(fontsize=7)
         py.tick_params(axis="y", direction="in", labelsize=15)
         py.yscale("log")
         py.ylabel(
@@ -220,15 +223,15 @@ class CoefficientsPlotter:
                 residuals per fit and coefficient
         """
 
-        py.figure(figsize=(7, 5))
-        df = pd.DataFrame.from_dict(residual, orient="index", columns=self.coeff_list).T
+        py.figure(figsize=(12, 5))
+        df = pd.DataFrame.from_dict(residual, orient="index", columns=self.coeff_labels).T
 
-        ax = df.plot(kind="bar", rot=0, width=0.7, figsize=(10, 5))
+        ax = df.plot(kind="bar", rot=0, width=0.6, figsize=(12, 5))
         ax.plot([-1, self.npar + 1], np.zeros(2), "k--", lw=2)
         ax.plot([-1, self.npar + 1], np.ones(2), "k--", lw=2, alpha=0.3)
         ax.plot([-1, self.npar + 1], -1.0 * np.ones(2), "k--", lw=2, alpha=0.3)
 
-        py.xticks(rotation=90)
+        py.xticks(fontsize=7)
         py.tick_params(axis="y", direction="in", labelsize=15)
         py.ylabel(r"${\rm Residuals\ (68\%)}$", fontsize=15)
         py.ylim(-3, 3)
@@ -236,13 +239,15 @@ class CoefficientsPlotter:
         py.tight_layout()
         py.savefig(f"{self.report_folder}/Coeffs_Residuals.pdf")
 
-    def plot_posteriors(self, posteriors, disjointed_lists=None):
+    def plot_posteriors(self, posteriors, labels, disjointed_lists=None):
         """ " Plot posteriors histograms
 
         Parameters
         ----------
             posteriors : dict
                 posterior distibutions per fit and coefficent
+            labels : list
+                list of fit names
             disjointed_list: list, optional
                 list of coefficients with double solutions
         """  # pylint:disable=import-error,import-outside-toplevel
@@ -256,7 +261,7 @@ class CoefficientsPlotter:
         gs = int(np.sqrt(self.npar)) + 1
         nrows, ncols = gs, gs
         fig = py.figure(figsize=(nrows * 4, ncols * 3))
-        for clr_cnt, (name, posterior) in enumerate(posteriors.items()):
+        for clr_cnt, posterior in enumerate(posteriors.values()):
             for cnt, l in enumerate(self.coeff_list):
                 ax = py.subplot(ncols, nrows, cnt + 1)
                 solution = posterior[l]
@@ -279,13 +284,13 @@ class CoefficientsPlotter:
                     color=colors[clr_cnt],
                     edgecolor="black",
                     alpha=0.3,
-                    label=r"${\rm %s}$" % name.replace("_", r"\ "),
+                    label=labels[clr_cnt],
                 )
                 if clr_cnt == 0:
                     ax.text(
                         0.05,
                         0.85,
-                        r"${\rm {\bf " + l + "}}$",
+                        utils.latex_coeff()[l],
                         transform=ax.transAxes,
                         fontsize=20,
                     )
@@ -301,7 +306,7 @@ class CoefficientsPlotter:
         py.tight_layout()
         py.savefig(f"{self.report_folder}/Coeffs_Hist.pdf")
 
-    def plot_single_posterior(self, coeff_name, posteriors, bounds):
+    def plot_single_posterior(self, coeff_name, posteriors, bounds, labels):
         """ " Plot posteriors histograms
 
         Parameters
@@ -310,24 +315,23 @@ class CoefficientsPlotter:
                 selected coefficient name
             posteriors : dict
                 posterior distibutions per fit and coefficent
+            bounds : dict
+                Confidence level bounds per fit and coefficent
+            labels: list
+                list of fit names
         """
         colors = py.rcParams["axes.prop_cycle"].by_key()["color"]
-
-        print("I am here")
 
         fig = py.figure(figsize=(7, 5))
         gs = fig.add_gridspec(5, 1)
         ax = py.subplot(gs[:-1])
         ax_ratio = py.subplot(gs[-1])
 
-        labels = []
         for clr_cnt, (name, posterior) in enumerate(posteriors.items()):
             solution = posterior[coeff_name]
             if solution.all() == 0.0:
                 continue
-
-            label = r"${\rm %s}$" % name.replace("_", r"\ ")
-            labels.append(label)
+            label = labels[clr_cnt]
             vals = bounds[label][coeff_name]
             # cl bounds
             if f"{coeff_name}_2" in bounds[label]:
@@ -383,18 +387,14 @@ class CoefficientsPlotter:
                 elinewidth=3,
             )
 
-        #ax.text(0.05,0.90,r"${ \rm " + coeff_name + "}$", transform=ax.transAxes, fontsize=35)
-        ax.text(0.03,0.88,r"$c_{\varphi t}$", transform=ax.transAxes, fontsize=37)
+        ax.text(0.03,0.88, utils.latex_coeff()[coeff_name], transform=ax.transAxes, fontsize=35)
         ax.set_ylabel(r"${ \rm Posterior\ Distibution\ }$", fontsize=20)
 
-
-        #
-        labels=[r"${\rm LO~QCD,~Quadratic~EFT}$",r"${\rm NLO~QCD,~Quadratic~EFT}$"]
-        ax.legend(labels, loc=1, prop={"size": 18})
+        ax.legend(labels, loc=1, prop={"size": 10})
         ax.tick_params(color="black", labelsize=18, width=1)
         ax.set_xticklabels([])
+        ax.set_yticks([])
         ax.set_yticklabels([])
-        ax.set_ylim([0,0.2])
 
         ax_ratio.set_ylabel(r"${ \rm 95\%~CL }$", fontsize=15)
         ax_ratio.set_yticklabels([])
@@ -409,8 +409,6 @@ class CoefficientsPlotter:
             alpha=0.7,
         )
         ax_ratio.tick_params(color="black", labelsize=18, width=1)
-
-        
         py.tight_layout()
         py.savefig(f"{self.report_folder}/Coeffs_Hist_{coeff_name}.pdf")
 
