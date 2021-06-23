@@ -14,12 +14,10 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel, anomalous-
         report_name : str
             report directory name
         fits : list
-            list of fits id
-        fit_labels : list, optional
-            list of fit labels
+            list of instances ofsmefit_lite.fit_manager.FitManger
     """
 
-    def __init__(self, data_path, report_name, fits, fit_labels=None):
+    def __init__(self, data_path, report_name, fits):
         """
         Init the data path where the rusults are stored
 
@@ -37,47 +35,8 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel, anomalous-
         self.data_path = pathlib.Path(data_path).absolute()
         self.report_name = report_name
         self.report_folder = f"{self.data_path.parents[0]}/reports/{self.report_name}"
-        if fit_labels is None:
-            self.fit_labels = {}
-            for name in fits:
-                self.fit_labels[name] = r"${\rm %s}$" % name.replace("_", r"\ ")
-        else:
-            self.fit_labels = dict(zip(fits, fit_labels))
-
-    def _load_configurations(self):
-        """Load configuration yaml card for each fit
-
-        Returns
-        -------
-            config: dict
-                configuration cards per fit
-        """
-        import yaml
-
-        config = {}
-        config.update({"data_path": self.data_path, "report_name": self.report_name})
-        for fit in self.fit_labels:
-            with open(f"{self.data_path}/{fit}/{fit}.yaml") as f:
-                temp = yaml.safe_load(f)
-            config.update({fit: temp})
-        return config
-
-    def _load_posteriors(self):
-        """Load posterior distribution for each fit
-
-        Returns
-        -------
-            posterior : dict
-                posterior distibutions per fit and coefficent
-        """
-        import json
-
-        posterior = {}
-        for fit in self.fit_labels:
-            with open(f"{self.data_path}/{fit}/posterior.json") as f:
-                temp = json.load(f)
-            posterior.update({fit: temp})
-        return posterior
+        self.fits = fits
+        self.fit_labels = [fit.label for fit in self.fits]
 
     def _build_report_folder(self):
         """Construct results folder if deos not exists"""
@@ -125,22 +84,26 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel, anomalous-
             ]
 
         # load results and configutation
-        config = self._load_configurations()
-        posteriors = self._load_posteriors()
+        config = {}
+        posteriors = {}
+        for fit in self.fits:
+            config.update({fit.label: fit.load_configuration()})
+            posteriors.update({fit.label: fit.load_posterior()})
 
-        print(2 * "  ", f"Loading: {list(self.fit_labels.keys())}")
+        print(2 * "  ", f"Loading: {[fit.name for fit in self.fits]}")
         self._build_report_folder()
-        coeff_ptl = CoefficientsPlotter(config, hide_dofs=free_dofs["hide"])
+        coeff_ptl = CoefficientsPlotter(config, self.report_folder, hide_dofs=free_dofs["hide"])
 
         # Build the confidence levels
         # They are stored in a dict per fit name and coefficient
         cl_bounds = {}
         disjointed_lists = []
-        for k, name in self.fit_labels.items():
-            disjointed_lists.append(config[k]["double_solution"])
-            propagate_constraints(config[k], posteriors[k])
+        for name in self.fit_labels:
+            disjointed_lists.append(config[name]["double_solution"])
+            propagate_constraints(config[name], posteriors[name])
             cl_bounds[name] = coeff_ptl.compute_confidence_level(
-                posteriors[k], config[k]["double_solution"]
+                posteriors[name], 
+                config[name]["double_solution"]
             )
 
         if "cl_vals" in plot_only:
@@ -153,8 +116,8 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel, anomalous-
             # Uncomment if you want to show the total error bar for double solution,
             # otherwhise show 95% CL for null solutions.
             # add second error if exists
-            for k, name in self.fit_labels.items():
-                for op in list(config[k]["double_solution"]):
+            for name in self.fit_labels:
+                for op in list(config[name]["double_solution"]):
                     temp[name][op]["cl95"] += temp[name][f"{op}_2"]["cl95"]
 
             coeff_ptl.plot_coeffs_bar(
@@ -181,8 +144,8 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel, anomalous-
             print(2 * "  ", "Plotting: Posterior histograms")
             coeff_ptl.plot_posteriors(
                 posteriors,
-                labels=list(self.fit_labels.values()),
-                disjointed_lists=[config[k]["double_solution"] for k in self.fit_labels],
+                labels=self.fit_labels,
+                disjointed_lists=[config[name]["double_solution"] for name in self.fit_labels],
             )
 
         if plot_only in coeff_ptl.coeff_list:
@@ -191,7 +154,7 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel, anomalous-
                 plot_only,
                 posteriors,
                 cl_bounds,
-                labels=list(self.fit_labels.values())
+                labels=self.fit_labels
             )
 
         if "coeff_table" in plot_only:
@@ -202,10 +165,10 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel, anomalous-
 
         if "correlations" in plot_only:
             print(2 * "  ", "Plotting: Correlations")
-            for k in self.fit_labels:
+            for fit in self.fits:
                 corr_plot(
-                    config[k],
-                    posteriors[k],
-                    f"{self.report_folder}/Coeffs_Corr_{k}.pdf",
+                    config[fit.label],
+                    posteriors[fit.label],
+                    f"{self.report_folder}/Coeffs_Corr_{fit.name}.pdf",
                     dofs=free_dofs,
                 )

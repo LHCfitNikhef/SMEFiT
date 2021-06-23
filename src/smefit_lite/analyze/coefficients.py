@@ -19,21 +19,18 @@ class CoefficientsPlotter:
     ----------
         config : dict
             configuration dictionary
+        report_folder : str
+            report folder, where plots are saved
         hid_dofs: list
             list of coefficients to hide
     """
 
-    def __init__(self, config, hide_dofs=None):
+    def __init__(self, config, report_folder, hide_dofs=None):
 
         hide_dofs = hide_dofs or []
-        self.report_folder = (
-            f"{config['data_path'].parents[0]}/reports/{config['report_name']}"
-        )
+        self.report_folder = report_folder
 
         coeff_config = utils.coeff_by_group()
-        temp = config.copy()
-        temp.pop("data_path")
-        temp.pop("report_name")
         self.coeff_list = []
         for group in coeff_config.values():
             for c in group:
@@ -42,13 +39,13 @@ class CoefficientsPlotter:
                 if np.any(
                     [
                         config[k]["coefficients"][c]["fixed"] is True
-                        for k in temp
+                        for k in config
                         if c in config[k]["coefficients"]
                     ]
                 ):
                     continue
                 if c not in self.coeff_list and np.any(
-                    [c in config[k]["coefficients"] for k in temp]
+                    [c in config[k]["coefficients"] for k in config]
                 ):
                     self.coeff_list.append(c)
 
