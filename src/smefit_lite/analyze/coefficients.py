@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 import matplotlib.pyplot as py
-from matplotlib import cm, colors
+from matplotlib import cm
 import rich
 
 

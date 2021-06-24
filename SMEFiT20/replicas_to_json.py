@@ -10,7 +10,7 @@ def convert_to_json(k):
     coeffs = []
     vals = {}
 
-    bar = Bar(r"Reading replica", max=len(os.listdir(k)) - 1)
+    counterbar = Bar(r"Reading replica", max=len(os.listdir(k)) - 1)
     for i, filename in enumerate( os.listdir(k)):
         if filename.startswith("SMEFT_coeffs_") is False or filename.endswith(
             "_0.txt"
@@ -36,8 +36,8 @@ def convert_to_json(k):
 
         # cleaning
         os.remove(f"{k}/{filename}")
-        bar.next()
-    bar.finish()
+        counterbar.next()
+    counterbar.finish()
     return vals
 
 if __name__ == "__main__":
@@ -68,7 +68,7 @@ if __name__ == "__main__":
                     if op != op_dir and op.startswith('O'):
                         temp.pop(op)
                 vals.update(temp)
-        else:    
+        else:
             vals = convert_to_json(fit)
 
         with open(f"{fit}/posterior.json", "w") as f:
