@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-import yaml
 import json
+import yaml
 
 
 class FitManager:

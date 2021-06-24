@@ -35,7 +35,7 @@ class CoefficientsPlotter:
         # in at least one fit included in the report
         self.coeff_list = []
         for group in coeff_config.values():
-            for c in group:
+            for c, _ in group:
                 if c in hide_dofs:
                     continue
                 if np.any(
@@ -52,7 +52,7 @@ class CoefficientsPlotter:
                     self.coeff_list.append(c)
 
         self.npar = len(self.coeff_list)
-        self.coeff_labels = [utils.latex_coeff()[name] for name in self.coeff_list]
+        self.coeff_labels = [utils.latex_coeff(name) for name in self.coeff_list]
 
     def plot_coeffs(self, bounds):
         """
@@ -134,7 +134,7 @@ class CoefficientsPlotter:
 
         py.xlim(-1, (self.npar) * 2 - 1)
         py.tick_params(which="major", direction="in", labelsize=13)
-        py.xticks(X, self.coeff_labels, fontsize=7)
+        py.xticks(X, self.coeff_labels, fontsize=10, rotation=45)
 
         py.legend(loc=0, frameon=False, prop={"size": 13})
         py.tight_layout()
@@ -162,7 +162,7 @@ class CoefficientsPlotter:
             alpha=0.7,
             lw=2,
         )
-        py.xticks(fontsize=7)
+        py.xticks(fontsize=10, rotation=45)
         py.tick_params(axis="y", direction="in", labelsize=15)
         py.yscale("log")
         py.ylabel(
@@ -193,7 +193,7 @@ class CoefficientsPlotter:
         ax.plot([-1, self.npar + 1], np.ones(2), "k--", lw=2, alpha=0.3)
         ax.plot([-1, self.npar + 1], -1.0 * np.ones(2), "k--", lw=2, alpha=0.3)
 
-        py.xticks(fontsize=7)
+        py.xticks(fontsize=10, rotation=45)
         py.tick_params(axis="y", direction="in", labelsize=15)
         py.ylabel(r"${\rm Residuals\ (68\%)}$", fontsize=15)
         py.ylim(-3, 3)
@@ -252,7 +252,7 @@ class CoefficientsPlotter:
                     ax.text(
                         0.05,
                         0.85,
-                        utils.latex_coeff()[l],
+                        utils.latex_coeff(l),
                         transform=ax.transAxes,
                         fontsize=20,
                     )
@@ -352,7 +352,7 @@ class CoefficientsPlotter:
         ax.text(
             0.03,
             0.88,
-            utils.latex_coeff()[coeff_name],
+            utils.latex_coeff(coeff_name),
             transform=ax.transAxes,
             fontsize=35,
         )
@@ -368,10 +368,10 @@ class CoefficientsPlotter:
         ax_ratio.set_yticklabels([])
         ax_ratio.set_yticks([])
         ax_ratio.set_xlim(ax.get_xlim())
-        ax_ratio.set_ylim(-0.5, clr_cnt + 0.5)
+        ax_ratio.set_ylim(-1, len(bounds))
         ax_ratio.plot(
-            np.zeros(clr_cnt + 3),
-            list(range(-1, len(bounds) + 1)),
+            np.zeros(len(bounds)+2),
+            list(range(-1, len(bounds)+1)),
             "k--",
             linewidth=2,
             alpha=0.7,

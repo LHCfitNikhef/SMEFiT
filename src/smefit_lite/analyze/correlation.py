@@ -56,7 +56,7 @@ def plot(config, fit, fig_file, dofs=None):
     correlations = np.array(correlations)[np.array(rows_to_keep), :]
     correlations = np.array(correlations)[:, np.array(rows_to_keep)]
 
-    labels = [latex_coeff()[name] for name in coeff_list]
+    labels = [latex_coeff(name) for name in coeff_list]
     labels = np.array(labels)[np.array(rows_to_keep)]
 
     npar = len(labels)

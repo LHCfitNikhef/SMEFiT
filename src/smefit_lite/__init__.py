@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-import numpy as np
 import subprocess
+import numpy as np
 
 from smefit_lite.coefficients_utils import load_confidence_levels
 
