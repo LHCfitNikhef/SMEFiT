@@ -1,5 +1,6 @@
 # # -*- coding: utf-8 -*-
 import numpy as np
+from numpy.lib.financial import ipmt
 
 
 def coeff_by_group():
@@ -11,7 +12,7 @@ def coeff_by_group():
         B = purely bosonic
     """
     return {
-        "4H":[
+        "4H": [
             ("cQQ1", r"$c_{QQ}^{1}$"),
             ("cQQ8", r"$c_{QQ}^{8}$"),
             ("cQt1", r"$c_{Qt}^{1}$"),
@@ -25,20 +26,20 @@ def coeff_by_group():
             ("cQtQb8", r"$c_{QtQb}^{8}$"),
         ],
         "2L2H": [
-        ("c81qq", r"$c_{qq}^{1,8}$"),
-        ("c11qq", r"$c_{qq}^{1,1}$"),
-        ("c83qq", r"$c_{qq}^{8,3}$"),
-        ("c13qq", r"$c_{qq}^{1,3}$"),
-        ("c8qt", r"$c_{qt}^{8}$"),
-        ("c1qt", r"$c_{qt}^{1}$"),
-        ("c8ut", r"$c_{ut}^{8}$"),
-        ("c1ut", r"$c_{ut}^{1}$"),
-        ("c8qu", r"$c_{qu}^{8}$"),
-        ("c1qu", r"$c_{qu}^{1}$"),
-        ("c8dt", r"$c_{dt}^{8}$"),
-        ("c1dt", r"$c_{dt}^{1}$"),
-        ("c8qd", r"$c_{qd}^{8}$"),
-        ("c1qd", r"$c_{qd}^{1}$"),
+            ("c81qq", r"$c_{qq}^{1,8}$"),
+            ("c11qq", r"$c_{qq}^{1,1}$"),
+            ("c83qq", r"$c_{qq}^{8,3}$"),
+            ("c13qq", r"$c_{qq}^{1,3}$"),
+            ("c8qt", r"$c_{qt}^{8}$"),
+            ("c1qt", r"$c_{qt}^{1}$"),
+            ("c8ut", r"$c_{ut}^{8}$"),
+            ("c1ut", r"$c_{ut}^{1}$"),
+            ("c8qu", r"$c_{qu}^{8}$"),
+            ("c1qu", r"$c_{qu}^{1}$"),
+            ("c8dt", r"$c_{dt}^{8}$"),
+            ("c1dt", r"$c_{dt}^{1}$"),
+            ("c8qd", r"$c_{qd}^{8}$"),
+            ("c1qd", r"$c_{qd}^{1}$"),
         ],
         "2FB": [
             ("ctp", r"$c_{t \varphi}$"),
@@ -46,8 +47,10 @@ def coeff_by_group():
             ("cbp", r"$c_{b \varphi}$"),
             ("ccp", r"$c_{c \varphi}$"),
             ("ctap", r"$c_{\tau \varphi}$"),
+            ("cmup", r"$c_{\mu \varphi}$"),
             ("ctW", r"$c_{tW}$"),
             ("ctZ", r"$c_{tZ}$"),  # Non Warsaw
+            ("ctB", r"$c_{tB}$"),
             ("cbW", r"$c_{bW}$"),
             ("cff", r"$c_{ff}$"),
             ("cpl1", r"$c_{\varphi l_1}$"),
@@ -63,6 +66,8 @@ def coeff_by_group():
             ("c3pQ3", r"$c_{\varphi Q}^{3}$"),
             ("cpqMi", r"$c_{\varphi q}^{(-)}$"),  # Non Warsaw
             ("cpQM", r"$c_{\varphi Q}^{(-)}$"),  # Non Warsaw
+            ("cpqi", r"$c_{\varphi q}^{(1)}$"),
+            ("cpQ", r"$c_{\varphi Q}^{(1)}$"),
             ("cpui", r"$c_{\varphi u}$"),
             ("cpdi", r"$c_{\varphi d}$"),
             ("cpt", r"$c_{\varphi t}$"),
@@ -87,6 +92,7 @@ def coeff_by_group():
         ],
     }
 
+
 def latex_coeff(name):
     """Get the coefficient latex name
     Parameters
@@ -103,6 +109,7 @@ def latex_coeff(name):
             if name == coeff:
                 return latex_name
     return ""
+
 
 def get_confidence_values(dist):
     """
@@ -191,7 +198,7 @@ def compute_confidence_level(posterior, coeff_list, disjointed_list=None):
     return bounds
 
 
-def get_bounds_from_cl(extreme, cl):
+def get_bounds_from_cl(extreme, cl, mid=None):
     """Get the confidence level, mean and error from bounds
 
     Parameters
@@ -200,6 +207,8 @@ def get_bounds_from_cl(extreme, cl):
             list of bounds: min, max
         cl: int
             confidence level value
+        mid: float, optional
+            central value, if not given do average
     Returns
     -------
         cl_vals: dict
@@ -208,8 +217,11 @@ def get_bounds_from_cl(extreme, cl):
     cl_vals = {
         f"low{cl}": extreme[0],
         f"high{cl}": extreme[1],
-        "mid": np.mean(extreme),
+        "mid": np.mean(extreme) if mid is None else mid,
     }
+    # if 95% store mean
+    # if cl == 95:
+    #     cl_vals.update({"mid": np.mean(extreme) if mid is None else mid})
     cl_vals.update(
         {
             f"error{cl}": (cl_vals[f"high{cl}"] - cl_vals[f"low{cl}"]) / 2.0,
@@ -224,18 +236,17 @@ def get_bounds_from_cl(extreme, cl):
     return cl_vals
 
 
-def load_confidence_levels(result, coeff_list, disjointed_list=None):
+def load_confidence_levels(result, coeff_list):
     """
     Load central value, 95 % and 68 % confidence levels and store the result in a dictionary
-    given some inputs results
+    given some inputs results.
+    It assume at least 95cl are given
     Parameters
     ----------
         result : dict
             results per coefficients, at lest '95cl' must be inluded
         coeff_list : list
             coefficients list for which the bounds are computed
-        disjointed_list: list, optional
-            list of coefficients with double solutions
 
     Returns
     -------
@@ -243,14 +254,18 @@ def load_confidence_levels(result, coeff_list, disjointed_list=None):
             confidence level bounds per coefficient
             Note: double solutions are appended under "2"
     """
-
-    disjointed_list = disjointed_list or []
     bounds = {}
     for l in coeff_list:
         if l not in result:
             result[l] = {"95cl": np.zeros(2)}
-        cl_vals = get_bounds_from_cl(result[l]["95cl"], 95)
+        cl_vals = {}
         if "68cl" in result[l]:
             cl_vals.update(get_bounds_from_cl(result[l]["68cl"], 68))
+        else:
+            cl_vals.update(get_bounds_from_cl(np.zeros(2), 68))
+
+        mid = result[l]["mid"] if "mid" in result[l] else None
+        cl_vals.update(get_bounds_from_cl(result[l]["95cl"], 95, mid))
+
         bounds.update({l: cl_vals})
     return bounds

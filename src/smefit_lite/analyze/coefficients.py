@@ -370,8 +370,8 @@ class CoefficientsPlotter:
         ax_ratio.set_xlim(ax.get_xlim())
         ax_ratio.set_ylim(-1, len(bounds))
         ax_ratio.plot(
-            np.zeros(len(bounds)+2),
-            list(range(-1, len(bounds)+1)),
+            np.zeros(len(bounds) + 2),
+            list(range(-1, len(bounds) + 1)),
             "k--",
             linewidth=2,
             alpha=0.7,

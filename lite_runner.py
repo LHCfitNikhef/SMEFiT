@@ -39,5 +39,5 @@ def plot_hist_only(coeff_name):
 
 if __name__ == "__main__":
 
-    #report_test()
+    report_test()
     plot_hist_only('ctG')

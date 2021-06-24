@@ -107,7 +107,6 @@ class Runner:  # pylint:disable=import-outside-toplevel
                 cl_bounds[fit.label] = load_confidence_levels(
                     fit.load_results(),
                     coeff_ptl.coeff_list,
-                    config[fit.label]["double_solution"],
                 )
 
         if "cl_vals" in plot_only:
@@ -137,7 +136,7 @@ class Runner:  # pylint:disable=import-outside-toplevel
             coeff_ptl.plot_residuals_bar(
                 {
                     name: [
-                        cl_bounds[name][op]["mid"] / cl_bounds[name][op]["error95"]
+                        cl_bounds[name][op]["mid"] / cl_bounds[name][op]["error68"]
                         for op in coeff_ptl.coeff_list
                     ]
                     for name in cl_bounds

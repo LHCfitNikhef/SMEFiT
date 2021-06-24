@@ -1,0 +1,57 @@
+# Result ID (see Result ID Naming Convention in README)
+resultID: FitMaker_GLOBAL_NLO_NHO
+
+# pQCD order (LO or NLO)
+order: NLO
+
+# SMEFT Expansion Order (NHO = Lambda^-2 , HO = Lambda^-4)
+HOlambda: NHO
+
+# Coefficients to fit
+coefficients:
+  cpWB: {'fixed': False, 'value': 0.0}
+  cpD: {'fixed': False, 'value': 0.0}
+  cll: {'fixed': False, 'value': 0.0}
+  c3pq: {'fixed': False, 'value': 0.0}
+  c3pQ3: {'fixed': False, 'value': 0.0}
+  cpdi: {'fixed': False, 'value': 0.0}
+  cpui: {'fixed': False, 'value': 0.0}
+  cpd: {'fixed': False, 'value': 0.0}
+  cpG: {'fixed': False, 'value': 0.0}
+  cpW: {'fixed': False, 'value': 0.0}
+  cpB: {'fixed': False, 'value': 0.0}
+  cWWWW: {'fixed': False, 'value': 0.0}
+  cG: {'fixed': False, 'value': 0.0}
+  ctap: {'fixed': False, 'value': 0.0}
+  cmup: {'fixed': False, 'value': 0.0}
+  cbp: {'fixed': False, 'value': 0.0}
+  ctp: {'fixed': False, 'value': 0.0}
+  cpt: {'fixed': False, 'value': 0.0}
+  ctG: {'fixed': False, 'value': 0.0}
+  ctW: {'fixed': False, 'value': 0.0}
+  c13qq: {'fixed': False, 'value': 0.0}
+  c83qq: {'fixed': False, 'value': 0.0}
+  c81qq: {'fixed': False, 'value': 0.0}
+  c8qu: {'fixed': False, 'value': 0.0}
+  c8qd: {'fixed': False, 'value': 0.0}
+  c8tq: {'fixed': False, 'value': 0.0}
+  c8tu: {'fixed': False, 'value': 0.0}
+  c8td: {'fixed': False, 'value': 0.0}
+
+  # All equal due to Flavor assumptions as in SMEFTiT2.0
+  c3pl1: {'fixed': False, 'value': 0.0}
+  c3pl2: {'fixed': ['c3pl1'], 'value': 1.0}
+  c3pl3: {'fixed': ['c3pl1'], 'value': 1.0}
+  cpl1:  {'fixed': False, 'value': 0.0}
+  cpl2: {'fixed': ['cpl1'], 'value': 1.0}
+  cpl3: {'fixed': ['cpl1'], 'value': 1.0}
+  cpe:  {'fixed': False, 'value': 0.0}
+  cpmu: {'fixed': ['cpe'], 'value': 1.0}
+  cpta: {'fixed': ['cpe'], 'value': 1.0}
+
+  # Do not match SMEFTiT2.0 rotations
+  cpqi:  {'fixed': False, 'value': 0.0}
+  cpQ:  {'fixed': False, 'value': 0.0}
+  ctB:  {'fixed': False, 'value': 0.0}
+
+double_solution: []
