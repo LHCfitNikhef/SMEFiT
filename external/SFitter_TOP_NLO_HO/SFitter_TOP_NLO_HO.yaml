@@ -1,0 +1,42 @@
+# Result ID (see Result ID Naming Convention in README)
+resultID: SFitter_TOP_NLO_HO
+
+# pQCD order (LO or NLO)
+order: NLO
+
+# SMEFT Expansion Order (NHO = Lambda^-2 , HO = Lambda^-4)
+HOlambda: HO
+
+# Coefficients to fit
+coefficients:
+
+  # TOP COEFFICIENTS
+  # They all match with SMEFiT2.0 definition
+  ctG: {'fixed': False, 'value': 0.0}
+  c81qq: {'fixed': False, 'value': 0.0}
+  c83qq: {'fixed': False, 'value': 0.0}
+  c8tq: {'fixed': False, 'value': 0.0}
+  c8qu: {'fixed': False, 'value': 0.0}
+  c8qd: {'fixed': False, 'value': 0.0}
+  c8tu: {'fixed': False, 'value': 0.0}
+  c8td: {'fixed': False, 'value': 0.0}
+  c11qq: {'fixed': False, 'value': 0.0}
+  c13qq: {'fixed': False, 'value': 0.0}
+  c1qt: {'fixed': False, 'value': 0.0}
+  c1qu: {'fixed': False, 'value': 0.0}
+  c1qd: {'fixed': False, 'value': 0.0}
+  c1tu: {'fixed': False, 'value': 0.0}
+  c1td: {'fixed': False, 'value': 0.0}
+  cbW: {'fixed': False, 'value': 0.0}
+  ctW: {'fixed': False, 'value': 0.0}
+  ctZ: {'fixed': False, 'value': 0.0}
+  cpt: {'fixed': False, 'value': 0.0}
+  cptb: {'fixed': False, 'value': 0.0} #Not part of SMEFiT2.0
+  c3pQ3: {'fixed': False, 'value': 0.0}
+  c3pQM: {'fixed': False, 'value': 0.0}
+
+
+double_solution: []
+
+
+
