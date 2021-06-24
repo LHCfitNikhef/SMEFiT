@@ -3,7 +3,9 @@ import numpy as np
 import pandas as pd
 
 import matplotlib.pyplot as py
+from matplotlib import cm, colors
 import rich
+
 
 from .. import coefficients_utils as utils
 
@@ -38,7 +40,7 @@ class CoefficientsPlotter:
             for c, _ in group:
                 if c in hide_dofs:
                     continue
-                if np.any(
+                if np.all(
                     [
                         config[k]["coefficients"][c]["fixed"] is True
                         for k in config
@@ -72,8 +74,7 @@ class CoefficientsPlotter:
         X = 2 * np.array(range(self.npar))
         # Spacing between fit results
         val = np.linspace(-0.1 * len(bounds), 0.1 * len(bounds), len(bounds))
-        colors = py.rcParams["axes.prop_cycle"].by_key()["color"]
-
+        colors = cm.get_cmap('tab20')
         # loop over fits
         for i, name in enumerate(bounds):
             for cnt, coeff in enumerate(self.coeff_list):
@@ -85,19 +86,17 @@ class CoefficientsPlotter:
                 vals = bounds[name][coeff]
                 if vals["error95"] == 0.0:
                     continue
-                eb = ax.errorbar(
+                ax.errorbar(
                     X[cnt] + val[i],
                     y=np.array(vals["mid"]),
                     yerr=np.array([vals["cl95"]]).T,
-                    color=colors[i],
-                    fmt=".",
+                    color=colors(2*i+1),
                 )
-                eb[-1][0].set_linestyle(":")
                 ax.errorbar(
                     X[cnt] + val[i],
                     y=np.array(vals["mid"]),
                     yerr=np.array([vals["cl68"]]).T,
-                    color=colors[i],
+                    color=colors(2*i),
                     fmt=".",
                     label=label,
                 )
@@ -108,7 +107,13 @@ class CoefficientsPlotter:
                         X[cnt] + val[i],
                         y=np.array(bounds[name][f"{coeff}_2"]["mid"]),
                         yerr=np.array([bounds[name][f"{coeff}_2"]["cl95"]]).T,
-                        color=colors[i],
+                        color=colors(2*i+1),
+                    )
+                    ax.errorbar(
+                        X[cnt] + val[i],
+                        y=np.array(bounds[name][f"{coeff}_2"]["mid"]),
+                        yerr=np.array([bounds[name][f"{coeff}_2"]["cl68"]]).T,
+                        color=colors(2*i),
                         fmt=".",
                     )
 
@@ -282,7 +287,9 @@ class CoefficientsPlotter:
             labels: list
                 list of fit names
         """
-        colors = py.rcParams["axes.prop_cycle"].by_key()["color"]
+        #colors = py.rcParams["axes.prop_cycle"].by_key()["color"]
+        colors = cm.get_cmap('tab20')
+
 
         fig = py.figure(figsize=(7, 5))
         gs = fig.add_gridspec(5, 1)
@@ -302,51 +309,49 @@ class CoefficientsPlotter:
                     solution2,
                     bins="fd",
                     density=True,
-                    color=colors[clr_cnt],
+                    color=colors(2*clr_cnt),
                     edgecolor="black",
                     alpha=0.3,
                 )
                 vals2 = bounds[label][f"{coeff_name}_2"]
-                eb = ax_ratio.errorbar(
+                ax_ratio.errorbar(
                     x=np.array(vals2["mid"]),
                     y=clr_cnt,
                     xerr=np.array([vals2["cl95"]]).T,
-                    color=colors[clr_cnt],
-                    fmt=".",
+                    color=colors(2*clr_cnt+1),
                     elinewidth=3,
                 )
-                eb[-1][0].set_linestyle(":")
                 ax_ratio.errorbar(
                     x=np.array(vals2["mid"]),
                     y=clr_cnt,
                     xerr=np.array([vals2["cl68"]]).T,
-                    color=colors[clr_cnt],
+                    color=colors(2*clr_cnt),
                     elinewidth=3,
+                    fmt=".",
                 )
             ax.hist(
                 solution,
                 bins="fd",
                 density=True,
-                color=colors[clr_cnt],
+                color=colors(2*clr_cnt),
                 edgecolor="black",
                 alpha=0.3,
                 label=name,
             )
-            eb = ax_ratio.errorbar(
+            ax_ratio.errorbar(
                 x=np.array(vals["mid"]),
                 y=clr_cnt,
                 xerr=np.array([vals["cl95"]]).T,
-                color=colors[clr_cnt],
-                fmt=".",
+                color=colors(2*clr_cnt+1),
                 elinewidth=3,
             )
-            eb[-1][0].set_linestyle(":")
             ax_ratio.errorbar(
                 x=np.array(vals["mid"]),
                 y=clr_cnt,
                 xerr=np.array([vals["cl68"]]).T,
-                color=colors[clr_cnt],
+                color=colors(2*clr_cnt),
                 elinewidth=3,
+                fmt=".",
             )
 
         ax.text(

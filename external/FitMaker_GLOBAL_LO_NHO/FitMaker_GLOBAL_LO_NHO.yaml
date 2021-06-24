@@ -1,8 +1,8 @@
 # Result ID (see Result ID Naming Convention in README)
-resultID: FitMaker_INDIV_NLO_NHO
+resultID: FitMaker_GLOBAL_LO_NHO
 
 # pQCD order (LO or NLO)
-order: NLO
+order: LO
 
 # SMEFT Expansion Order (NHO = Lambda^-2 , HO = Lambda^-4)
 HOlambda: NHO

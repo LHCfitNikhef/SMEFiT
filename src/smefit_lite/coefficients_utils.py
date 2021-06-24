@@ -1,7 +1,5 @@
 # # -*- coding: utf-8 -*-
 import numpy as np
-from numpy.lib.financial import ipmt
-
 
 def coeff_by_group():
     """
