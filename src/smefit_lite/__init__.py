@@ -2,45 +2,39 @@
 import numpy as np
 import subprocess
 
+from smefit_lite.coefficients_utils import load_confidence_levels
 
-class Runner:  # pylint:disable=import-error,import-outside-toplevel, anomalous-backslash-in-string
+
+class Runner:  # pylint:disable=import-outside-toplevel
     """
     Runner class for smefit lite
 
     Parameters
     ----------
-        data_path : str
-            data path
-        report_name : str
-            report directory name
+        report_folder : pathlib.Path
+            folder where the report will be located
         fits : list
             list of instances ofsmefit_lite.fit_manager.FitManger
     """
 
-    def __init__(self, data_path, report_name, fits):
-        """
-        Init the data path where the rusults are stored
-
-        """
-        import pathlib
-
-        print(20 * "  ", " ____  __  __ _____ _____ _ _____ ")
-        print(20 * "  ", "/ ___||  \/  | ____|  ___(_)_   _|")
-        print(20 * "  ", "\___ \| |\/| |  _| | |_  | | | |  ")
-        print(20 * "  ", " ___) | |  | | |___|  _| | | | |  ")
-        print(20 * "  ", "|____/|_|  |_|_____|_|   |_| |_|  ")
+    def __init__(self, report_folder, fits):
+        print(20 * "  ", r" ____  __  __ _____ _____ _ _____ ")
+        print(20 * "  ", r"/ ___||  \/  | ____|  ___(_)_   _|")
+        print(20 * "  ", r"\___ \| |\/| |  _| | |_  | | | |  ")
+        print(20 * "  ", r" ___) | |  | | |___|  _| | | | |  ")
+        print(20 * "  ", r"|____/|_|  |_|_____|_|   |_| |_|  ")
         print()
         print(18 * "  ", "A Standard Model Effective Field Theory Fitter")
 
-        self.data_path = pathlib.Path(data_path).absolute()
-        self.report_name = report_name
-        self.report_folder = f"{self.data_path.parents[0]}/reports/{self.report_name}"
+        self.report_folder = report_folder
         self.fits = fits
         self.fit_labels = [fit.label for fit in self.fits]
+        self._build_report_folder()
 
     def _build_report_folder(self):
         """Construct results folder if deos not exists"""
-        subprocess.call(f"mkdir -p {self.data_path.parents[0]}/reports/", shell=True)
+        # Suppose the report folder exist ...
+        # subprocess.call(f"mkdir -p {self.data_path.parents[0]}/reports/", shell=True)
 
         # Clean output folder if exists
         subprocess.call(f"rm -rf {self.report_folder}", shell=True)
@@ -65,6 +59,7 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel, anomalous-
 
         from .analyze.correlation import plot as corr_plot
         from .analyze.coefficients import CoefficientsPlotter
+        from .coefficients_utils import compute_confidence_level
         from .fixed_dofs import propagate_constraints
 
         # global mathplotlib settings
@@ -83,32 +78,41 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel, anomalous-
                 "correlations",
             ]
 
-        # load results and configutation
+        # load configurations dict
+        print(2 * "  ", f"Loading: {[fit.name for fit in self.fits]}")
         config = {}
-        posteriors = {}
         for fit in self.fits:
             config.update({fit.label: fit.load_configuration()})
-            posteriors.update({fit.label: fit.load_posterior()})
 
-        print(2 * "  ", f"Loading: {[fit.name for fit in self.fits]}")
-        self._build_report_folder()
-        coeff_ptl = CoefficientsPlotter(config, self.report_folder, hide_dofs=free_dofs["hide"])
+        coeff_ptl = CoefficientsPlotter(
+            config, self.report_folder, hide_dofs=free_dofs["hide"]
+        )
 
-        # Build the confidence levels
-        # They are stored in a dict per fit name and coefficient
+        # compute confidence level bounds
+        posteriors = {}
         cl_bounds = {}
-        disjointed_lists = []
-        for name in self.fit_labels:
-            disjointed_lists.append(config[name]["double_solution"])
-            propagate_constraints(config[name], posteriors[name])
-            cl_bounds[name] = coeff_ptl.compute_confidence_level(
-                posteriors[name], 
-                config[name]["double_solution"]
-            )
+        for fit in self.fits:
+            if fit.has_posterior:
+                # Load the posteriors and build the confidence levels
+                # They are stored in a dict per fit label and coefficient
+                posteriors.update({fit.label: fit.load_posterior()})
+                propagate_constraints(config[fit.label], posteriors[fit.label])
+                cl_bounds[fit.label] = compute_confidence_level(
+                    posteriors[fit.label],
+                    coeff_ptl.coeff_list,
+                    config[fit.label]["double_solution"],
+                )
+            else:
+                # If not posteriors are given, just use the results
+                cl_bounds[fit.label] = load_confidence_levels(
+                    fit.load_results(),
+                    coeff_ptl.coeff_list,
+                    config[fit.label]["double_solution"],
+                )
 
         if "cl_vals" in plot_only:
             print(2 * "  ", "Plotting: Central values and Confidence Level bounds")
-            coeff_ptl.plot_coeffs(cl_bounds, disjointed_lists)
+            coeff_ptl.plot_coeffs(cl_bounds)
 
         if "cl_bars" in plot_only:
             print(2 * "  ", "Plotting: Confidence Level error bars")
@@ -133,7 +137,7 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel, anomalous-
             coeff_ptl.plot_residuals_bar(
                 {
                     name: [
-                        cl_bounds[name][op]["mid"] / cl_bounds[name][op]["error68"]
+                        cl_bounds[name][op]["mid"] / cl_bounds[name][op]["error95"]
                         for op in coeff_ptl.coeff_list
                     ]
                     for name in cl_bounds
@@ -145,16 +149,15 @@ class Runner:  # pylint:disable=import-error,import-outside-toplevel, anomalous-
             coeff_ptl.plot_posteriors(
                 posteriors,
                 labels=self.fit_labels,
-                disjointed_lists=[config[name]["double_solution"] for name in self.fit_labels],
+                disjointed_lists=[
+                    config[fit.label]["double_solution"] for fit in self.fits
+                ],
             )
 
         if plot_only in coeff_ptl.coeff_list:
             print(2 * "  ", f"Plotting: {plot_only} Posterior histograms")
             coeff_ptl.plot_single_posterior(
-                plot_only,
-                posteriors,
-                cl_bounds,
-                labels=self.fit_labels
+                plot_only, posteriors, cl_bounds, labels=self.fit_labels
             )
 
         if "coeff_table" in plot_only:

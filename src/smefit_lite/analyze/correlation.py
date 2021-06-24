@@ -6,7 +6,7 @@ import matplotlib.pyplot as py
 from matplotlib import colors as matcolors
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-from .coefficients_utils import latex_coeff
+from ..coefficients_utils import latex_coeff
 
 
 def plot(config, fit, fig_file, dofs=None):
@@ -56,8 +56,8 @@ def plot(config, fit, fig_file, dofs=None):
     correlations = np.array(correlations)[np.array(rows_to_keep), :]
     correlations = np.array(correlations)[:, np.array(rows_to_keep)]
 
-    labels = [ latex_coeff()[name] for name in coeff_list ]
-    labels =  np.array(labels)[np.array(rows_to_keep)]
+    labels = [latex_coeff()[name] for name in coeff_list]
+    labels = np.array(labels)[np.array(rows_to_keep)]
 
     npar = len(labels)
 

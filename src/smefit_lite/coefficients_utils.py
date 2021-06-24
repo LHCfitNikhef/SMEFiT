@@ -1,10 +1,11 @@
 # # -*- coding: utf-8 -*-
 import numpy as np
 
+
 def latex_coeff():
     """
-    Dictr SMEFT oprator with latex name
-    """  # pylint:disable=line-too-long
+    Dictionary SMEFT operators with latex names
+    """
     return {
         # 4H
         "cQQ1": r"$c_{QQ}^{1}$",
@@ -18,7 +19,7 @@ def latex_coeff():
         "ctb8": r"$c_{tb}^{8}$",
         "cQtQb1": r"$c_{QtQb}^{1}$",
         "cQtQb8": r"$c_{QtQb}^{8}$",
-        #"2L2H"
+        # "2L2H"
         "c81qq": r"$c_{qq}^{1,8}$",
         "c11qq": r"$c_{qq}^{1,1}$",
         "c83qq": r"$c_{qq}^{8,3}$",
@@ -33,14 +34,14 @@ def latex_coeff():
         "c1dt": r"$c_{dt}^{1}$",
         "c8qd": r"$c_{qd}^{8}$",
         "c1qd": r"$c_{qd}^{1}$",
-        #"2FB"
+        # "2FB"
         "ctp": r"$c_{t \varphi}$",
-        "ctG":r"$c_{tG}$",
+        "ctG": r"$c_{tG}$",
         "cbp": r"$c_{b \varphi}$",
         "ccp": r"$c_{c \varphi}$",
         "ctap": r"$c_{\tau \varphi}$",
         "ctW": r"$c_{tW}$",
-        "ctZ": r"$c_{tZ}$",
+        "ctZ": r"$c_{tZ}$",  # Non Warsaw
         "cbW": r"$c_{bW}$",
         "cff": r"$c_{ff}$",
         "cpl1": r"$c_{\varphi l_1}$",
@@ -54,30 +55,30 @@ def latex_coeff():
         "cpta": r"$c_{\varphi \tau}$",
         "c3pq": r"$c_{\varphi q}^{3}$",
         "c3pQ3": r"$c_{\varphi Q}^{3}$",
-        "cpqMi": r"$c_{\varphi q}^{(-)}$",
-        "cpQM": r"$c_{\varphi Q}^{(-)}$",
+        "cpqMi": r"$c_{\varphi q}^{(-)}$",  # Non Warsaw
+        "cpQM": r"$c_{\varphi Q}^{(-)}$",  # Non Warsaw
         "cpui": r"$c_{\varphi u}$",
-        "cpdi":r"$c_{\varphi d}$",
+        "cpdi": r"$c_{\varphi d}$",
         "cpt": r"$c_{\varphi t}$",
+        "cptb": r"$c_{\varphi tb}$",  # Non SMEFiT2.0
         "cll": r"$c_{ll}$",
-        #"B"
+        # "B"
         "cpG": r"$c_{\varphi G}$",
-        "cpGtil": r"$c_{\widetilde{\varphi G}}$",
+        "cpGtil": r"$c_{\widetilde{\varphi G}}$",  # Non SMEFiT2.0
         "cpB": r"$c_{\varphi B}$",
-        "cpBtil": r"$c_{\widetilde{\varphi B}}$",
+        "cpBtil": r"$c_{\widetilde{\varphi B}}$",  # Non SMEFiT2.0
         "cpW": r"$c_{\varphi W}$",
-        "cpWtil":r"$c_{\widetilde{\varphi W}}$",
+        "cpWtil": r"$c_{\widetilde{\varphi W}}$",  # Non SMEFiT2.0
         "cpWB": r"$c_{\varphi WB}$",
-        "cpWBtil": r"$c_{\widetilde{\varphi WB}}$",
+        "cpWBtil": r"$c_{\widetilde{\varphi WB}}$",  # Non SMEFiT2.0
         "cpd": r"$c_{\varphi d}$",
         "cpD": r"$c_{\varphi D}$",
-        "cWWW": r"$c_{3W}$",
-        "cWWWtil": r"$c_{\widetilde{3W}}$",
-        # Non Warsaw Redundant dofs, keep them for code
-        # consistency
-        "cW": r"$c_{W}$",
-        "cB":r"$c_{B}$",
+        "cWWW": r"$c_{WWW}$",
+        "cWWWtil": r"$c_{\widetilde{WWW}}$",
+        "cW": r"$c_{W}$",  # Non Warsaw
+        "cB": r"$c_{B}$",  # Non Warsaw
     }
+
 
 def coeff_by_group():
     """
@@ -86,7 +87,7 @@ def coeff_by_group():
         2L2H = 2-light-2-heavy
         2FB = 2-fermion + boson
         B = purely bosonic
-    """  # pylint:disable=line-too-long
+    """
     return {
         "4H": [
             "cQQ1",
@@ -143,6 +144,7 @@ def coeff_by_group():
             "cpui",
             "cpdi",
             "cpt",
+            "cptb",
             "cll",
         ],
         "B": [
@@ -164,7 +166,7 @@ def coeff_by_group():
     }
 
 
-def get_conficence_values(dist):
+def get_confidence_values(dist):
     """
     Get confidence level bounds given the distribution
     """
@@ -204,8 +206,113 @@ def split_solution(full_solution):
 def get_double_cls(full_solution):
     solution1, solution2 = split_solution(full_solution)
     # First solution
-    cl_vals_1 = get_conficence_values(solution1)
+    cl_vals_1 = get_confidence_values(solution1)
     # Second solution
-    cl_vals_2 = get_conficence_values(solution2)
+    cl_vals_2 = get_confidence_values(solution2)
 
     return cl_vals_1, cl_vals_2
+
+
+def compute_confidence_level(posterior, coeff_list, disjointed_list=None):
+    """
+    Compute central value, 95 % and 68 % confidence levels and store the result in a dictionary
+    given a posterior distribution
+    Parameters
+    ----------
+        posterior : dict
+            posterior distibutions per coefficent
+        coeff_list : list
+            coefficients list for which the bounds are computed
+        disjointed_list: list, optional
+            list of coefficients with double solutions
+
+    Returns
+    -------
+        bounds: dict
+            confidence level bounds per coefficient
+            Note: double solutions are appended under "2"
+    """
+
+    disjointed_list = disjointed_list or []
+    bounds = {}
+    for l in coeff_list:
+        if l not in posterior:
+            posterior[l] = np.array(np.zeros(len(list(posterior.values())[0])))
+        posterior[l] = np.array(posterior[l])
+        cl_vals = {}
+        # double soultion
+        if l in disjointed_list:
+            cl_vals1, cl_vals2 = get_double_cls(posterior[l])
+            bounds.update({l: cl_vals1})
+            bounds.update({f"{l}_2": cl_vals2})
+        # single solution
+        else:
+            cl_vals = get_confidence_values(posterior[l])
+            bounds.update({l: cl_vals})
+
+    return bounds
+
+
+def get_bounds_from_cl(extreme, cl):
+    """Get the confidence level, mean and error from bounds
+
+    Parameters
+    ----------
+        extereme: np.narray
+            list of bounds: min, max
+        cl: int
+            confidence level value
+    Returns
+    -------
+        cl_vals: dict
+            Confidence level dictionary
+    """
+    cl_vals = {
+        f"low{cl}": extreme[0],
+        f"high{cl}": extreme[1],
+        "mid": np.mean(extreme),
+    }
+    cl_vals.update(
+        {
+            f"error{cl}": (cl_vals[f"high{cl}"] - cl_vals[f"low{cl}"]) / 2.0,
+            f"cl{cl}": np.array(
+                [
+                    cl_vals["mid"] - cl_vals[f"low{cl}"],
+                    cl_vals[f"high{cl}"] - cl_vals["mid"],
+                ]
+            ),
+        }
+    )
+    return cl_vals
+
+
+def load_confidence_levels(result, coeff_list, disjointed_list=None):
+    """
+    Load central value, 95 % and 68 % confidence levels and store the result in a dictionary
+    given some inputs results
+    Parameters
+    ----------
+        result : dict
+            results per coefficients, at lest '95cl' must be inluded
+        coeff_list : list
+            coefficients list for which the bounds are computed
+        disjointed_list: list, optional
+            list of coefficients with double solutions
+
+    Returns
+    -------
+        bounds: dict
+            confidence level bounds per coefficient
+            Note: double solutions are appended under "2"
+    """
+
+    disjointed_list = disjointed_list or []
+    bounds = {}
+    for l in coeff_list:
+        if l not in result:
+            result[l] = {"95cl": np.zeros(2)}
+        cl_vals = get_bounds_from_cl(result[l]["95cl"], 95)
+        if "68cl" in result[l]:
+            cl_vals.update(get_bounds_from_cl(result[l]["68cl"], 68))
+        bounds.update({l: cl_vals})
+    return bounds

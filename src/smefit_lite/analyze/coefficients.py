@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as py
 import rich
 
-from . import coefficients_utils as utils
+from .. import coefficients_utils as utils
 
 
 class CoefficientsPlotter:
@@ -31,6 +31,8 @@ class CoefficientsPlotter:
         self.report_folder = report_folder
 
         coeff_config = utils.coeff_by_group()
+        # coeff list contains the coefficents that are fitted
+        # in at least one fit included in the report
         self.coeff_list = []
         for group in coeff_config.values():
             for c in group:
@@ -52,44 +54,7 @@ class CoefficientsPlotter:
         self.npar = len(self.coeff_list)
         self.coeff_labels = [utils.latex_coeff()[name] for name in self.coeff_list]
 
-    def compute_confidence_level(self, posterior, disjointed_list=None):
-        """
-        Compute 95 % and 68 % confidence levels and store the result in a dictionary
-
-        Parameters
-        ----------
-            posterior : dict
-                posterior distibutions per coefficent
-            disjointed_list: list, optional
-                list of coefficients with double solutions
-
-        Returns
-        -------
-            bounds: dict
-                confidence level bounds per coefficient
-                Note: double solutions are appended under "2"
-        """
-
-        disjointed_list = disjointed_list or []
-        bounds = {}
-        for l in self.coeff_list:
-            if l not in posterior:
-                posterior[l] = np.array(np.zeros(len(list(posterior.values())[0])))
-            posterior[l] = np.array(posterior[l])
-            cl_vals = {}
-            # double soultion
-            if l in disjointed_list:
-                cl_vals1, cl_vals2 = utils.get_double_cls(posterior[l])
-                bounds.update({l: cl_vals1})
-                bounds.update({f"{l}_2": cl_vals2})
-            # single solution
-            else:
-                cl_vals = utils.get_conficence_values(posterior[l])
-                bounds.update({l: cl_vals})
-
-        return bounds
-
-    def plot_coeffs(self, bounds, disjointed_lists):
+    def plot_coeffs(self, bounds):
         """
         Plot central value + 95% CL errors
 
@@ -98,11 +63,9 @@ class CoefficientsPlotter:
             bounds: dict
                 confidence level bounds per fit and coefficient
                 Note: double solutions are appended under "2"
-            disjointed_list: list, optional
-                list of coefficients with double solutions
         """
 
-        py.figure(figsize=(12,5))
+        py.figure(figsize=(12, 6))
         ax = py.subplot(111)
 
         # X-axis
@@ -140,7 +103,7 @@ class CoefficientsPlotter:
                 )
                 label = None
                 # double soluton
-                if coeff in disjointed_lists[i]:
+                if f"{coeff}_2" in bounds[name]:
                     ax.errorbar(
                         X[cnt] + val[i],
                         y=np.array(bounds[name][f"{coeff}_2"]["mid"]),
@@ -152,7 +115,7 @@ class CoefficientsPlotter:
         py.plot(list(range(-1, 200)), np.zeros(201), "k--", alpha=0.7)
 
         py.yscale("symlog", linthresh=1e-1)
-        py.ylim(-200, 200)
+        py.ylim(-400, 400)
         py.yticks(
             [-100, -10, -1, -0.1, 0, 0.1, 1, 10, 100],
             [
@@ -187,7 +150,7 @@ class CoefficientsPlotter:
                confidence level bounds per fit and coefficient
         """
 
-        py.figure(figsize=(7, 5))
+        py.figure(figsize=(12, 6))
         df = pd.DataFrame.from_dict(error, orient="index", columns=self.coeff_labels).T
         df.plot(kind="bar", rot=0, width=0.6, figsize=(12, 5))
 
@@ -220,8 +183,10 @@ class CoefficientsPlotter:
                 residuals per fit and coefficient
         """
 
-        py.figure(figsize=(12, 5))
-        df = pd.DataFrame.from_dict(residual, orient="index", columns=self.coeff_labels).T
+        py.figure(figsize=(12, 6))
+        df = pd.DataFrame.from_dict(
+            residual, orient="index", columns=self.coeff_labels
+        ).T
 
         ax = df.plot(kind="bar", rot=0, width=0.6, figsize=(12, 5))
         ax.plot([-1, self.npar + 1], np.zeros(2), "k--", lw=2)
@@ -247,7 +212,7 @@ class CoefficientsPlotter:
                 list of fit names
             disjointed_list: list, optional
                 list of coefficients with double solutions
-        """  # pylint:disable=import-error,import-outside-toplevel
+        """  # pylint:disable=import-outside-toplevel
         import warnings
         import matplotlib
 
@@ -384,7 +349,13 @@ class CoefficientsPlotter:
                 elinewidth=3,
             )
 
-        ax.text(0.03,0.88, utils.latex_coeff()[coeff_name], transform=ax.transAxes, fontsize=35)
+        ax.text(
+            0.03,
+            0.88,
+            utils.latex_coeff()[coeff_name],
+            transform=ax.transAxes,
+            fontsize=35,
+        )
         ax.set_ylabel(r"${ \rm Posterior\ Distibution\ }$", fontsize=20)
 
         ax.legend(labels, loc=1, prop={"size": 10})
