@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+from numpy.core.fromnumeric import mean
 
 
-def propagate_constraints(config, posterior):
+def propagate_constraints(config, posterior, is_individual=False):
     """This fuctions construct the posterior ditributions for the
     fixed coefficints
 
@@ -12,6 +13,8 @@ def propagate_constraints(config, posterior):
             configuration card
         posterior : dict
             posterior distributions
+        is_individual: bool, optional
+            if the posterior are individual perform a convolution of replicas
 
     Returns
     -------
@@ -28,5 +31,17 @@ def propagate_constraints(config, posterior):
         for free_dof in coeff["fixed"]:
             new_post.append(posterior[free_dof])
 
-        new_post = rotation @ np.array(new_post)
+        if is_individual:
+            # Note this method is statistically equivalent 
+            # to sum the CL bounds in quadrature in the limit 
+            # for size going to infinity.
+            sigma, mean = 0,0
+            size = int(10e6)
+            for (a, post) in zip(rotation, new_post):
+                sigma += (a * np.std(post)) ** 2
+                mean += a * np.mean(post)
+            new_post = np.random.normal(loc=mean, scale=np.sqrt(sigma), size=size)
+        else:
+            new_post = rotation @ np.array(new_post)
+        
         posterior.update({name: new_post})

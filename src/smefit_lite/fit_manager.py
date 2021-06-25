@@ -18,13 +18,16 @@ class FitManager:
             fit label if any otherwise guess it from the name
         has_posterior: bool, optional
             if False load Confidence Level bounds else load the full posterior
+        is_individual: bool, optional
+            individual fit, needed in case posterior is given
     """
 
-    def __init__(self, path, name, label=None, has_posterior=True):
+    def __init__(self, path, name, label=None, has_posterior=True, is_individual=False):
         self.path = path
         self.name = name
         self.label = label
         self.has_posterior = has_posterior
+        self.is_individual = is_individual
         if self.label is None:
             self.label = r"${\rm %s}$" % name.replace("_", r"\ ")
 

@@ -96,7 +96,7 @@ class Runner:  # pylint:disable=import-outside-toplevel
                 # Load the posteriors and build the confidence levels
                 # They are stored in a dict per fit label and coefficient
                 posteriors.update({fit.label: fit.load_posterior()})
-                propagate_constraints(config[fit.label], posteriors[fit.label])
+                propagate_constraints(config[fit.label], posteriors[fit.label],fit.is_individual)
                 cl_bounds[fit.label] = compute_confidence_level(
                     posteriors[fit.label],
                     coeff_ptl.coeff_list,

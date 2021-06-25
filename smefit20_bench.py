@@ -54,7 +54,7 @@ class FitMarker_runner():
         fit_fitmarker = FitManager(
             f"{path}/external",
             "FitMaker_GLOBAL_LO_NHO",
-            label=r"${\rm FitMarker\ Top+H+VV,\ LO\ QCD\ \mathcal{O}(\Lambda^2)}$",
+            label=r"${\rm FitMaker\ Top+H+VV,\ LO\ QCD\ \mathcal{O}(\Lambda^2)}$",
             has_posterior=False,
         )
         report_name = "fitmaker_bench"
@@ -69,11 +69,12 @@ class FitMarker_runner():
             f"{path}/SMEFiT20",
             "SNS_GLOBAL_LO_NHO",
             label=r"${\rm SMEFiT\ Top+H+VV\ Individual,\ LO\ QCD\ \mathcal{O}(\Lambda^2)}$",
+            is_individual=True
         )
         fit_fitmarker = FitManager(
             f"{path}/external",
             "FitMaker_INDIV_LO_NHO",
-            label=r"${\rm FitMarker\ Top+H+VV\ Individual,\ LO\ QCD\ \mathcal{O}(\Lambda^2)}$",
+            label=r"${\rm FitMaker\ Top+H+VV\ Individual,\ LO\ QCD\ \mathcal{O}(\Lambda^2)}$",
             has_posterior=False,
         )
         report_name = "fitmaker_individual_bench"
@@ -86,4 +87,4 @@ if __name__ == "__main__":
     Sfitter_bench()
     runner = FitMarker_runner()
     runner.marginalized_bench()
-    #runner.individual_bench()
+    runner.individual_bench()
