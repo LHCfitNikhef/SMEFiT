@@ -1,0 +1,84 @@
+# Input YAML configurations for SMEFiT code
+
+# Root patp (path to SMEFT code directory)
+root_path: /home/giac/physicstool/temp_HL/code
+
+# Result ID (see Result ID Naming Convention in README)
+resultID: NS_VBS_HL_LO_NHO
+
+# EFT pQCD order (LO or NLO)
+order: LO
+
+# SMEFT Expansion Order (NHO = Lambda^-2 , pO = Lambda^-4)
+HOlambda: NHO
+
+# Cross-validation
+cv: False
+
+# Replica generation
+bootstrap: False
+
+# Closure tests (True or False)
+CT0L: False
+# Closure test level (0, 1, or 2)
+ctlevel: 0
+
+# Coefficient bounds (Null or SCAN_ Result ID, see README)
+#bounds: SCAN_Combined_Fit_LO_NHO
+bounds: Null
+
+# Number of live points used in Nested Sampling
+nlive: 500
+efr: 0.01
+ceff: False
+
+# Datasets to include
+datasets:
+
+## VBS HL ## 
+ - ATLASDIFFPtllaAZVBS13TEV
+ - ATLASDIFFmllWWjjVBS13TEV
+ - ATLASDIFFmzzZZjjVBS13TEV
+ - ATLASDIFFpTlllWZjjVBS13TEV
+ - CMSDIFFMaAZVBS13TEV
+ - CMSDIFFmllWWjjVBS13TEV
+ - CMSDIFFmTwzWZjjVBS13TEV
+ - CMSDIFFmzzZZjjVBS13TEV
+ 
+# Coefficients to fit
+coefficients:
+
+## VBS COEFFICIENTS ##
+# Note: cpX -> OpX
+ 
+ #Class1 
+ cWWW: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}  
+ cWWWtil: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
+ 
+ #class3
+ cpD: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
+ 
+ #class4
+ cpW: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
+ cpWtil: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
+ cpB: {'fixed': False, 'value': 0.0,'min': -10.0, 'max': 10.0}
+ cpBtil: {'fixed': False, 'value': 0.0,'min': -10.0, 'max': 10.0}
+ cpWB: {'fixed': False, 'value': 0.0,'min': -1.0, 'max': 1.0}
+ cpWBtil: {'fixed': False, 'value': 0.0,'min': -1.0, 'max': 1.0}
+ 
+ #class7
+ cpe: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
+ cpu: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
+ cpd: {'fixed': False, 'value': 0.0,'min': -1.0, 'max': 1.0}
+ cpl: {'fixed': False, 'value': 0.0,'min': -1.0, 'max': 1.0}
+ c3pl: {'fixed': False, 'value': 0.0,'min': -1.0, 'max': 1.0}
+ cpq: {'fixed': False, 'value': 0.0,'min': -1.0, 'max': 1.0}
+ c3pq: {'fixed': False, 'value': 0.0,'min': -1.0, 'max': 1.0}
+ 
+# cpud: {'fixed': True,  'value': 0.0,'min': -1000.0, 'max': 1000.0}
+
+##  Gluon operators ##
+# OG: {'fixed': False, 'value': 0.0, 'min': -30.0, 'max': 10.0}
+# OGtil: {'fixed': False, 'value': 0.0, 'min': -30.0, 'max': 10.0}
+# OpG: {'fixed': False, 'value': 0.0, 'min': -200.0, 'max': 20.0}
+# OpGtil: {'fixed': False, 'value': 0.0, 'min': -100.0, 'max': 10.0} 

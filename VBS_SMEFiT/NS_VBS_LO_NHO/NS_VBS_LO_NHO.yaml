@@ -1,0 +1,97 @@
+# Input YAML configurations for SMEFiT code
+
+# Root patp (path to SMEFT code directory)
+root_path: /home/giac/Documents/Physics_Master/Thesis/SMEFT-master/code
+
+# Result ID (see Result ID Naming Convention in README)
+resultID: NS_VBS_LO_NHO
+
+# EFT pQCD order (LO or NLO)
+order: LO
+
+# SMEFT Expansion Order (NHO = Lambda^-2 , pO = Lambda^-4)
+HOlambda: NHO
+
+# Cross-validation
+cv: False
+
+# Replica generation
+bootstrap: False
+
+# Closure tests (True or False)
+CT0L: False
+# Closure test level (0, 1, or 2)
+ctlevel: 0
+
+# Coefficient bounds (Null or SCAN_ Result ID, see README)
+#bounds: SCAN_VBS_NLO_NHO
+bounds: Null
+
+# Number of live points used in Nested Sampling
+nlive: 500
+efr: 0.01
+ceff: False
+
+# Datasets to include
+datasets:
+
+## VBS ##
+# ZZ 
+ - CMSFIDZZVBS13TEV
+ #- CMSDIFFMZZZZVBS13TEV
+ - ATLASFIDZZVBS13TEV
+
+# ssWW
+ - CMSFIDWWVBS13TEV
+ - CMSDIFFMLLWWVBS13TEV
+ - ATLASFIDWWVBS13TEV
+ #- ATLASDIFFMLLWWVBS13TEV
+
+# WZ
+ - CMSFIDWZVBS13TEV
+ - CMSDIFFMJJWZVBS13TEV
+ - ATLASDIFFMTWZWZVBS13TEV
+ 
+# AZ
+ - CMSFIDAZVBS13TEV
+ - ATLASFIDAZVBS13TEV
+ #- ATLASDIFFPTLLAAZVBS13TEV
+ 
+# Coefficients to fit
+coefficients:
+
+## VBS COEFFICIENTS ##
+# Note: cpX -> OpX
+ 
+  #Class1 
+ cWWW: {'fixed': False, 'value': 0.0, 'min': -20.0, 'max': 20.0}  
+ cWWWtil: {'fixed': False, 'value': 0.0, 'min': -50.0, 'max': 50.0}
+ 
+ #class3
+ cpD: {'fixed': False, 'value': 0.0, 'min': -50.0, 'max': 50.0}
+ 
+ #class4
+ cpW: {'fixed': False, 'value': 0.0, 'min': -100.0, 'max': 100.0}
+ cpWtil: {'fixed': False, 'value': 0.0, 'min': -100.0, 'max': 100.0}
+ cpB: {'fixed': False, 'value': 0.0,'min': -300.0, 'max': 300.0}
+ cpBtil: {'fixed': False, 'value': 0.0,'min': -600.0, 'max': 600.0}
+ cpWB: {'fixed': False, 'value': 0.0,'min': -30.0, 'max': 30.0}
+ cpWBtil: {'fixed': False, 'value': 0.0,'min': -300.0, 'max': 300.0}
+ 
+ #class7
+ cpe: {'fixed': False, 'value': 0.0, 'min': -100.0, 'max': 100.0}
+ cpu: {'fixed': False, 'value': 0.0, 'min': -100.0, 'max': 100.0}
+ cpd: {'fixed': False, 'value': 0.0,'min': -70.0, 'max': 70.0}
+ cpl: {'fixed': False, 'value': 0.0,'min': -50.0, 'max': 50.0}
+ c3pl: {'fixed': False, 'value': 0.0,'min': -5.0, 'max': 5.0}
+ cpq: {'fixed': False, 'value': 0.0,'min': -50.0, 'max': 50.0}
+ c3pq: {'fixed': False, 'value': 0.0,'min': -5.0, 'max': 5.0}
+ 
+ #class7
+# cpe: {'fixed': True, 'value': 0.0, 'min': -20.0, 'max': 20.0}
+# cpu: {'fixed': True, 'value': 0.0, 'min': -50.0, 'max': 50.0}
+# cpd: {'fixed': True, 'value': 0.0,'min': -50.0, 'max': 50.0}
+# cpl: {'fixed': True, 'value': 0.0,'min': -20.0, 'max': 20.0}
+# c3pl: {'fixed': True, 'value': 0.0,'min': -5.0, 'max': 5.0}
+# cpq: {'fixed': True, 'value': 0.0,'min': -30.0, 'max': 30.0}
+# c3pq: {'fixed': True, 'value': 0.0,'min': -5.0, 'max': 5.0}

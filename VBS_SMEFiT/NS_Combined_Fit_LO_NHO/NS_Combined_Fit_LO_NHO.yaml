@@ -1,0 +1,110 @@
+# Input YAML configurations for SMEFiT code
+
+# Root patp (patp to SMEFT code directory)
+root_patp: /pome/giac/Documents/Ppysics_Master/Tpesis/SMEFT-master/code
+
+# Result ID (see Result ID Naming Convention in README)
+resultID: NS_Combined_Fit_LO_NHO
+
+# EFT pQCD order (LO or NLO)
+order: LO
+
+# SMEFT Expansion Order (NHO = Lambda^-2 , pO = Lambda^-4)
+HOlambda: NHO
+
+# Cross-validation
+cv: False
+
+# Replica generation
+bootstrap: False
+
+# Closure tests (True or False)
+CT0L: False
+# Closure test level (0, 1, or 2)
+ctlevel: 0
+
+# Coefficient bounds (Null or SCAN_ Result ID, see README)
+#bounds: SCAN_Combined_Fit_LO_NHO
+bounds: Null
+
+# Number of live points used in Nested Sampling
+nlive: 500
+efr: 0.01
+ceff: False
+
+# Datasets to include
+datasets:
+
+## VBS ##
+# ZZ 
+ - CMSFIDZZVBS13TEV
+ #- CMSDIFFMZZZZVBS13TEV
+ - ATLASFIDZZVBS13TEV
+
+# ssWW
+ - CMSFIDWWVBS13TEV
+ - CMSDIFFMLLWWVBS13TEV
+ - ATLASFIDWWVBS13TEV
+ #- ATLASDIFFMLLWWVBS13TEV
+
+# WZ
+ - CMSFIDWZVBS13TEV
+ - CMSDIFFMJJWZVBS13TEV
+ - ATLASDIFFMTWZWZVBS13TEV
+ 
+# AZ
+ - CMSFIDAZVBS13TEV
+ - ATLASFIDAZVBS13TEV
+ #- ATLASDIFFPTLLAAZVBS13TEV
+  
+## DIBOSON ##
+
+# ZZ mzz 
+ - CMSDIFFMZZZZD13TEV
+
+# WW m emu
+ - CMSDIFFMEMUWWD13TEV 
+ - ATLASDIFFMEMUWWD13TEV  
+# WZ pt Z
+ - CMSDIFFPTZWZD13TEV
+ #- CMSDIFFMWZWZD13TEV 
+ 
+# WZ pt Z
+ - ATLASDIFFPTZWZD13TEV
+ 
+# Coefficients to fit
+coefficients:
+
+## VBS COEFFICIENTS ##
+# Note: cpX -> OpX
+ 
+ #Class1 
+ cWWW: {'fixed': False, 'value': 0.0, 'min': -0.3, 'max': 0.5}  
+ cWWWtil: {'fixed': False, 'value': 0.0, 'min': -1, 'max': 1}
+ 
+ #class3
+ cpD: {'fixed': False, 'value': 0.0, 'min': -2.3, 'max': 0.7}
+ 
+ #class4
+ cpW: {'fixed': False, 'value': 0.0, 'min': -1.4, 'max': 2.21}
+ cpWtil: {'fixed': False, 'value': 0.0, 'min': -4, 'max': 2.5}
+ cpB: {'fixed': False, 'value': 0.0,'min': -25, 'max': 25}
+ cpBtil: {'fixed': False, 'value': 0.0,'min': -50, 'max': 50}
+ cpWB: {'fixed': False, 'value': 0.0,'min': -0.5, 'max': 1}
+ cpWBtil: {'fixed': False, 'value': 0.0,'min': -1.82, 'max': 2.8}
+ 
+ #class7
+ cpe: {'fixed': False, 'value': 0.0, 'min': -1.5, 'max': 1.5}
+ cpu: {'fixed': False, 'value': 0.0, 'min': -1.5, 'max': 1.5}
+ cpd: {'fixed': False, 'value': 0.0,'min': -2, 'max': 2}
+ cpl: {'fixed': False, 'value': 0.0,'min': -2, 'max': 1}
+ c3pl: {'fixed': False, 'value': 0.0,'min': -1, 'max': 1}
+ cpq: {'fixed': False, 'value': 0.0,'min': -1, 'max': 1}
+ c3pq: {'fixed': False, 'value': 0.0,'min': -1, 'max': 1}
+# cpud: {'fixed': True,  'value': 0.0,'min': -1000.0, 'max': 1000.0}
+
+##  Gluon operators ##
+# OG: {'fixed': False, 'value': 0.0, 'min': -30.0, 'max': 10.0}
+# OGtil: {'fixed': False, 'value': 0.0, 'min': -30.0, 'max': 10.0}
+# OpG: {'fixed': False, 'value': 0.0, 'min': -200.0, 'max': 20.0}
+# OpGtil: {'fixed': False, 'value': 0.0, 'min': -100.0, 'max': 10.0} 
