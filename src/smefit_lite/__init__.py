@@ -96,11 +96,15 @@ class Runner:  # pylint:disable=import-outside-toplevel
                 # Load the posteriors and build the confidence levels
                 # They are stored in a dict per fit label and coefficient
                 posteriors.update({fit.label: fit.load_posterior()})
-                propagate_constraints(config[fit.label], posteriors[fit.label],fit.is_individual)
+                propagate_constraints(
+                    config[fit.label], posteriors[fit.label], fit.is_individual
+                )
                 cl_bounds[fit.label] = compute_confidence_level(
                     posteriors[fit.label],
                     coeff_ptl.coeff_list,
-                    config[fit.label]["double_solution"] if "double_solution" in config[fit.label] else None,
+                    config[fit.label]["double_solution"]
+                    if "double_solution" in config[fit.label]
+                    else None,
                 )
             else:
                 # If not posteriors are given, just use the results
@@ -138,10 +142,10 @@ class Runner:  # pylint:disable=import-outside-toplevel
             coeff_ptl.plot_residuals_bar(
                 {
                     name: [
-                        cl_bounds[name][op]["mid"] / cl_bounds[name][op]["error68"]
+                        bound[op]["mid"] / bound[op]["error68"]
                         for op in coeff_ptl.coeff_list
                     ]
-                    for name in cl_bounds
+                    for name, bound in cl_bounds.items()
                 }
             )
 

@@ -1,6 +1,7 @@
 # # -*- coding: utf-8 -*-
 import numpy as np
 
+
 def coeff_by_group():
     """
     Lists of SMEFT operators by classification:

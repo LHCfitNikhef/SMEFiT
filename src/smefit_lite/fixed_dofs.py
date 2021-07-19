@@ -34,7 +34,7 @@ def propagate_constraints(config, posterior, is_individual=False):
             # Note this method is statistically equivalent
             # to sum the CL bounds in quadrature in the limit
             # for size going to infinity.
-            sigma, mean = 0,0
+            sigma, mean = 0, 0
             size = int(10e6)
             for (a, post) in zip(rotation, new_post):
                 sigma += (a * np.std(post)) ** 2

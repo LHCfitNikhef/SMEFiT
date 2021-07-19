@@ -74,7 +74,7 @@ class CoefficientsPlotter:
         X = 2 * np.array(range(self.npar))
         # Spacing between fit results
         val = np.linspace(-0.1 * len(bounds), 0.1 * len(bounds), len(bounds))
-        colors = cm.get_cmap('tab20')
+        colors = cm.get_cmap("tab20")
         # loop over fits
         for i, name in enumerate(bounds):
             for cnt, coeff in enumerate(self.coeff_list):
@@ -90,13 +90,13 @@ class CoefficientsPlotter:
                     X[cnt] + val[i],
                     y=np.array(vals["mid"]),
                     yerr=np.array([vals["cl95"]]).T,
-                    color=colors(2*i+1),
+                    color=colors(2 * i + 1),
                 )
                 ax.errorbar(
                     X[cnt] + val[i],
                     y=np.array(vals["mid"]),
                     yerr=np.array([vals["cl68"]]).T,
-                    color=colors(2*i),
+                    color=colors(2 * i),
                     fmt=".",
                     label=label,
                 )
@@ -107,13 +107,13 @@ class CoefficientsPlotter:
                         X[cnt] + val[i],
                         y=np.array(bounds[name][f"{coeff}_2"]["mid"]),
                         yerr=np.array([bounds[name][f"{coeff}_2"]["cl95"]]).T,
-                        color=colors(2*i+1),
+                        color=colors(2 * i + 1),
                     )
                     ax.errorbar(
                         X[cnt] + val[i],
                         y=np.array(bounds[name][f"{coeff}_2"]["mid"]),
                         yerr=np.array([bounds[name][f"{coeff}_2"]["cl68"]]).T,
-                        color=colors(2*i),
+                        color=colors(2 * i),
                         fmt=".",
                     )
 
@@ -287,9 +287,8 @@ class CoefficientsPlotter:
             labels: list
                 list of fit names
         """
-        #colors = py.rcParams["axes.prop_cycle"].by_key()["color"]
-        colors = cm.get_cmap('tab20')
-
+        # colors = py.rcParams["axes.prop_cycle"].by_key()["color"]
+        colors = cm.get_cmap("tab20")
 
         fig = py.figure(figsize=(7, 5))
         gs = fig.add_gridspec(5, 1)
@@ -309,7 +308,7 @@ class CoefficientsPlotter:
                     solution2,
                     bins="fd",
                     density=True,
-                    color=colors(2*clr_cnt),
+                    color=colors(2 * clr_cnt),
                     edgecolor="black",
                     alpha=0.3,
                 )
@@ -318,14 +317,14 @@ class CoefficientsPlotter:
                     x=np.array(vals2["mid"]),
                     y=clr_cnt,
                     xerr=np.array([vals2["cl95"]]).T,
-                    color=colors(2*clr_cnt+1),
+                    color=colors(2 * clr_cnt + 1),
                     elinewidth=3,
                 )
                 ax_ratio.errorbar(
                     x=np.array(vals2["mid"]),
                     y=clr_cnt,
                     xerr=np.array([vals2["cl68"]]).T,
-                    color=colors(2*clr_cnt),
+                    color=colors(2 * clr_cnt),
                     elinewidth=3,
                     fmt=".",
                 )
@@ -333,7 +332,7 @@ class CoefficientsPlotter:
                 solution,
                 bins="fd",
                 density=True,
-                color=colors(2*clr_cnt),
+                color=colors(2 * clr_cnt),
                 edgecolor="black",
                 alpha=0.3,
                 label=name,
@@ -342,14 +341,14 @@ class CoefficientsPlotter:
                 x=np.array(vals["mid"]),
                 y=clr_cnt,
                 xerr=np.array([vals["cl95"]]).T,
-                color=colors(2*clr_cnt+1),
+                color=colors(2 * clr_cnt + 1),
                 elinewidth=3,
             )
             ax_ratio.errorbar(
                 x=np.array(vals["mid"]),
                 y=clr_cnt,
                 xerr=np.array([vals["cl68"]]).T,
-                color=colors(2*clr_cnt),
+                color=colors(2 * clr_cnt),
                 elinewidth=3,
                 fmt=".",
             )
