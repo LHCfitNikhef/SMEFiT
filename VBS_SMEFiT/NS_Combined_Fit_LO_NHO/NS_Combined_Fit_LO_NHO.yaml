@@ -36,7 +36,7 @@ ceff: False
 datasets:
 
 ## VBS ##
-# ZZ 
+# ZZ
  - CMSFIDZZVBS13TEV
  #- CMSDIFFMZZZZVBS13TEV
  - ATLASFIDZZVBS13TEV
@@ -78,7 +78,7 @@ coefficients:
 ## VBS COEFFICIENTS ##
 # Note: cpX -> OpX
 
- #Class1 
+ #Class1
  cWWW: {'fixed': False, 'value': 0.0, 'min': -0.3, 'max': 0.5}
  cWWWtil: {'fixed': False, 'value': 0.0, 'min': -1, 'max': 1}
 

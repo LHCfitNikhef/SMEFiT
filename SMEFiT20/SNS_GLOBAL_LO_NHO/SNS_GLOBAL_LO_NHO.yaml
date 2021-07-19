@@ -181,7 +181,7 @@ coefficients:
   # Uncomment this is you want to check also the EWPO constrained dofs
   # Note: this comaprison is not really physical since the EWPO dofs
   # are not fitted individually, but obtainided through error propagation
-  
+
   # cpG: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
   # cpB: {'fixed': False, 'value': 0.0, 'min': -5.0, 'max': 5.0}
   # cpW: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 10.0}

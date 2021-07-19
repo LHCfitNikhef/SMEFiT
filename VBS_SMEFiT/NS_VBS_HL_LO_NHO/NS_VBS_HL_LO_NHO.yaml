@@ -54,7 +54,7 @@ coefficients:
  #Class1
  cWWW: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
  cWWWtil: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
- 
+
  #class3
  cpD: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
 

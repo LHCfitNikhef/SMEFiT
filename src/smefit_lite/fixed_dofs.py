@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-from numpy.core.fromnumeric import mean
 
 
 def propagate_constraints(config, posterior, is_individual=False):
@@ -32,8 +31,8 @@ def propagate_constraints(config, posterior, is_individual=False):
             new_post.append(posterior[free_dof])
 
         if is_individual:
-            # Note this method is statistically equivalent 
-            # to sum the CL bounds in quadrature in the limit 
+            # Note this method is statistically equivalent
+            # to sum the CL bounds in quadrature in the limit
             # for size going to infinity.
             sigma, mean = 0,0
             size = int(10e6)
@@ -43,5 +42,5 @@ def propagate_constraints(config, posterior, is_individual=False):
             new_post = np.random.normal(loc=mean, scale=np.sqrt(sigma), size=size)
         else:
             new_post = rotation @ np.array(new_post)
-        
+
         posterior.update({name: new_post})
