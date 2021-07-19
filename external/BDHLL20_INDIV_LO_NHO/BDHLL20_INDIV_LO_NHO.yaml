@@ -1,0 +1,33 @@
+"""
+Results coming from https://arxiv.org/pdf/2003.07862.pdf:
+table IV, 3rd column, Individual VH+VV bounds
+"""
+
+# Result ID (see Result ID Naming Convention in README)
+resultID: BDHLL20_INDIV_LO_NHO
+
+# pQCD order (LO or NLO)
+order: LO
+
+# SMEFT Expansion Order (NHO = Lambda^-2 , HO = Lambda^-4)
+HOlambda: NHO
+
+# Coefficients to fit
+coefficients:
+
+ cWWW: {'fixed': False, 'value': 0.0, 'min': -0.3, 'max': 0.5}
+ cpD: {'fixed': False, 'value': 0.0, 'min': -2.3, 'max': 0.7}
+ cpd: {'fixed': False, 'value': 0.0, 'min': -2.3, 'max': 0.7}
+ cpW: {'fixed': False, 'value': 0.0, 'min': -1.4, 'max': 2.21}
+ cpB: {'fixed': False, 'value': 0.0,'min': -25, 'max': 25}
+ cpWB: {'fixed': False, 'value': 0.0,'min': -0.5, 'max': 1}
+
+ # Do not match SMEFTiT2.0 rotations
+ # match VBS SMEFTiT only
+ cpui: {'fixed': False, 'value': 0.0, 'min': -1.5, 'max': 1.5}
+ cpdi: {'fixed': False, 'value': 0.0,'min': -2, 'max': 2}
+ cpqi: {'fixed': False, 'value': 0.0,'min': -1, 'max': 1}
+
+ c3pq: {'fixed': False, 'value': 0.0,'min': -1, 'max': 1}
+
+double_solution: []

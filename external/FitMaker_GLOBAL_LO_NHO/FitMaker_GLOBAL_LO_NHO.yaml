@@ -1,3 +1,6 @@
+"""Results coming from https://arxiv.org/pdf/2012.02779.pdf, table 6"""
+
+
 # Result ID (see Result ID Naming Convention in README)
 resultID: FitMaker_GLOBAL_LO_NHO
 
