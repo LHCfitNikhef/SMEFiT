@@ -100,7 +100,7 @@ class Runner:  # pylint:disable=import-outside-toplevel
                 cl_bounds[fit.label] = compute_confidence_level(
                     posteriors[fit.label],
                     coeff_ptl.coeff_list,
-                    config[fit.label]["double_solution"],
+                    config[fit.label]["double_solution"] if "double_solution" in config[fit.label] else None,
                 )
             else:
                 # If not posteriors are given, just use the results
@@ -120,6 +120,8 @@ class Runner:  # pylint:disable=import-outside-toplevel
             # otherwhise show 95% CL for null solutions.
             # add second error if exists
             for name in self.fit_labels:
+                if "double_solution" not in config[name]:
+                    continue
                 for op in list(config[name]["double_solution"]):
                     temp[name][op]["cl95"] += temp[name][f"{op}_2"]["cl95"]
 

@@ -1,4 +1,6 @@
-"""Results coming from https://arxiv.org/pdf/2012.02779.pdf, table 6"""
+###################################################################
+# Results coming from https://arxiv.org/pdf/2012.02779.pdf, table 6
+###################################################################
 
 # Result ID (see Result ID Naming Convention in README)
 resultID: FitMaker_INDIV_LO_NHO
@@ -22,7 +24,7 @@ coefficients:
   cpG: {'fixed': False, 'value': 0.0}
   cpW: {'fixed': False, 'value': 0.0}
   cpB: {'fixed': False, 'value': 0.0}
-  cWWWW: {'fixed': False, 'value': 0.0}
+  cWWW: {'fixed': False, 'value': 0.0}
   cG: {'fixed': False, 'value': 0.0}
   ctap: {'fixed': False, 'value': 0.0}
   cmup: {'fixed': False, 'value': 0.0}

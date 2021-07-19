@@ -1,7 +1,7 @@
-"""
-Results coming from https://arxiv.org/pdf/2003.07862.pdf:
-table IV, 3rd column, Individual VH+VV bounds
-"""
+###########################################################
+# Results coming from https://arxiv.org/pdf/2003.07862.pdf:
+# table IV, 3rd column, Individual VH+VV bounds
+###########################################################
 
 # Result ID (see Result ID Naming Convention in README)
 resultID: BDHLL20_INDIV_LO_NHO

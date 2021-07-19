@@ -1,4 +1,6 @@
-"""Results coming from https://arxiv.org/pdf/1910.03606.pdf, table 9"""
+###################################################################
+# Results coming from https://arxiv.org/pdf/1910.03606.pdf, table 9
+###################################################################
 
 # Result ID (see Result ID Naming Convention in README)
 resultID: SFitter_TOP_NLO_HO
