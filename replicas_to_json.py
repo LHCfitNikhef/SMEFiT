@@ -24,8 +24,10 @@ def convert_to_json(k):
         ) and "VBS" not in k):
             continue
 
-        file = open(f"{k}/{filename}", "r")
-        data = file.readlines()
+        with open(f"{k}/{filename}", "r") as file:
+            data = file.readlines()
+            file.close()
+
         if i == 0:
             coeffs = [str(i) for i in data[0].split()]
             for c in coeffs:
@@ -39,7 +41,6 @@ def convert_to_json(k):
         temp = dict(zip(coeffs, [rescale_fact * float(i) for i in data[1].split()]))
         for c in coeffs:
             vals[c].append(temp[c])
-        file.close()
 
         # cleaning
         os.remove(f"{k}/{filename}")

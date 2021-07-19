@@ -35,7 +35,7 @@ ceff: False
 # Datasets to include
 datasets:
 
-## VBS HL ## 
+## VBS HL ##
  - ATLASDIFFPtllaAZVBS13TEV
  - ATLASDIFFmllWWjjVBS13TEV
  - ATLASDIFFmzzZZjjVBS13TEV
@@ -44,20 +44,20 @@ datasets:
  - CMSDIFFmllWWjjVBS13TEV
  - CMSDIFFmTwzWZjjVBS13TEV
  - CMSDIFFmzzZZjjVBS13TEV
- 
+
 # Coefficients to fit
 coefficients:
 
 ## VBS COEFFICIENTS ##
 # Note: cpX -> OpX
- 
- #Class1 
- cWWW: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}  
+
+ #Class1
+ cWWW: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
  cWWWtil: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
  
  #class3
  cpD: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
- 
+
  #class4
  cpW: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
  cpWtil: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
@@ -65,7 +65,7 @@ coefficients:
  cpBtil: {'fixed': False, 'value': 0.0,'min': -10.0, 'max': 10.0}
  cpWB: {'fixed': False, 'value': 0.0,'min': -1.0, 'max': 1.0}
  cpWBtil: {'fixed': False, 'value': 0.0,'min': -1.0, 'max': 1.0}
- 
+
  #class7
  cpe: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
  cpu: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
@@ -74,11 +74,4 @@ coefficients:
  c3pl: {'fixed': False, 'value': 0.0,'min': -1.0, 'max': 1.0}
  cpq: {'fixed': False, 'value': 0.0,'min': -1.0, 'max': 1.0}
  c3pq: {'fixed': False, 'value': 0.0,'min': -1.0, 'max': 1.0}
- 
 # cpud: {'fixed': True,  'value': 0.0,'min': -1000.0, 'max': 1000.0}
-
-##  Gluon operators ##
-# OG: {'fixed': False, 'value': 0.0, 'min': -30.0, 'max': 10.0}
-# OGtil: {'fixed': False, 'value': 0.0, 'min': -30.0, 'max': 10.0}
-# OpG: {'fixed': False, 'value': 0.0, 'min': -200.0, 'max': 20.0}
-# OpGtil: {'fixed': False, 'value': 0.0, 'min': -100.0, 'max': 10.0} 
