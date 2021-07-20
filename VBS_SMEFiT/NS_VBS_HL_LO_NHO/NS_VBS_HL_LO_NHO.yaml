@@ -68,10 +68,10 @@ coefficients:
 
  #class7
  cpe: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
- cpu: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
- cpd: {'fixed': False, 'value': 0.0,'min': -1.0, 'max': 1.0}
- cpl: {'fixed': False, 'value': 0.0,'min': -1.0, 'max': 1.0}
- c3pl: {'fixed': False, 'value': 0.0,'min': -1.0, 'max': 1.0}
- cpq: {'fixed': False, 'value': 0.0,'min': -1.0, 'max': 1.0}
+ cpui: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
+ cpdi: {'fixed': False, 'value': 0.0,'min': -1.0, 'max': 1.0}
+ cpl1: {'fixed': False, 'value': 0.0,'min': -1.0, 'max': 1.0}
+ c3pl1: {'fixed': False, 'value': 0.0,'min': -1.0, 'max': 1.0}
+ cpqi: {'fixed': False, 'value': 0.0,'min': -1.0, 'max': 1.0}
  c3pq: {'fixed': False, 'value': 0.0,'min': -1.0, 'max': 1.0}
 # cpud: {'fixed': True,  'value': 0.0,'min': -1000.0, 'max': 1000.0}

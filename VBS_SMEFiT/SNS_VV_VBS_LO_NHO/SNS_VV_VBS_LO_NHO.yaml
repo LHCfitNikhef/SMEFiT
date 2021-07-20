@@ -4,9 +4,9 @@
 root_path: /home/giac/Documents/Physics_Master/Thesis/SMEFT-master/code
 
 # Result ID (see Result ID Naming Convention in README)
-resultID: SNS_Combined_Fit_NLO_NHO
+resultID: SNS_VV_VBS_LO_NHO
 
-# pQCD order (LO or nLO)
+# pQCD order (LO or NLO)
 order: LO
 
 # SMEFT Expansion Order (NHO = Lambda^-2 , pO = Lambda^-4)
@@ -36,7 +36,7 @@ ceff: True
 datasets:
 
 ## VBS ##
-# ZZ 
+# ZZ
  - CMSFIDZZVBS13TEV
  #- CMSDIFFMZZZZVBS13TEV
  - ATLASFIDZZVBS13TEV
@@ -51,40 +51,40 @@ datasets:
  - CMSFIDWZVBS13TEV
  - CMSDIFFMJJWZVBS13TEV
  - ATLASDIFFMTWZWZVBS13TEV
- 
+
 # AZ
  - CMSFIDAZVBS13TEV
  - ATLASFIDAZVBS13TEV
  #- ATLASDIFFPTLLAAZVBS13TEV
-  
+
 ## DIBOSON ##
 
-# ZZ mzz 
+# ZZ mzz
  - CMSDIFFMZZZZD13TEV
 
 # WW m emu
- - CMSDIFFMEMUWWD13TEV 
- - ATLASDIFFMEMUWWD13TEV  
+ - CMSDIFFMEMUWWD13TEV
+ - ATLASDIFFMEMUWWD13TEV
 # WZ pt Z
  - CMSDIFFPTZWZD13TEV
- #- CMSDIFFMWZWZD13TEV 
- 
+ #- CMSDIFFMWZWZD13TEV
+
 # WZ pt Z
  - ATLASDIFFPTZWZD13TEV
- 
+
 # Coefficients to fit
 coefficients:
 
 ## VBS COEFFICIENTS ##
 # Note: cpX -> OpX
- 
- #Class1 
- cWWW: {fixed: False, 'value': 0.0, 'min': -1., 'max': 1}  
+
+ #Class1
+ cWWW: {fixed: False, 'value': 0.0, 'min': -1., 'max': 1}
  cWWWtil: {fixed: False, 'value': 0.0, 'min': -1, 'max': 1}
- 
+
  #class3
  cpD: {fixed: False, 'value': 0.0, 'min': -2.5, 'max': 2.5}
- 
+
  #class4
  cpW: {fixed: False, 'value': 0.0, 'min': -2.5, 'max': 2.5}
  cpWtil: {fixed: False, 'value': 0.0, 'min': -4, 'max': 4}
@@ -92,12 +92,12 @@ coefficients:
  cpBtil: {fixed: False, 'value': 0.0,'min': -50, 'max': 50}
  cpWB: {fixed: False, 'value': 0.0,'min': -1., 'max': 1.}
  cpWBtil: {fixed: False, 'value': 0.0,'min': -3., 'max': 3.}
- 
+
  #class7
  cpe: {fixed: False, 'value': 0.0, 'min': -1.5, 'max': 1.5}
- cpu: {fixed: False, 'value': 0.0, 'min': -1.5, 'max': 1.5}
- cpd: {fixed: False, 'value': 0.0,'min': -2, 'max': 2}
- cpl: {fixed: False, 'value': 0.0,'min': -2, 'max': 1}
- c3pl: {fixed: False, 'value': 0.0,'min': -1, 'max': 1}
- cpq: {fixed: False, 'value': 0.0,'min': -1, 'max': 1}
+ cpui: {fixed: False, 'value': 0.0, 'min': -1.5, 'max': 1.5}
+ cpdi: {fixed: False, 'value': 0.0,'min': -2, 'max': 2}
+ cpl1: {fixed: False, 'value': 0.0,'min': -2, 'max': 1}
+ c3pl1: {fixed: False, 'value': 0.0,'min': -1, 'max': 1}
+ cpqi: {fixed: False, 'value': 0.0,'min': -1, 'max': 1}
  c3pq: {fixed: False, 'value': 0.0,'min': -1, 'max': 1}
