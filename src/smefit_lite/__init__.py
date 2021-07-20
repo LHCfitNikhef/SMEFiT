@@ -156,7 +156,9 @@ class Runner:  # pylint:disable=import-outside-toplevel
                 labels=self.fit_labels,
                 disjointed_lists=[
                     config[fit.label]["double_solution"] for fit in self.fits
-                ],
+                ]
+                if "double_solution" in config[fit.label].keys()
+                else None,
             )
 
         if plot_only in coeff_ptl.coeff_list:

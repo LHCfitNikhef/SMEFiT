@@ -234,7 +234,9 @@ class CoefficientsPlotter:
                 solution = posterior[l]
                 if solution.all() == 0.0:
                     continue
-                if l in disjointed_lists[clr_cnt]:
+                if disjointed_lists is None:
+                    pass
+                elif l in disjointed_lists[clr_cnt]:
                     solution, solution2 = utils.split_solution(posterior[l])
                     ax.hist(
                         solution2,
@@ -253,14 +255,14 @@ class CoefficientsPlotter:
                     alpha=0.3,
                     label=labels[clr_cnt],
                 )
-                if clr_cnt == 0:
-                    ax.text(
-                        0.05,
-                        0.85,
-                        utils.latex_coeff(l),
-                        transform=ax.transAxes,
-                        fontsize=20,
-                    )
+                # if clr_cnt == 0 :
+                ax.text(
+                    0.05,
+                    0.85,
+                    utils.latex_coeff(l),
+                    transform=ax.transAxes,
+                    fontsize=20,
+                )
 
                 ax.tick_params(which="both", direction="in", labelsize=22.5)
                 ax.tick_params(labelleft=False)

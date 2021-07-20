@@ -7,8 +7,8 @@ report_path = f"{path}/reports"
 
 
 def Individual_bench():
-    """ "
-        VV+VBS settings
+    """
+    VBS SMEFiT vs FitMarker and BDHLL20 Individual LO, Linear comparison
 
     IMOPRTANT note:
         the coeffientes cpe, cpl1, c3pl1, cpui, cpdi, cpqi, cpq3
@@ -84,7 +84,6 @@ def Individual_bench():
             "cB",
         ]
     }
-    """ VBS SMEFiT vs FitMarker and BDHLL20 Individual LO, Linear comparison """
     fit_smefit = FitManager(
         f"{path}/VBS_SMEFiT",
         "SNS_VV_VBS_LO_NHO",
