@@ -37,6 +37,6 @@ coefficients:
   cpt: {'fixed': False, 'value': 0.0}
   cptb: {'fixed': False, 'value': 0.0} #Not part of SMEFiT2.0
   c3pQ3: {'fixed': False, 'value': 0.0}
-  c3pQM: {'fixed': False, 'value': 0.0}
+  cpQM: {'fixed': False, 'value': 0.0}
 
 double_solution: []

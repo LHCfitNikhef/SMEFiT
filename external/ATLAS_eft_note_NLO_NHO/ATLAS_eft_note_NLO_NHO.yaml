@@ -1,0 +1,60 @@
+###################################################################################
+# Results coming from https://inspirehep.net/files/3f5c7a581dfc2934470ea37abaf77878
+# table 5,6, Quadratic Model, rotation was performed to the SMEFiT dof
+# Reasults are rotated considering the correlations between the fitted parameterà
+# The rotated bounds are then symmetric
+###################################################################################
+
+# Result ID (see Result ID Naming Convention in README)
+resultID: ATLAS-CONF-2020-053_NHO
+
+# pQCD order (LO or NLO)
+order: NLO
+
+# SMEFT Expansion Order (NHO = Lambda^-2 , HO = Lambda^-4)
+HOlambda: NHO
+
+# Coefficients to fit
+coefficients:
+
+  cG: {'fixed': False, 'value': 0.0}
+  cpD: {'fixed': False, 'value': 0.0}
+  cpG: {'fixed': False, 'value': 0.0}
+  cpW: {'fixed': False, 'value': 0.0}
+  cpWB: {'fixed': False, 'value': 0}
+  cpB: {'fixed': True, 'value': 0.0}
+
+  ctG: {'fixed': False, 'value': 0.0}
+  ctW: {'fixed': False, 'value': 0.0}
+  ctB: {'fixed': False, 'value': 0.0}
+
+  # Ykawas Op up are the same for charm and top
+  cup: {'fixed': False, 'value': 0.0}
+  ccp: {'fixed': ['cup'], 'value': [1.0]}
+  cbp: {'fixed': True, 'value': 0.0}
+  ctp: {'fixed': ['cup'], 'value': [1.0]}
+
+  c3pq: {'fixed': False, 'value': 0.0}
+  c1pq:  {'fixed': True, 'value': 0.0}
+  # not really fittd but roated with Mathematica
+  cpqM:  {'fixed': False, 'value': 0.0}
+  c3pQ3: {'fixed': ['c3pq'], 'value': [1.0]}
+  cpQM: {'fixed': ['cpqM'], 'value': [1.0]}
+  cpqMi: {'fixed': ['cpqM'], 'value': [1.0]}
+
+  cpui: {'fixed': False, 'value': 0.0}
+  cpdi: {'fixed': False, 'value': 0.0}
+  cpt: {'fixed': ['cpui'], 'value': [1.0]}
+
+  # All equal due to Flavor assumptions as in SMEFTiT2.0
+  cpe: {'fixed': False, 'value': 0.0}
+  cpmu: {'fixed': ['cpe'], 'value': [1.0]}
+  cpta: {'fixed': ['cpe'], 'value': [1.0]}
+  cpl1: {'fixed': False, 'value': 0.0}
+  cpl2: {'fixed': ['cpl1'], 'value': [1.0]}
+  cpl3: {'fixed': ['cpl1'], 'value': [1.0]}
+  c3pl1: {'fixed': False, 'value': 0.0}
+  c3pl2: {'fixed': ['c3pl1'], 'value': [1.0]}
+  c3pl3: {'fixed': ['c3pl1'], 'value': [1.0]}
+
+  cll: {'fixed': False, 'value': 0.0}
