@@ -2,7 +2,7 @@
 import numpy as np
 
 
-def propagate_constraints(config, posterior, is_individual=False):
+def propagate_constraints(config, posterior, is_individual=False, is_results=False):
     """This fuctions construct the posterior ditributions for the
     fixed coefficints
 
@@ -14,6 +14,8 @@ def propagate_constraints(config, posterior, is_individual=False):
             posterior distributions
         is_individual: bool, optional
             if the posterior are individual perform a convolution of replicas
+        is_results: bool, optional
+            use if only results and not posteriors are given
 
     Returns
     -------
@@ -40,6 +42,12 @@ def propagate_constraints(config, posterior, is_individual=False):
                 sigma += (a * np.std(post)) ** 2
                 mean += a * np.mean(post)
             new_post = np.random.normal(loc=mean, scale=np.sqrt(sigma), size=size)
+        elif is_results:
+            new_results = new_post[0]
+            for i, result_dict in enumerate(new_post):
+                for key, val in result_dict.items():
+                    new_results[key] += np.array(val) * rotation[i]
+            new_post = new_results
         else:
             new_post = rotation @ np.array(new_post)
 

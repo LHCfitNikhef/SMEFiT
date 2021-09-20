@@ -108,8 +108,12 @@ class Runner:  # pylint:disable=import-outside-toplevel
                 )
             else:
                 # If not posteriors are given, just use the results
+                results = fit.load_results()
+                propagate_constraints(
+                    config[fit.label], results, fit.is_individual, is_results=True
+                )
                 cl_bounds[fit.label] = load_confidence_levels(
-                    fit.load_results(),
+                    results,
                     coeff_ptl.coeff_list,
                 )
 

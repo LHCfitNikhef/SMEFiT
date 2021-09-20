@@ -44,14 +44,14 @@ coefficients:
 
   # All equal due to Flavor assumptions as in SMEFTiT2.0
   c3pl1: {'fixed': False, 'value': 0.0}
-  c3pl2: {'fixed': ['c3pl1'], 'value': 1.0}
-  c3pl3: {'fixed': ['c3pl1'], 'value': 1.0}
+  c3pl2: {'fixed': ['c3pl1'], 'value': [1.0]}
+  c3pl3: {'fixed': ['c3pl1'], 'value': [1.0]}
   cpl1:  {'fixed': False, 'value': 0.0}
-  cpl2: {'fixed': ['cpl1'], 'value': 1.0}
-  cpl3: {'fixed': ['cpl1'], 'value': 1.0}
+  cpl2: {'fixed': ['cpl1'], 'value': [1.0]}
+  cpl3: {'fixed': ['cpl1'], 'value': [1.0]}
   cpe:  {'fixed': False, 'value': 0.0}
-  cpmu: {'fixed': ['cpe'], 'value': 1.0}
-  cpta: {'fixed': ['cpe'], 'value': 1.0}
+  cpmu: {'fixed': ['cpe'], 'value': [1.0]}
+  cpta: {'fixed': ['cpe'], 'value': [1.0]}
 
   # Do not match SMEFTiT2.0 rotations
   cpqi:  {'fixed': False, 'value': 0.0}
