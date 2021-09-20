@@ -84,18 +84,18 @@ class CoefficientsPlotter:
                     continue
 
                 vals = bounds[name][coeff]
-                if vals["error95"] == 0.0:
+                if vals["mean_err95"] == 0.0:
                     continue
                 ax.errorbar(
                     X[cnt] + val[i],
                     y=np.array(vals["mid"]),
-                    yerr=np.array([vals["cl95"]]).T,
+                    yerr=np.array([vals["err95"]]).T,
                     color=colors(2 * i + 1),
                 )
                 ax.errorbar(
                     X[cnt] + val[i],
                     y=np.array(vals["mid"]),
-                    yerr=np.array([vals["cl68"]]).T,
+                    yerr=np.array([vals["err68"]]).T,
                     color=colors(2 * i),
                     fmt=".",
                     label=label,
@@ -106,13 +106,13 @@ class CoefficientsPlotter:
                     ax.errorbar(
                         X[cnt] + val[i],
                         y=np.array(bounds[name][f"{coeff}_2"]["mid"]),
-                        yerr=np.array([bounds[name][f"{coeff}_2"]["cl95"]]).T,
+                        yerr=np.array([bounds[name][f"{coeff}_2"]["err95"]]).T,
                         color=colors(2 * i + 1),
                     )
                     ax.errorbar(
                         X[cnt] + val[i],
                         y=np.array(bounds[name][f"{coeff}_2"]["mid"]),
-                        yerr=np.array([bounds[name][f"{coeff}_2"]["cl68"]]).T,
+                        yerr=np.array([bounds[name][f"{coeff}_2"]["err68"]]).T,
                         color=colors(2 * i),
                         fmt=".",
                     )
@@ -318,14 +318,14 @@ class CoefficientsPlotter:
                 ax_ratio.errorbar(
                     x=np.array(vals2["mid"]),
                     y=clr_cnt,
-                    xerr=np.array([vals2["cl95"]]).T,
+                    xerr=np.array([vals2["err95"]]).T,
                     color=colors(2 * clr_cnt + 1),
                     elinewidth=3,
                 )
                 ax_ratio.errorbar(
                     x=np.array(vals2["mid"]),
                     y=clr_cnt,
-                    xerr=np.array([vals2["cl68"]]).T,
+                    xerr=np.array([vals2["err68"]]).T,
                     color=colors(2 * clr_cnt),
                     elinewidth=3,
                     fmt=".",
@@ -342,14 +342,14 @@ class CoefficientsPlotter:
             ax_ratio.errorbar(
                 x=np.array(vals["mid"]),
                 y=clr_cnt,
-                xerr=np.array([vals["cl95"]]).T,
+                xerr=np.array([vals["err95"]]).T,
                 color=colors(2 * clr_cnt + 1),
                 elinewidth=3,
             )
             ax_ratio.errorbar(
                 x=np.array(vals["mid"]),
                 y=clr_cnt,
-                xerr=np.array([vals["cl68"]]).T,
+                xerr=np.array([vals["err68"]]).T,
                 color=colors(2 * clr_cnt),
                 elinewidth=3,
                 fmt=".",

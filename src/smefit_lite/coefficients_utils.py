@@ -86,6 +86,8 @@ def coeff_by_group():
             ("cpD", r"$c_{\varphi D}$"),
             ("cWWW", r"$c_{WWW}$"),
             ("cWWWtil", r"$c_{\widetilde{WWW}}$"),
+            ("cG", r"$c_{G}$"),  # Non SMEFiT2.0
+            ("cGtil", r"$c_{\widetilde{G}}$"),  # Non SMEFiT2.0
             ("cW", r"$c_{W}$"),  # Non Warsaw
             ("cB", r"$c_{B}$"),  # Non Warsaw
         ],
@@ -120,12 +122,12 @@ def get_confidence_values(dist):
     cl_vals["low95"] = np.nanpercentile(dist, 2.5)
     cl_vals["high95"] = np.nanpercentile(dist, 97.5)
     cl_vals["mid"] = np.mean(dist, axis=0)
-    cl_vals["error68"] = (cl_vals["high68"] - cl_vals["low68"]) / 2.0
-    cl_vals["error95"] = (cl_vals["high95"] - cl_vals["low95"]) / 2.0
-    cl_vals["cl68"] = np.array(
+    cl_vals["mean_err68"] = (cl_vals["high68"] - cl_vals["low68"]) / 2.0
+    cl_vals["mean_err95"] = (cl_vals["high95"] - cl_vals["low95"]) / 2.0
+    cl_vals["err68"] = np.array(
         [cl_vals["mid"] - cl_vals["low68"], cl_vals["high68"] - cl_vals["mid"]]
     )
-    cl_vals["cl95"] = np.array(
+    cl_vals["err95"] = np.array(
         [cl_vals["mid"] - cl_vals["low95"], cl_vals["high95"] - cl_vals["mid"]]
     )
     return cl_vals
@@ -223,8 +225,8 @@ def get_bounds_from_cl(extreme, cl, mid=None):
     #     cl_vals.update({"mid": np.mean(extreme) if mid is None else mid})
     cl_vals.update(
         {
-            f"error{cl}": (cl_vals[f"high{cl}"] - cl_vals[f"low{cl}"]) / 2.0,
-            f"cl{cl}": np.array(
+            f"mean_err{cl}": (cl_vals[f"high{cl}"] - cl_vals[f"low{cl}"]) / 2.0,
+            f"err{cl}": np.array(
                 [
                     cl_vals["mid"] - cl_vals[f"low{cl}"],
                     cl_vals[f"high{cl}"] - cl_vals["mid"],
@@ -239,11 +241,11 @@ def load_confidence_levels(result, coeff_list):
     """
     Load central value, 95 % and 68 % confidence levels and store the result in a dictionary
     given some inputs results.
-    It assume at least 95cl are given
+    It assume at least 95cl or eeor95 are given
     Parameters
     ----------
         result : dict
-            results per coefficients, at lest '95cl' must be inluded
+            results per coefficients, at lest '95cl' or 'erro95' must be inluded
         coeff_list : list
             coefficients list for which the bounds are computed
 
@@ -258,13 +260,20 @@ def load_confidence_levels(result, coeff_list):
         if l not in result:
             result[l] = {"95cl": np.zeros(2)}
         cl_vals = {}
+        mid = result[l]["mid"] if "mid" in result[l] else None
         if "68cl" in result[l]:
             cl_vals.update(get_bounds_from_cl(result[l]["68cl"], 68))
+        elif "mean_err68" in result[l]:
+            err = result[l]["mean_err68"]
+            cl_vals.update(get_bounds_from_cl([mid - err, mid + err], 68, mid))
         else:
             cl_vals.update(get_bounds_from_cl(np.zeros(2), 68))
 
-        mid = result[l]["mid"] if "mid" in result[l] else None
-        cl_vals.update(get_bounds_from_cl(result[l]["95cl"], 95, mid))
+        if "95cl" in result[l]:
+            cl_vals.update(get_bounds_from_cl(result[l]["95cl"], 95, mid))
+        elif "mean_err95" in result[l]:
+            err = result[l]["mean_err95"]
+            cl_vals.update(get_bounds_from_cl([mid - err, mid + err], 95, mid))
 
         bounds.update({l: cl_vals})
     return bounds

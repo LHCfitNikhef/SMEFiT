@@ -43,7 +43,7 @@ def propagate_constraints(config, posterior, is_individual=False, is_results=Fal
                 mean += a * np.mean(post)
             new_post = np.random.normal(loc=mean, scale=np.sqrt(sigma), size=size)
         elif is_results:
-            new_results = new_post[0]
+            new_results = dict(zip(new_post[0].keys(), [0] * len(new_post[0].keys())))
             for i, result_dict in enumerate(new_post):
                 for key, val in result_dict.items():
                     new_results[key] += np.array(val) * rotation[i]

@@ -131,12 +131,12 @@ class Runner:  # pylint:disable=import-outside-toplevel
                 if "double_solution" not in config[name]:
                     continue
                 for op in list(config[name]["double_solution"]):
-                    temp[name][op]["cl95"] += temp[name][f"{op}_2"]["cl95"]
+                    temp[name][op]["err95"] += temp[name][f"{op}_2"]["err95"]
 
             coeff_ptl.plot_coeffs_bar(
                 {
                     name: [
-                        np.sum(temp[name][op]["cl95"]) for op in coeff_ptl.coeff_list
+                        np.sum(temp[name][op]["err95"]) for op in coeff_ptl.coeff_list
                     ]
                     for name in temp
                 }
@@ -146,7 +146,7 @@ class Runner:  # pylint:disable=import-outside-toplevel
             coeff_ptl.plot_residuals_bar(
                 {
                     name: [
-                        bound[op]["mid"] / bound[op]["error68"]
+                        bound[op]["mid"] / bound[op]["mean_err68"]
                         for op in coeff_ptl.coeff_list
                     ]
                     for name, bound in cl_bounds.items()
