@@ -10,7 +10,7 @@ report_path = f"{pathlib.Path().absolute()}/reports"
 def report_test():
 
     fit_linear = FitManager(
-        data_path, "NS_GLOBAL_NLO_NHO", label=r"${\rm NLO~QCD,~Linear~EFT}$"
+        data_path, "NS_GLOBAL_LO_NHO", label=r"${\rm SMEFiT\ Top+H+VV,\ LO\ EFT\ \mathcal{O}(\Lambda^2)}$"
     )
     fit_quad = FitManager(
         data_path, "NS_GLOBAL_NLO_HO",
@@ -26,10 +26,10 @@ def report_test():
 def plot_hist_only(coeff_name):
 
     fit_linear = FitManager(
-        data_path, "NS_GLOBAL_NLO_NHO", label=r"${\rm NLO~QCD,~Linear~EFT}$"
+        data_path, "NS_GLOBAL_NLO_NHO", label=r"${\rm NLO~EFT,~Linear~EFT}$"
     )
     fit_quad = FitManager(
-        data_path, "NS_GLOBAL_NLO_HO", label=r"${\rm NLO~QCD,~Quadratic~EFT}$"
+        data_path, "NS_GLOBAL_NLO_HO", label=r"${\rm NLO~EFT,~Quadratic~EFT}$"
     )
 
     report_name = f"/test_{coeff_name}"
@@ -39,5 +39,5 @@ def plot_hist_only(coeff_name):
 
 if __name__ == "__main__":
 
-    #report_test()
+    # report_test()
     plot_hist_only('ctG')

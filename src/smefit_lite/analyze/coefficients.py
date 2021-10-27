@@ -145,7 +145,7 @@ class CoefficientsPlotter:
         py.tight_layout()
         py.savefig(f"{self.report_folder}/Coeffs_Central.pdf")
 
-    def plot_coeffs_bar(self, error):
+    def plot_coeffs_bar(self, error, plot_cutoff = False):
         """
         Plot error bars at given confidence level
 
@@ -160,13 +160,14 @@ class CoefficientsPlotter:
         df.plot(kind="bar", rot=0, width=0.6, figsize=(12, 5))
 
         # Hard cutoff
-        py.plot(
-            np.linspace(-1, 2 * self.npar + 1, 2),
-            400 * np.ones(2),
-            "k--",
-            alpha=0.7,
-            lw=2,
-        )
+        if plot_cutoff:
+            py.plot(
+                np.linspace(-1, 2 * self.npar + 1, 2),
+                400 * np.ones(2),
+                "k--",
+                alpha=0.7,
+                lw=2,
+            )
         py.xticks(fontsize=10, rotation=45)
         py.tick_params(axis="y", direction="in", labelsize=15)
         py.yscale("log")

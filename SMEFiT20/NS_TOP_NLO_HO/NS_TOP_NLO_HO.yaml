@@ -110,7 +110,7 @@ coefficients:
   cpt: {'fixed': False, 'value': 0.0, 'min': -25.0, 'max': 15.0}
   ctW: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
   ctG: {'fixed': False, 'value': 0.0, 'min': -1.0, 'max': 1.0}
-  #Otp: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 5.0}
+  #ctp: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 5.0}
   ctZ: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 10.0}
 
   cQQ1: {'fixed': False, 'value': 0.0, 'min': -10.0, 'max': 10.0}

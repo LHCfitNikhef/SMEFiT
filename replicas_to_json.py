@@ -68,12 +68,12 @@ if __name__ == "__main__":
             vals = {}
             # read replicas in each folder
             for op_dir in os.listdir(fit):
-                if op_dir.startswith('O') is False:
+                if op_dir.startswith('c') is False:
                     continue
                 temp = convert_to_json(f"{fit}/{op_dir}")
                 # clean
                 for op in os.listdir(fit):
-                    if op != op_dir and op.startswith('O'):
+                    if op != op_dir and op.startswith('c') and "VBS" not in fit:
                         temp.pop(op)
                 vals.update(temp)
         else:
